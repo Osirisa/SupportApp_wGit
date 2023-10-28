@@ -13,3 +13,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::on_actionAPI_Key_triggered()
+{
+
+
+}
+
