@@ -146,7 +146,3 @@ void AdtractionAPI::loadAdvertisersData()
         emit advertisersUpdated(m_advertisers);
     }
 }
-
-const QHash<QString, AdvertiserData>& AdtractionAPI::getAdvertisers() const {
-    return m_advertisers;
-}

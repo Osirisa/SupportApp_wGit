@@ -2,6 +2,7 @@
 #define P_SUPPORTPAGE_H
 
 #include <QWidget>
+#include "advertiserdata.h"
 
 namespace Ui {
 class P_SupportPage;
@@ -17,6 +18,9 @@ public:
 
 private:
     Ui::P_SupportPage *ui;
+
+public slots:
+    void onShopsUpdated(const QHash<QString, AdvertiserData> &advertisers);
 };
 
 #endif // P_SUPPORTPAGE_H
