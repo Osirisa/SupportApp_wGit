@@ -12,22 +12,27 @@ CONFIG += c++17
 SOURCES += \
     adtractionapi.cpp \
     datamanager.cpp \
+    encryptionhelper.cpp \
     main.cpp \
     mainwindow.cpp \
     networkmanager.cpp \
-    p_supportpage.cpp
+    p_supportpage.cpp \
+    setapikey.cpp
 
 HEADERS += \
     adtractionapi.h \
     advertiserdata.h \
     datamanager.h \
+    encryptionhelper.h \
     mainwindow.h \
     networkmanager.h \
-    p_supportpage.h
+    p_supportpage.h \
+    setapikey.h
 
 FORMS += \
     mainwindow.ui \
-    p_supportpage.ui
+    p_supportpage.ui \
+    setapikey.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
