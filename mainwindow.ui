@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1639</width>
+    <height>843</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QListWidget" name="LW_MenuNav">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>7</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="P_SupportPage" name="page"/>
+      <widget class="QWidget" name="page_2"/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1639</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionSave"/>
+    <addaction name="actionLoad"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_CSV"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuAPIs">
+    <property name="title">
+     <string>APIs</string>
+    </property>
+    <widget class="QMenu" name="menuAdTraction">
+     <property name="title">
+      <string>AdTraction</string>
+     </property>
+     <addaction name="actionUpdate_Shops"/>
+     <addaction name="actionUpdate_Currencies"/>
+     <addaction name="separator"/>
+     <addaction name="actionAPI_Key"/>
+    </widget>
+    <addaction name="menuAdTraction"/>
+    <addaction name="actionAwin"/>
+    <addaction name="actionCJ"/>
+    <addaction name="separator"/>
+    <addaction name="actionUpdate_All"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuAPIs"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAwin">
+   <property name="text">
+    <string>Awin</string>
+   </property>
+  </action>
+  <action name="actionCJ">
+   <property name="text">
+    <string>CJ</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="actionImport_CSV">
+   <property name="text">
+    <string>Import CSV</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Shops">
+   <property name="text">
+    <string>Update Shops</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Currencies">
+   <property name="text">
+    <string>Update Currencies</string>
+   </property>
+  </action>
+  <action name="actionAPI_Key">
+   <property name="text">
+    <string>API Key</string>
+   </property>
+  </action>
+  <action name="actionUpdate_All">
+   <property name="text">
+    <string>Update All</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>P_SupportPage</class>
+   <extends>QWidget</extends>
+   <header>p_supportpage.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
+</ui>
