@@ -18,6 +18,11 @@ public:
     explicit SetAPIKey(DataManager* dataManager, EncryptionHelper* encryptionHelper,QWidget *parent = nullptr);
     ~SetAPIKey();
 
+    const QString loadAPIKey();
+
+    signals:
+    void apiKeyChanged(const QString &newKey);
+
 private slots:
     void on_PB_Cancel_clicked();
     void on_PB_Save_clicked();
@@ -26,6 +31,8 @@ private:
     Ui::SetAPIKey *ui;
     DataManager* dataManager;
     EncryptionHelper* encryptionHelper;
+
+    void saveAPIKey(const QString &key);
 };
 
 #endif // SETAPIKEY_H
