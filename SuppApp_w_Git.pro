@@ -10,12 +10,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    adtractionapi.cpp \
+    datamanager.cpp \
     main.cpp \
     mainwindow.cpp \
     networkmanager.cpp \
     p_supportpage.cpp
 
 HEADERS += \
+    adtractionapi.h \
+    advertiserdata.h \
+    datamanager.h \
     mainwindow.h \
     networkmanager.h \
     p_supportpage.h
