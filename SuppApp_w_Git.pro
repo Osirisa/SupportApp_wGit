@@ -11,6 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     adtractionapi.cpp \
+    apimanager.cpp \
     datamanager.cpp \
     encryptionhelper.cpp \
     main.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 HEADERS += \
     adtractionapi.h \
     advertiserdata.h \
+    apimanager.h \
     datamanager.h \
     encryptionhelper.h \
     mainwindow.h \

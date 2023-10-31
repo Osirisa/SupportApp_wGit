@@ -6,12 +6,13 @@
 #include "advertiserdata.h"
 #include "networkmanager.h"
 #include "datamanager.h"
+#include "apimanager.h"
 
 class AdtractionAPI : public QObject
 {
     Q_OBJECT
 public:
-    explicit AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent = nullptr);
+    explicit AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, APIManager* apiManager,const QString& apiToken, QObject *parent = nullptr);
 
     const QHash<QString, AdvertiserData>& getAdvertisers() const;
     const AdvertiserData& getAdvertiserData(const QString& shopName) const;
@@ -31,6 +32,7 @@ private slots:
 private:
     NetworkManager* networkManager;
     DataManager* dataManager;
+    APIManager* apiManager;
     QString apiToken;
 
     QHash<QString, AdvertiserData> m_advertisers;

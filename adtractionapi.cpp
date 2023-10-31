@@ -5,8 +5,8 @@
 #include <QJsonObject>
 
 //Takes in the NetworkManager, the DataManager, the APIToken and the Parent to ensure being loaded the whole time
-AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
-    : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
+AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, APIManager* apiManager, const QString& apiToken, QObject *parent)
+    : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiManager(apiManager), apiToken(apiToken)
 {
 }
 
