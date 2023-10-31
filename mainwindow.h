@@ -3,8 +3,7 @@
 
 #include <QMainWindow>
 #include "setapikey.h"
-#include "networkmanager.h"
-#include "adtractionapi.h"
+#include "apimanager.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -28,8 +27,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     SetAPIKey* SetAPIKeyWindow;
-    NetworkManager* networkManager;
     DataManager* dataManager;
-    AdtractionAPI* adtractionApi;
+    EncryptionHelper* encryptionHelper;
+
+    APIManager* apiManager;
 };
 #endif // MAINWINDOW_H

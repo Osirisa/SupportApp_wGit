@@ -8,7 +8,7 @@
 class BaseNetwork {
 public:
     BaseNetwork()
-        : UpdateAdvertisersInstance(this), GetAdvertisersInstance(this), AdminInstance(this) {}
+        : UpdateAdvertisersInstance(this), GetAdvertisersInstance(this), Admin(this) {}
 
     class UpdateAdvertisers {
     public:
@@ -38,7 +38,7 @@ public:
 
     private:
         BaseNetwork* parentNetwork;
-    } AdminInstance;
+    } Admin;
 
 protected:
     struct NetworkInfo {
