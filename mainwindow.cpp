@@ -29,7 +29,7 @@ MainWindow::~MainWindow()
 //Public Slots
 void MainWindow::updateApiKey(const QString &newKey)
 {
-    apiManager->adtraction->Admin.addAPIKey(newKey);
+
 }
 
 //Private Slots

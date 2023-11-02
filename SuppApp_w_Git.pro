@@ -13,7 +13,7 @@ SOURCES += \
     Networks/adtraction.cpp \
     api_Classes/adtractionapi.cpp \
     apimanager.cpp \
-    datamanager.cpp \
+    DataManager/datamanager.cpp \
     encryptionhelper.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -28,7 +28,7 @@ HEADERS += \
     advertiserdata.h \
     apimanager.h \
     BaseClasses/basenetwork.h \
-    datamanager.h \
+    DataManager/datamanager.h \
     encryptionhelper.h \
     mainwindow.h \
     networkmanager.h \

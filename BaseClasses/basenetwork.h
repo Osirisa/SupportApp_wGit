@@ -8,7 +8,7 @@
 class BaseNetwork {
 public:
     BaseNetwork()
-        : UpdateAdvertisersInstance(this), GetAdvertisersInstance(this), Admin(this) {}
+        : UpdateAdverts(this), GetAdverts(this), Admin(this) {}
 
     class UpdateAdvertisers {
     public:
@@ -18,7 +18,7 @@ public:
 
     private:
         BaseNetwork* parentNetwork;
-    } UpdateAdvertisersInstance;
+    } UpdateAdverts;
 
     class GetAdvertisers {
     public:
@@ -28,7 +28,7 @@ public:
 
     private:
         BaseNetwork* parentNetwork;
-    } GetAdvertisersInstance;
+    } GetAdverts;
 
     class Admin {
     public:

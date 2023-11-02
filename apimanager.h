@@ -6,7 +6,7 @@
 #include <QStringList>
 #include <QHash>
 
-#include "datamanager.h"
+#include "DataManager/datamanager.h"
 #include "networkmanager.h"
 #include "Networks/adtraction.h"
 

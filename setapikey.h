@@ -2,7 +2,7 @@
 #define SETAPIKEY_H
 
 #include <QDialog>
-#include "datamanager.h"
+#include "DataManager/datamanager.h"
 #include "encryptionhelper.h"
 
 

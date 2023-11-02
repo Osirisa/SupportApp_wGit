@@ -634,6 +634,11 @@
         </property>
         <column>
          <property name="text">
+          <string>Network</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Shop</string>
          </property>
         </column>
