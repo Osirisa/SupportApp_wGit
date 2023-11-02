@@ -25,19 +25,48 @@ void DataManager::registerFile(const QString &key, const QString &filename) {
 }
 
 /*--------------
+ * Name: hasKey
+ * Usage: Checks if a given key is already present in the file map.
+ * Parameters:
+ * - const QString &key: The unique key to check in the file map.
+ * Return: bool: Returns true if the key exists; otherwise, false.
+ *-----------------*/
+bool DataManager::hasKey(const QString &key) const {
+    return fileMap.contains(key);
+}
+
+/*--------------
  * Name: saveToFile
- * Usage: Saves data to a file associated with a key.
+ * Usage: Saves data to a file associated with a key. It creates the directory path if it does not exist.
+ *       The file is saved relative to the executable's directory.
  * Parameters:
  * - const QString &filename: The filename or path where data will be saved.
  * - const QByteArray &data: The data to be saved in the file.
- * Return: void
+ * Return: bool: Returns true if the data was successfully saved; otherwise, false.
  *-----------------*/
-void DataManager::saveToFile(const QString &filename, const QByteArray &data) {
-    QFile file(filename);
-    if (file.open(QIODevice::WriteOnly)) {
-        file.write(data);
-        file.close();
+bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
+    QString exeDir = QCoreApplication::applicationDirPath(); // Get the executable's directory
+    QString filePath = exeDir + "/" + fileMap[key]; // Construct the absolute file path
+
+    QFile file(filePath);
+    QFileInfo fileInfo(file.fileName());
+    QDir dir;
+
+    // Check if the directory exists, create it if it doesn't
+    if (!dir.exists(fileInfo.dir().absolutePath())) {
+        dir.mkpath(fileInfo.dir().absolutePath());
     }
+
+    // Attempt to open the file and write the data
+    if (file.open(QIODevice::WriteOnly)) {
+        if (file.write(data) != -1) {
+            file.close();
+            return true; // Data was successfully saved
+        }
+        file.close(); // Close the file if write failed
+    }
+
+    return false; // Return false if unable to save the data
 }
 
 /*--------------
@@ -47,8 +76,8 @@ void DataManager::saveToFile(const QString &filename, const QByteArray &data) {
  * - const QString &filename: The filename or path from where data will be loaded.
  * Return: QByteArray: The data loaded from the file.
  *-----------------*/
-QByteArray DataManager::loadFromFile(const QString &filename) {
-    QFile file(filename);
+QByteArray DataManager::loadFromFile(const QString &key) {
+    QFile file(fileMap[key]);
     QByteArray data;
     if (file.open(QIODevice::ReadOnly)) {
         data = file.readAll();
@@ -90,3 +119,49 @@ QList<QStringList> DataManager::convertCsvToList(const QByteArray &csvData) {
     return list;
 }
 
+/*--------------
+ * JsonManager Class Implementation
+ *-----------------*/
+
+DataManager::JsonManager::JsonManager(DataManager *parent) : parent(parent) {}
+
+void DataManager::JsonManager::save(const QString &key, const QJsonDocument &jsonDoc) {
+    parent->saveToFile(key, jsonDoc.toJson());
+}
+
+QJsonDocument DataManager::JsonManager::load(const QString &key) {
+    QByteArray jsonData = parent->loadFromFile(key);
+    return QJsonDocument::fromJson(jsonData);
+}
+
+/*--------------
+ * CsvManager Class Implementation
+ *-----------------*/
+
+DataManager::CsvManager::CsvManager(DataManager *parent) : parent(parent) {}
+
+void DataManager::CsvManager::save(const QString &key, const QList<QStringList> &data) {
+    QByteArray csvData = parent->convertListToCsv(data);
+    parent->saveToFile(key, csvData);
+}
+
+QList<QStringList> DataManager::CsvManager::load(const QString &key) {
+    QByteArray csvData = parent->loadFromFile(key);
+    return parent->convertCsvToList(csvData);
+}
+
+/*--------------
+ * TxtManager Class Implementation
+ *-----------------*/
+
+DataManager::TxtManager::TxtManager(DataManager *parent) : parent(parent) {}
+
+void DataManager::TxtManager::save(const QString &key, const QString &text) {
+    QByteArray textData = text.toUtf8();
+    parent->saveToFile(key, textData);
+}
+
+QString DataManager::TxtManager::load(const QString &key) {
+    QByteArray textData = parent->loadFromFile(key);
+    return QString::fromUtf8(textData);
+}

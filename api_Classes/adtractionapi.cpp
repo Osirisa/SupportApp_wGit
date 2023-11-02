@@ -8,6 +8,7 @@
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
 {
+    dataManager->registerFile("currenciesAdtraction","/dataAdtraction/currencies.txt");
 }
 
 void AdtractionAPI::updateCurrencies()
@@ -22,7 +23,7 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
 {
     if(reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
-        dataManager->saveToFile("currencies.txt", responseData);
+        dataManager->txt->save("currencies", responseData);
     } else {
         qWarning() << "Network request failed:" << reply->errorString();
     }

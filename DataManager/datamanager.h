@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QJsonDocument>
 #include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QCoreApplication>
 #include <QTextStream>
 #include <QStringList>
 #include <QMap>
@@ -62,7 +65,7 @@ public:
 
     // Registers a file with a unique key for later access.
     void registerFile(const QString &key, const QString &filename);
-
+    bool hasKey(const QString &key) const;
     // Pointers to the nested class instances for handling JSON, CSV, and TXT.
     JsonManager *json;
     CsvManager *csv;
@@ -77,7 +80,7 @@ private:
     QList<QStringList> convertCsvToList(const QByteArray &csvData);
 
     // Saves data to a file.
-    void saveToFile(const QString &filename, const QByteArray &data);
+    bool saveToFile(const QString &filename, const QByteArray &data);
     // Loads data from a file.
     QByteArray loadFromFile(const QString &filename);
 };
