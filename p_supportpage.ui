@@ -417,8 +417,13 @@
               </property>
               <item>
                <widget class="QLabel" name="label_3">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string>Order ID</string>
                 </property>
                </widget>
               </item>
@@ -447,7 +452,7 @@
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">

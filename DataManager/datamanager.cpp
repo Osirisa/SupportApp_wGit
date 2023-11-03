@@ -77,14 +77,23 @@ bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
  * Return: QByteArray: The data loaded from the file.
  *-----------------*/
 QByteArray DataManager::loadFromFile(const QString &key) {
-    QFile file(fileMap[key]);
-    QByteArray data;
-    if (file.open(QIODevice::ReadOnly)) {
-        data = file.readAll();
-        file.close();
+    QString exeDir = QCoreApplication::applicationDirPath(); // Get the executable's directory
+    QString filePath = exeDir + "/" + fileMap[key]; // Construct the absolute file path
+
+    QFile file(filePath);
+    if (!file.exists()) {
+        qDebug() << "File does not exist:" << filePath;
+        return QByteArray();
     }
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Unable to open file:" << filePath;
+        return QByteArray();
+    }
+    QByteArray data = file.readAll();
+    file.close();
     return data;
 }
+
 
 /*--------------
  * Name: convertListToCsv
@@ -164,4 +173,5 @@ void DataManager::TxtManager::save(const QString &key, const QString &text) {
 QString DataManager::TxtManager::load(const QString &key) {
     QByteArray textData = parent->loadFromFile(key);
     return QString::fromUtf8(textData);
+
 }

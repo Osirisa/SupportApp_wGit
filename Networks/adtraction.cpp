@@ -1,7 +1,5 @@
 #include "Networks/adtraction.h"
 
-// Implementation for RefreshAdvertisersDerived methods
-
 void Adtraction::UpdateAdvertisersDerived::byChannel(int channelID) {
 
 }

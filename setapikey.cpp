@@ -7,9 +7,9 @@ SetAPIKey::SetAPIKey(DataManager* dataManager, EncryptionHelper* encryptionHelpe
     dataManager(dataManager),
     encryptionHelper(encryptionHelper)
 {
+        dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
 
     ui->setupUi(this);
-    ui->LE_APIKey->setText(loadAPIKey());
 }
 
 SetAPIKey::~SetAPIKey()
@@ -17,12 +17,15 @@ SetAPIKey::~SetAPIKey()
     delete ui;
 }
 
-const QString SetAPIKey::loadAPIKey()
+QString SetAPIKey::loadAPIKey()
 {
-
-    QString decryptedKey = encryptionHelper->encryptDecrypt(dataManager->loadFromFile("apiKey.txt"));
-
+    QString decryptedKey = encryptionHelper->encryptDecrypt(dataManager->txt->load("adtractionKey"));
     return decryptedKey;
+}
+
+void SetAPIKey::FillLE(){
+    QString key = loadAPIKey();
+    ui->LE_APIKey->setText(key);
 }
 
 void SetAPIKey::on_PB_Cancel_clicked()
@@ -36,11 +39,10 @@ void SetAPIKey::on_PB_Save_clicked()
     saveAPIKey(ui->LE_APIKey->text());
     hide();
 }
-
 void SetAPIKey::saveAPIKey(const QString &apiKey)
 {
     QString encryptedKey = encryptionHelper->encryptDecrypt(apiKey);
-    dataManager->saveToFile("apiKey.txt",encryptedKey.toUtf8());
+    dataManager->txt->save("adtractionKey",encryptedKey.toUtf8());
 
-    emit apiKeyChanged(apiKey);
+//    emit apiKeyChanged(apiKey);
 }

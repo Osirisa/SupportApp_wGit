@@ -8,7 +8,12 @@
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
 {
-    dataManager->registerFile("currenciesAdtraction","/dataAdtraction/currencies.txt");
+    if(!(dataManager->hasKey("currenciesAdtraction"))){
+        dataManager->registerFile("currenciesAdtraction","dataAdtraction/currencies.txt");
+    }
+    if(!(dataManager->hasKey("advertisersAdtraction"))){
+        dataManager->registerFile("advertisersAdtraction","dataAdtraction/advertisersAdtraction.json");
+    }
 }
 
 void AdtractionAPI::updateCurrencies()
@@ -120,7 +125,7 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply)
 
         // Create a new JSON document from the modified array and save it
         QJsonDocument newJsonDoc(newAdvertisersArray);
-        dataManager->saveJsonToFile("advertisers.json", newJsonDoc);
+        dataManager->json->save("advertisersAdtraction", newJsonDoc);
     } else {
         qWarning() << "Network request failed:" << reply->errorString();
     }
@@ -131,7 +136,7 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply)
 
 void AdtractionAPI::loadAdvertisersData()
 {
-    QJsonDocument jsonDoc = dataManager->loadJsonFromFile("advertisers.json");
+    QJsonDocument jsonDoc = dataManager->json->load("advertisersAdtraction");
     if (!jsonDoc.isNull()) {
         QJsonObject jsonObject = jsonDoc.object();
         m_advertisers.clear();  // Clear any existing data

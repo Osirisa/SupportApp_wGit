@@ -58,9 +58,9 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>PB_Cancel</tabstop>
   <tabstop>LE_APIKey</tabstop>
   <tabstop>PB_Save</tabstop>
-  <tabstop>PB_Cancel</tabstop>
  </tabstops>
  <resources/>
  <connections/>

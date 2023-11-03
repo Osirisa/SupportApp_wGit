@@ -18,7 +18,9 @@ public:
     explicit SetAPIKey(DataManager* dataManager, EncryptionHelper* encryptionHelper,QWidget *parent = nullptr);
     ~SetAPIKey();
 
-    const QString loadAPIKey();
+    QString loadAPIKey();
+
+    void FillLE();
 
     signals:
     void apiKeyChanged(const QString &newKey);
