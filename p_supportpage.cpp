@@ -76,7 +76,7 @@ void P_SupportPage::on_PB_AddToList_clicked()
         new QTableWidgetItem(QString(ui->CB_shop->currentText())),
         new QTableWidgetItem(QString(ui->LE_value->text())),
         new QTableWidgetItem(QString(ui->LE_expectedProv_Currency->text())),
-        new QTableWidgetItem(QString(ui->CB_shop->currentText())),
+        new QTableWidgetItem(QString(ui->CB_Currency->currentText())),
         new QTableWidgetItem(QString(ui->LE_User->text())),
         new QTableWidgetItem(QString(ui->DE_transactionDate->date().toString())),
         new QTableWidgetItem(QString(ui->CB_ComissionID->currentText())),
@@ -94,7 +94,6 @@ void P_SupportPage::on_PB_AddToList_clicked()
     deleteBTN->setText("X");
     deleteBTN->setStyleSheet("QPushButton { color: red; }");
     ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,10,deleteBTN);
-
 
     QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
 }

@@ -10,6 +10,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    networkchannels.cpp \
     Networks/adtraction.cpp \
     api_Classes/adtractionapi.cpp \
     apimanager.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     APIData.h \
+    networkchannels.h \
     Networks/adtraction.h \
     api_Classes/adtractionapi.h \
     advertiserdata.h \
@@ -36,6 +38,7 @@ HEADERS += \
     setapikey.h
 
 FORMS += \
+    networkchannels.ui \
     mainwindow.ui \
     p_supportpage.ui \
     setapikey.ui

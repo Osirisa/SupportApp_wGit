@@ -10,9 +10,9 @@ public:
     BaseNetwork()
         : UpdateAdverts(this), GetAdverts(this), Admin(this) {}
 
-    class UpdateAdvertisers {
+    class UpdateAdvertisersBase {
     public:
-        UpdateAdvertisers(BaseNetwork* parent) : parentNetwork(parent) {}
+        UpdateAdvertisersBase(BaseNetwork* parent) : parentNetwork(parent) {}
         virtual void byChannel(int channelID) {}
         virtual void allChannels() {}
 
@@ -20,9 +20,9 @@ public:
         BaseNetwork* parentNetwork;
     } UpdateAdverts;
 
-    class GetAdvertisers {
+    class GetAdvertisersBase {
     public:
-        GetAdvertisers(BaseNetwork* parent) : parentNetwork(parent) {}
+        GetAdvertisersBase(BaseNetwork* parent) : parentNetwork(parent) {}
         virtual QStringList fromChannel(int channelID) { return QStringList(); }
         virtual QStringList fromNetwork() { return QStringList(); }
 

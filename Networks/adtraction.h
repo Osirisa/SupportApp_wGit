@@ -7,7 +7,7 @@ class Adtraction : public BaseNetwork {
 public:
     Adtraction();
 
-    class UpdateAdvertisersDerived : public UpdateAdvertisers {
+    class UpdateAdvertisersDerived : public UpdateAdvertisersBase {
     public:
        UpdateAdvertisersDerived(Adtraction* parent);
 
@@ -18,7 +18,7 @@ public:
         Adtraction* parentAdtraction;
     } UpdateAdvs;
 
-    class GetAdvertisersDerived : public GetAdvertisers {
+    class GetAdvertisersDerived : public GetAdvertisersBase {
     public:
         GetAdvertisersDerived(Adtraction* parent);
 

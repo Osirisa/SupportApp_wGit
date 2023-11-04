@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "setapikey.h"
 #include "apimanager.h"
+#include "networkchannels.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -24,9 +25,16 @@ public slots:
 private slots:
     void on_actionAPI_Key_triggered();
 
+    void on_actionUpdate_Shops_triggered();
+
+    void on_actionAdd_ChannelIds_triggered();
+
 private:
     Ui::MainWindow *ui;
+
     SetAPIKey* SetAPIKeyWindow;
+    NetworkChannels* networkChannelWindow;
+
     DataManager* dataManager;
     EncryptionHelper* encryptionHelper;
 
