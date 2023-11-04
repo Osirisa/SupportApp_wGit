@@ -29,6 +29,8 @@ private slots:
 
     void on_actionAdd_ChannelIds_triggered();
 
+    void on_actionChannelIDs_triggered();
+
 private:
     Ui::MainWindow *ui;
 

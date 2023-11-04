@@ -24,12 +24,28 @@ void NetworkChannels::on_addButton_clicked() {
         return;
     }
 
-    // Add items to the table
-    int row = ui->T_NWC_NetworkChannels->rowCount();
-    ui->T_NWC_NetworkChannels->insertRow(row);
-    ui->T_NWC_NetworkChannels->setItem(row, 0, new QTableWidgetItem(ui->CB_NWC_Network->currentText()));
-    ui->T_NWC_NetworkChannels->setItem(row, 1, new QTableWidgetItem(ui->LE_NWC_ChannelName->text()));
-    ui->T_NWC_NetworkChannels->setItem(row, 2, new QTableWidgetItem(ui->LE_NWC_ChannelID->text()));
+    int rowCount = ui->T_NWC_NetworkChannels->rowCount();
+    ui->T_NWC_NetworkChannels->setRowCount(rowCount + 1);
+
+    QTableWidgetItem *items [] = {
+        new QTableWidgetItem(QString(ui->CB_NWC_Network->currentText())),
+        new QTableWidgetItem(QString(ui->LE_NWC_ChannelName->text())),
+        new QTableWidgetItem(QString(ui->LE_NWC_ChannelID->text())),
+
+        new QTableWidgetItem
+    };
+
+    const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
+    for(size_t column = 0; column < count; column++){
+        ui->T_NWC_NetworkChannels->setItem(rowCount,column,items[column]);
+    }
+
+    QPushButton *deleteBTN = new QPushButton;
+    deleteBTN->setText("X");
+    deleteBTN->setStyleSheet("QPushButton { color: red; }");
+    ui->T_NWC_NetworkChannels->setCellWidget(rowCount,3,deleteBTN);
+
+    QObject::connect(deleteBTN, &QPushButton::clicked, this, &NetworkChannels::on_deleteBTN_clicked);
 }
 
 void NetworkChannels::on_saveButton_clicked() {
@@ -40,4 +56,9 @@ void NetworkChannels::on_saveButton_clicked() {
 void NetworkChannels::saveChannelsToCsv() {
     // Your code to save data from tableWidget to CSV using DataManager
     // ...
+}
+void NetworkChannels::on_deleteBTN_clicked(){
+
+    ui->T_NWC_NetworkChannels->removeRow(ui->T_NWC_NetworkChannels->currentRow());
+
 }

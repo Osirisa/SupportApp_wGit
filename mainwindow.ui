@@ -87,6 +87,7 @@
     <addaction name="actionCJ"/>
     <addaction name="separator"/>
     <addaction name="actionUpdate_All"/>
+    <addaction name="actionChannelIDs"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -151,6 +152,11 @@
   <action name="actionAdd_ChannelIds">
    <property name="text">
     <string>Channel IDs</string>
+   </property>
+  </action>
+  <action name="actionChannelIDs">
+   <property name="text">
+    <string>ChannelIDs</string>
    </property>
   </action>
  </widget>

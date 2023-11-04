@@ -56,3 +56,10 @@ void MainWindow::on_actionAdd_ChannelIds_triggered()
     networkChannelWindow->exec();
 }
 
+
+void MainWindow::on_actionChannelIDs_triggered()
+{
+    networkChannelWindow->setModal(true);
+    networkChannelWindow->exec();
+}
+

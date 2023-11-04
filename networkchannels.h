@@ -19,6 +19,8 @@ private slots:
     void on_addButton_clicked();
     void on_saveButton_clicked();
 
+    void on_deleteBTN_clicked();
+
 private:
     Ui::NetworkChannels* ui;
     DataManager* dataManager;
