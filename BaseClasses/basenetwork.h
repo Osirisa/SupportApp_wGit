@@ -4,11 +4,12 @@
 #include <QString>
 #include <QList>
 #include <QStringList>
+#include "DataManager/datamanager.h"
 
 class BaseNetwork {
 public:
-    BaseNetwork()
-        : UpdateAdverts(this), GetAdverts(this), Admin(this) {}
+    BaseNetwork(DataManager* dataManager)
+        : UpdateAdverts(this), GetAdverts(this), Admin(this), dataManager(dataManager) {}
 
     class UpdateAdvertisersBase {
     public:
@@ -46,6 +47,7 @@ protected:
         QList<int> channelIDs;
     };
     NetworkInfo info;
+    DataManager* dataManager;
 };
 
 #endif // BASENETWORK_H

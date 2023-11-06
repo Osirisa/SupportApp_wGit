@@ -5,7 +5,7 @@
 
 class Adtraction : public BaseNetwork {
 public:
-    Adtraction();
+    Adtraction(DataManager* dataManager);
 
     class UpdateAdvertisersDerived : public UpdateAdvertisersBase {
     public:
@@ -28,6 +28,9 @@ public:
     private:
         Adtraction* parentAdtraction;
     } GetAdvs;
+
+private:
+    DataManager* dataManager;
 };
 
 #endif // ADTRACTION_H
