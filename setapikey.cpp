@@ -7,7 +7,6 @@ SetAPIKey::SetAPIKey(DataManager* dataManager, EncryptionHelper* encryptionHelpe
     dataManager(dataManager),
     encryptionHelper(encryptionHelper)
 {
-        dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
 
     ui->setupUi(this);
 }

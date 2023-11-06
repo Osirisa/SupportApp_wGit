@@ -14,7 +14,6 @@ NetworkChannels::NetworkChannels(DataManager *dataManager, QWidget *parent) :
 
     fillComboBox();
 
-    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
 
     loadChannelsFromCsv();
 }

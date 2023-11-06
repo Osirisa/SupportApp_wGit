@@ -4,5 +4,4 @@ APIManager::APIManager(DataManager* dataManager) :
     dataManager(dataManager)
 {
 
-
 }

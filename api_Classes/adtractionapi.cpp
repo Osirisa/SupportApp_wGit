@@ -8,12 +8,9 @@
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
 {
-    if(!(dataManager->hasKey("currenciesAdtraction"))){
-        dataManager->registerFile("currenciesAdtraction","dataAdtraction/currencies.txt");
-    }
-    if(!(dataManager->hasKey("advertisersAdtraction"))){
-        dataManager->registerFile("advertisersAdtraction","dataAdtraction/advertisersAdtraction.json");
-    }
+
+
+
 }
 
 void AdtractionAPI::updateCurrencies()
