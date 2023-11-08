@@ -1,45 +1,52 @@
 #ifndef BASENETWORK_H
 #define BASENETWORK_H
 
+#include <QObject>
 #include <QString>
 #include <QList>
 #include <QStringList>
 #include "DataManager/datamanager.h"
+#include "networkmanager.h"
 
-class BaseNetwork {
+class BaseNetwork : public QObject {
+    Q_OBJECT  // Required for all QObject derived classes
+
 public:
-    BaseNetwork(DataManager* dataManager)
-        : UpdateAdverts(this), GetAdverts(this), Admin(this), dataManager(dataManager) {}
+    explicit BaseNetwork(DataManager* dataManager, NetworkManager* networkManager,const QString &apiToken ,QObject *parent = nullptr)
+        : QObject(parent), dataManager(dataManager), networkManager(networkManager), apiToken(apiToken) {}
 
-    class UpdateAdvertisersBase {
+    class UpdateAdvertisersBase : public QObject {
+
     public:
-        UpdateAdvertisersBase(BaseNetwork* parent) : parentNetwork(parent) {}
+        explicit UpdateAdvertisersBase(BaseNetwork* parent) : QObject(parent), parentNetwork(parent) {}
         virtual void byChannel(int channelID) {}
         virtual void allChannels() {}
 
-    private:
+    protected:
         BaseNetwork* parentNetwork;
-    } UpdateAdverts;
+    };
 
-    class GetAdvertisersBase {
+    class GetAdvertisersBase : public QObject {
+
     public:
-        GetAdvertisersBase(BaseNetwork* parent) : parentNetwork(parent) {}
+        explicit GetAdvertisersBase(BaseNetwork* parent) : QObject(parent), parentNetwork(parent) {}
         virtual QStringList fromChannel(int channelID) { return QStringList(); }
         virtual QStringList fromNetwork() { return QStringList(); }
 
-    private:
+    protected:
         BaseNetwork* parentNetwork;
-    } GetAdverts;
+    };
 
-    class Admin {
+    class Admin : public QObject {
+
     public:
-        Admin(BaseNetwork* parent) : parentNetwork(parent) {}
-        void addAPIKey(const QString& key) { parentNetwork->info.apiKey = key; }
-        void addAPIChannelID(int channelID) { parentNetwork->info.channelIDs.append(channelID); }
+        explicit Admin(BaseNetwork* parent) : QObject(parent), parentNetwork(parent) {}
+        void addAPIKey(const QString& key);
+        void addAPIChannelID(int channelID);
 
-    private:
+    protected:
         BaseNetwork* parentNetwork;
-    } Admin;
+    };
 
 protected:
     struct NetworkInfo {
@@ -47,7 +54,12 @@ protected:
         QList<int> channelIDs;
     };
     NetworkInfo info;
+
     DataManager* dataManager;
+    NetworkManager* networkManager;
+    QString apiToken;
+
+private:
 };
 
 #endif // BASENETWORK_H

@@ -1,37 +1,60 @@
 #include "Networks/adtraction.h"
 
 
-Adtraction::Adtraction(DataManager* dataManager)
-    : BaseNetwork(dataManager), UpdateAdvs(this), GetAdvs(this), dataManager(dataManager) {
-    // Any initialization specific to Adtraction
+Adtraction::Adtraction(DataManager* dataManager, NetworkManager* networkManager, const QString &apiToken ,QObject *parent)
+    : BaseNetwork(dataManager, networkManager, apiToken, parent), updater(this), getter(this){
+
+    qDebug()<<"Test1";
+    initApi();
 }
 
-Adtraction::UpdateAdvertisersDerived::UpdateAdvertisersDerived(Adtraction* parent)
+Adtraction::~Adtraction(){
+
+    delete adtractionAPI;
+}
+
+void Adtraction::refreshAPI()
+{
+    if(adtractionAPI){
+        delete adtractionAPI;
+    }
+    initApi();
+}
+
+void Adtraction::initApi()
+{
+    adtractionAPI = new AdtractionAPI(networkManager,dataManager,apiToken,this);
+}
+
+Adtraction::UpdateAdvs::UpdateAdvs(Adtraction* parent)
     : UpdateAdvertisersBase(parent), parentAdtraction(parent) {}
 
-void Adtraction::UpdateAdvertisersDerived::byChannel(int channelID) {
+void Adtraction::UpdateAdvs::byChannel(int channelID) {
     // Implementation for updating advertisers by channel
 }
 
-void Adtraction::UpdateAdvertisersDerived::allChannels() {
+void Adtraction::UpdateAdvs::allChannels() {
     // Implementation for updating all channels
+    qDebug()<<"Test2";
+    if(parentAdtraction->adtractionAPI){
+        qDebug()<<"Test3";
+        parentAdtraction->adtractionAPI->updateAdvertisers(1592293656);
+    }
 }
 
-Adtraction::GetAdvertisersDerived::GetAdvertisersDerived(Adtraction* parent)
+Adtraction::GetAdvs::GetAdvs(Adtraction* parent)
     : GetAdvertisersBase(parent), parentAdtraction(parent) {}
 
-QStringList Adtraction::GetAdvertisersDerived::fromChannel(int channelID) {
+QStringList Adtraction::GetAdvs::fromChannel(int channelID) {
+
+    //TBD:
     QStringList advertisers;
-    // Fetch data using DataManager for a specific channel
-    // Example: advertisers = dataManager->loadAdvertisersForChannel(channelID);
-    advertisers << "Advertiser1" << "Advertiser2"; // Placeholder data
     return advertisers;
 }
 
-QStringList Adtraction::GetAdvertisersDerived::fromNetwork() {
+QStringList Adtraction::GetAdvs::fromNetwork() {
+
+    //TBD:
     QStringList advertisers;
-    // Fetch data using DataManager for the whole network
-    // Example: advertisers = dataManager->loadAllAdvertisers();
-    advertisers << "AdvertiserA" << "AdvertiserB" << "AdvertiserC"; // Placeholder data
     return advertisers;
 }

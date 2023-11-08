@@ -14,8 +14,7 @@ NetworkChannels::NetworkChannels(DataManager *dataManager, QWidget *parent) :
 
     fillComboBox();
 
-
-    loadChannelsFromCsv();
+    QTimer::singleShot(300, this, &NetworkChannels::updateTableWidget);
 }
 
 NetworkChannels::~NetworkChannels() {
@@ -176,5 +175,10 @@ void NetworkChannels::on_PB_NWC_Cancel_clicked()
     ui->T_NWC_NetworkChannels->setRowCount(0);
     loadChannelsFromCsv();
     hide();
+}
+
+void NetworkChannels::updateTableWidget()
+{
+    loadChannelsFromCsv();
 }
 

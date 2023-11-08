@@ -2,35 +2,47 @@
 #define ADTRACTION_H
 
 #include "BaseClasses/BaseNetwork.h"
+#include "api_Classes/adtractionapi.h"
 
 class Adtraction : public BaseNetwork {
-public:
-    Adtraction(DataManager* dataManager);
+    Q_OBJECT
 
-    class UpdateAdvertisersDerived : public UpdateAdvertisersBase {
+public:
+    explicit Adtraction(DataManager* dataManager, NetworkManager* networkManager, const QString &apiToken, QObject *parent = nullptr);
+    ~Adtraction();
+
+    class UpdateAdvs : public UpdateAdvertisersBase {
+
     public:
-       UpdateAdvertisersDerived(Adtraction* parent);
+        explicit UpdateAdvs(Adtraction* parent);
 
         void byChannel(int channelID) override;
         void allChannels() override;
 
-    private:
+    protected:
         Adtraction* parentAdtraction;
-    } UpdateAdvs;
+    };
 
-    class GetAdvertisersDerived : public GetAdvertisersBase {
+    class GetAdvs : public GetAdvertisersBase {
+
     public:
-        GetAdvertisersDerived(Adtraction* parent);
+        explicit GetAdvs(Adtraction* parent);
 
         QStringList fromChannel(int channelID) override;
         QStringList fromNetwork() override;
 
-    private:
+    protected:
         Adtraction* parentAdtraction;
-    } GetAdvs;
+    };
 
+    UpdateAdvs updater;
+    GetAdvs getter;
+
+    void refreshAPI();
 private:
-    DataManager* dataManager;
+
+    AdtractionAPI* adtractionAPI;
+    void initApi();
 };
 
 #endif // ADTRACTION_H

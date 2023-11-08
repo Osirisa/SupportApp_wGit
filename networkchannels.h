@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QString>
 #include <QStringList>
+#include <QTimer>
 
 #include "DataManager/DataManager.h"
 
@@ -24,6 +25,8 @@ private slots:
     void on_deleteBTN_clicked();
 
     void on_PB_NWC_Cancel_clicked();
+
+    void updateTableWidget();
 
 private:
     Ui::NetworkChannels* ui;

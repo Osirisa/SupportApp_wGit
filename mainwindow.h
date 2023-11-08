@@ -23,23 +23,24 @@ public slots:
     void updateApiKey(const QString &newKey);
 
 private slots:
+
     void on_actionAPI_Key_triggered();
-
     void on_actionUpdate_Shops_triggered();
-
     void on_actionAdd_ChannelIds_triggered();
-
     void on_actionChannelIDs_triggered();
 
 private:
     Ui::MainWindow *ui;
 
+    //Windows
     SetAPIKey* SetAPIKeyWindow;
     NetworkChannels* networkChannelWindow;
 
+    //GeneralClasses
     DataManager* dataManager;
     EncryptionHelper* encryptionHelper;
 
+    //API Class
     APIManager* apiManager;
 };
 #endif // MAINWINDOW_H

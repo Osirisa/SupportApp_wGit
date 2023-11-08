@@ -5,17 +5,19 @@
 #include <QString>
 #include <QStringList>
 #include <QHash>
+#include <QTimer>
 
 #include "DataManager/datamanager.h"
 #include "networkmanager.h"
 #include "Networks/adtraction.h"
+#include "encryptionhelper.h"
 
 class APIManager: public QObject
 {
     Q_OBJECT
 
 public:
-    APIManager(DataManager* dataManager);
+    APIManager(DataManager* dataManager,  EncryptionHelper* encryptionHelper);
 
     //"Network" Classes
     Adtraction* adtraction;
@@ -25,9 +27,10 @@ private:
     NetworkManager* networkManager;
     DataManager* dataManager;
 
+    //
+    EncryptionHelper* encryptionHelper;
 
-
-    //TBD: other "Network" Classes
+    void initApiNetwork();
 };
 
 #endif // APIMANAGER_H

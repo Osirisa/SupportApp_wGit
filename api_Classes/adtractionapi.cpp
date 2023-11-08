@@ -3,14 +3,12 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QPointer>
 
 //Takes in the NetworkManager, the DataManager, the APIToken and the Parent to ensure being loaded the whole time
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
 {
-
-
-
 }
 
 void AdtractionAPI::updateCurrencies()
@@ -36,6 +34,7 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
 //Sends a Post-Request to the server with the needed information to get all the accepted shops in the selected market.
 void AdtractionAPI::updateAdvertisers(int channelId)
 {
+    qDebug()<<"Test4";
     //takes the endpoint and adds the apiToken
     QString endpoint = QString("https://api.adtraction.com/v3/partner/programs/?token=%1").arg(apiToken);
 
@@ -48,10 +47,19 @@ void AdtractionAPI::updateAdvertisers(int channelId)
 
     //gets the reply from the server and saves it into a QNetworkReply object
     QNetworkReply* reply = networkManager->sendPostRequest(endpoint, apiToken, json);
+    qDebug() << "got it";
+    QPointer<QNetworkReply> safeReply = reply;
+    qDebug() << "safe? signal emitted";
 
     //If reply received a signal gets emited to the slot onAdvertisersRequestFinished
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        onAdvertisersRequestFinished(reply);
+    connect(reply, &QNetworkReply::finished, this, [this, safeReply]() {
+        qDebug() << "Finished signal emitted";
+        if (safeReply) {
+            qDebug() << "Reply is safe to use";
+            onAdvertisersRequestFinished(safeReply);
+        } else {
+            qDebug() << "Reply was deleted before slot execution";
+        }
     });
 }
 
