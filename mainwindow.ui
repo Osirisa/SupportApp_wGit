@@ -36,7 +36,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="P_SupportPage" name="page"/>
+      <widget class="QWidget" name="page"/>
       <widget class="QWidget" name="page_2"/>
      </widget>
     </item>
@@ -160,14 +160,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>P_SupportPage</class>
-   <extends>QWidget</extends>
-   <header>p_supportpage.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

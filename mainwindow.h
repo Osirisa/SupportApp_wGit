@@ -5,6 +5,7 @@
 #include "setapikey.h"
 #include "apimanager.h"
 #include "networkchannels.h"
+#include "p_supportpage.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -35,6 +36,7 @@ private:
     //Windows
     SetAPIKey* SetAPIKeyWindow;
     NetworkChannels* networkChannelWindow;
+    P_SupportPage* suppPage;
 
     //GeneralClasses
     DataManager* dataManager;

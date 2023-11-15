@@ -18,14 +18,18 @@ MainWindow::MainWindow(QWidget *parent)
     //Windows
     SetAPIKeyWindow = new SetAPIKey(dataManager,encryptionHelper, this);
     networkChannelWindow = new NetworkChannels(dataManager,this);
+    suppPage = new P_SupportPage(dataManager,this);
 
-
+    ui->stackedWidget->addWidget(suppPage);
+    ui->stackedWidget->setCurrentWidget(suppPage);
 
     //TBD: FileManager dataBank or soemthing like that
     dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
     dataManager->registerFile("currenciesAdtraction","dataAdtraction/currencies.txt");
     dataManager->registerFile("advertisersAdtraction","dataAdtraction/advertisersAdtraction.json");
     dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
+
+   // ui->stackedWidget->addWidget();
 }
 
 //-------------Destructor----------------

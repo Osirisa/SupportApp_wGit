@@ -1,12 +1,16 @@
 #include "p_supportpage.h"
 #include "ui_p_supportpage.h"
+#include <QJsonValue>
+#include <QJsonArray>
+#include <qjsonobject.h>
+#include <QTimer>
 
-P_SupportPage::P_SupportPage(QWidget *parent) :
+P_SupportPage::P_SupportPage(DataManager* dataManager,QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::P_SupportPage)
+    ui(new Ui::P_SupportPage),
+    dataManager(dataManager)
 {
     ui->setupUi(this);
-
 
     QDoubleValidator *dvalidator = new QDoubleValidator(this);
     ui->LE_value->setValidator(dvalidator);
@@ -20,6 +24,8 @@ P_SupportPage::P_SupportPage(QWidget *parent) :
     ui->DE_transactionDate->setMaximumDate(QDate::currentDate());
 
     initTable();
+
+    QTimer::singleShot(300, this, &P_SupportPage::initPage);
 }
 
 P_SupportPage::~P_SupportPage()
@@ -38,6 +44,39 @@ void P_SupportPage::initTable()
     ui->T_NachbuchungsanfragenListe->setColumnWidth(4,75);
     ui->T_NachbuchungsanfragenListe->setColumnWidth(9,75);
     ui->T_NachbuchungsanfragenListe->setColumnWidth(10,75);
+}
+
+void P_SupportPage::initPage()
+{
+    doc = dataManager->json->load("advertisersAdtraction");
+    fillShopComboBox();
+    setupComboBoxConnections();
+}
+
+void P_SupportPage::fillShopComboBox()
+{
+
+    for(const QJsonValue &value : doc.array()){
+        QJsonObject obj = value.toObject();
+        ui->CB_shop->addItem(obj["programName"].toString(),obj["programId"].toInt());
+    }
+}
+
+void P_SupportPage::setupComboBoxConnections()
+{
+    connect(ui->CB_shop, QOverload<int>::of(&QComboBox::activated),[this](int index) {
+        ui->CB_ComissionID->clear();
+        QJsonObject selectedProgram = doc.array().at(index).toObject();
+        QJsonArray commissions = selectedProgram["commissions"].toArray();
+
+        for (const QJsonValue &value : commissions) {
+            QJsonObject obj = value.toObject();
+            QString itemId = obj["id"].toString();
+            QString itemName = obj["name"].toString();
+            QString itemText = QString("%1: %2").arg(itemName, itemId);
+            ui->CB_ComissionID->addItem(itemText);
+        }
+    });
 }
 
 //Private Slots

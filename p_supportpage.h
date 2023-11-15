@@ -7,6 +7,7 @@
 #include <QDate>
 
 #include "advertiserdata.h"
+#include "DataManager/datamanager.h"
 
 namespace Ui {
 class P_SupportPage;
@@ -17,13 +18,19 @@ class P_SupportPage : public QWidget
     Q_OBJECT
 
 public:
-    explicit P_SupportPage(QWidget *parent = nullptr);
+    explicit P_SupportPage(DataManager* dataManager,QWidget *parent = nullptr);
     ~P_SupportPage();
 
 private:
     Ui::P_SupportPage *ui;
 
     void initTable();
+    void initPage();
+    void fillShopComboBox();
+    void setupComboBoxConnections();
+
+    DataManager* dataManager;
+    QJsonDocument doc;
 public slots:
    // void onShopsUpdated(const QHash<QString, AdvertiserData> &advertisers);
 private slots:
