@@ -7,6 +7,18 @@ APIManager::APIManager(DataManager* dataManager, EncryptionHelper* encryptionHel
     QTimer::singleShot(300, this, &APIManager::initApiNetwork);
 }
 
+void APIManager::refreshApiManager()
+{
+    if(networkManager){
+        delete networkManager;
+    }
+    if(adtraction){
+        delete adtraction;
+    }
+
+    initApiNetwork();
+}
+
 void APIManager::initApiNetwork()
 {
     QString adtractionApiKey = encryptionHelper->encryptDecrypt(dataManager->txt->load("adtractionKey"));

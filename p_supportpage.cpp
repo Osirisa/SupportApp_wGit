@@ -42,8 +42,8 @@ void P_SupportPage::initTable()
 
     //rest is seted seperately
     ui->T_NachbuchungsanfragenListe->setColumnWidth(4,75);
-    ui->T_NachbuchungsanfragenListe->setColumnWidth(9,75);
     ui->T_NachbuchungsanfragenListe->setColumnWidth(10,75);
+    ui->T_NachbuchungsanfragenListe->setColumnWidth(11,75);
 }
 
 void P_SupportPage::initPage()
@@ -116,6 +116,7 @@ void P_SupportPage::on_PB_AddToList_clicked()
         new QTableWidgetItem(QString(ui->LE_value->text())),
         new QTableWidgetItem(QString(ui->LE_expectedProv_Currency->text())),
         new QTableWidgetItem(QString(ui->CB_Currency->currentText())),
+        new QTableWidgetItem(QString(ui->LE_orderId->text())),
         new QTableWidgetItem(QString(ui->LE_User->text())),
         new QTableWidgetItem(QString(ui->DE_transactionDate->date().toString())),
         new QTableWidgetItem(QString(ui->CB_ComissionID->currentText())),
@@ -135,6 +136,13 @@ void P_SupportPage::on_PB_AddToList_clicked()
     ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,10,deleteBTN);
 
     QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
+
+    //Delete contents
+    ui->LE_value->clear();
+    ui->LE_expectedProv_Currency->clear();
+    ui->LE_orderId->clear();
+    ui->LE_User->clear();
+    ui->DE_transactionDate->setDate(QDate::currentDate());
 }
 
 void P_SupportPage::on_deleteBTN_clicked()

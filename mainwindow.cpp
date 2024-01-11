@@ -20,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     networkChannelWindow = new NetworkChannels(dataManager,this);
     suppPage = new P_SupportPage(dataManager,this);
 
+    //Signal
+    connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
+
     ui->stackedWidget->addWidget(suppPage);
     ui->stackedWidget->setCurrentWidget(suppPage);
 
@@ -45,7 +48,7 @@ MainWindow::~MainWindow()
 //Public Slots
 void MainWindow::updateApiKey(const QString &newKey)
 {
-
+    apiManager->refreshApiManager();
 }
 
 //Private Slots

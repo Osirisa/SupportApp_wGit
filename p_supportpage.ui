@@ -428,7 +428,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit"/>
+               <widget class="QLineEdit" name="LE_orderId"/>
               </item>
              </layout>
             </widget>
@@ -660,6 +660,11 @@
         <column>
          <property name="text">
           <string>Währung</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>OrderID</string>
          </property>
         </column>
         <column>

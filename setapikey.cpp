@@ -43,5 +43,5 @@ void SetAPIKey::saveAPIKey(const QString &apiKey)
     QString encryptedKey = encryptionHelper->encryptDecrypt(apiKey);
     dataManager->txt->save("adtractionKey",encryptedKey.toUtf8());
 
-//    emit apiKeyChanged(apiKey);
+    emit apiKeyChanged(apiKey);
 }

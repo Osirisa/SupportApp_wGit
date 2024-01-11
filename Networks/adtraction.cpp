@@ -4,7 +4,6 @@
 Adtraction::Adtraction(DataManager* dataManager, NetworkManager* networkManager, const QString &apiToken ,QObject *parent)
     : BaseNetwork(dataManager, networkManager, apiToken, parent), updater(this), getter(this){
 
-    qDebug()<<"Test1";
     initApi();
 }
 
@@ -35,9 +34,7 @@ void Adtraction::UpdateAdvs::byChannel(int channelID) {
 
 void Adtraction::UpdateAdvs::allChannels() {
     // Implementation for updating all channels
-    qDebug()<<"Test2";
     if(parentAdtraction->adtractionAPI){
-        qDebug()<<"Test3";
         parentAdtraction->adtractionAPI->updateAdvertisers(1592293656);
     }
 }

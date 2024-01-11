@@ -12,14 +12,13 @@ class AdtractionAPI : public QObject
     Q_OBJECT
 public:
     explicit AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager,const QString& apiToken, QObject *parent = nullptr);
-
+    ~AdtractionAPI();
     const QHash<QString, AdvertiserData>& getAdvertisers() const;
     const AdvertiserData& getAdvertiserData(const QString& shopName) const;
 
     void updateCurrencies();
     void updateAdvertisers(int channelId);
     void loadAdvertisersData();
-
 signals:
     void requestFinished(QNetworkReply*);
     void advertisersUpdated(const QHash<QString, AdvertiserData> &advertisers);

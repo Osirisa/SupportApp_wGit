@@ -19,13 +19,19 @@ class APIManager: public QObject
 public:
     APIManager(DataManager* dataManager,  EncryptionHelper* encryptionHelper);
 
+    void refreshApiManager();
+
     //"Network" Classes
     Adtraction* adtraction;
+
+
 private:
 
     //Manager Classes
     NetworkManager* networkManager;
     DataManager* dataManager;
+
+
 
     //
     EncryptionHelper* encryptionHelper;

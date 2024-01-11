@@ -9,6 +9,12 @@
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
 {
+    qDebug()<<"Test Constructor:"<<apiToken;
+}
+
+AdtractionAPI::~AdtractionAPI()
+{
+    qDebug()<<"Test Destructor:"<<apiToken;
 }
 
 void AdtractionAPI::updateCurrencies()
@@ -36,8 +42,9 @@ void AdtractionAPI::updateAdvertisers(int channelId)
 {
     qDebug()<<"Test4";
     //takes the endpoint and adds the apiToken
+    qDebug()<<apiToken;
     QString endpoint = QString("https://api.adtraction.com/v3/partner/programs/?token=%1").arg(apiToken);
-
+    qDebug()<<endpoint;
     // Create a QJsonObject with all the necessary parameters
     QJsonObject json;
     json.insert("channelId", channelId);        // current channelId of rewardo. ch/de/at, standard.at...
