@@ -27,10 +27,18 @@ private:
     void initTable();
     void initPage();
     void fillShopComboBox();
+    void fillCurrencyComboBox();
     void setupComboBoxConnections();
 
     DataManager* dataManager;
     QJsonDocument doc;
+    QJsonDocument cur;
+
+    QSet<QString> prefferedCurrencies = {"EUR","CHF","USD"};
+
+    QList<QString> prefferedList;
+    QList<QString> otherList;
+
 public slots:
    // void onShopsUpdated(const QHash<QString, AdvertiserData> &advertisers);
 private slots:

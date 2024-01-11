@@ -30,6 +30,8 @@ private slots:
     void on_actionAdd_ChannelIds_triggered();
     void on_actionChannelIDs_triggered();
 
+    void on_actionUpdate_Currencies_triggered();
+
 private:
     Ui::MainWindow *ui;
 

@@ -28,6 +28,13 @@ void Adtraction::initApi()
 Adtraction::UpdateAdvs::UpdateAdvs(Adtraction* parent)
     : UpdateAdvertisersBase(parent), parentAdtraction(parent) {}
 
+void Adtraction::UpdateAdvs::currencies()
+{
+    if(parentAdtraction->adtractionAPI){
+        parentAdtraction->adtractionAPI->updateCurrencies();
+    }
+}
+
 void Adtraction::UpdateAdvs::byChannel(int channelID) {
     // Implementation for updating advertisers by channel
 }

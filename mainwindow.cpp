@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //TBD: FileManager dataBank or soemthing like that
     dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
-    dataManager->registerFile("currenciesAdtraction","dataAdtraction/currencies.txt");
+    dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
     dataManager->registerFile("advertisersAdtraction","dataAdtraction/advertisersAdtraction.json");
     dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
 
@@ -82,5 +82,11 @@ void MainWindow::on_actionChannelIDs_triggered()
 {
     networkChannelWindow->setModal(true);
     networkChannelWindow->exec();
+}
+
+
+void MainWindow::on_actionUpdate_Currencies_triggered()
+{
+    apiManager->adtraction->updater.currencies();
 }
 

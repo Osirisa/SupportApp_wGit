@@ -29,7 +29,7 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
 {
     if(reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
-        dataManager->txt->save("currencies", responseData);
+        dataManager->txt->save("currenciesAdtraction", responseData);
     } else {
         qWarning() << "Network request failed:" << reply->errorString();
     }

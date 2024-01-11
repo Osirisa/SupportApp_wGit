@@ -16,6 +16,7 @@ public:
     public:
         explicit UpdateAdvs(Adtraction* parent);
 
+        void currencies();
         void byChannel(int channelID) override;
         void allChannels() override;
 

@@ -25,6 +25,8 @@ P_SupportPage::P_SupportPage(DataManager* dataManager,QWidget *parent) :
 
     initTable();
 
+    ui->CB_Network->addItem("Adtraction");
+    ui->CB_SuppType->addItem("Untracked");
     QTimer::singleShot(300, this, &P_SupportPage::initPage);
 }
 
@@ -49,7 +51,9 @@ void P_SupportPage::initTable()
 void P_SupportPage::initPage()
 {
     doc = dataManager->json->load("advertisersAdtraction");
+    cur = dataManager->json->load("currenciesAdtraction");
     fillShopComboBox();
+    fillCurrencyComboBox();
     setupComboBoxConnections();
 }
 
@@ -59,6 +63,28 @@ void P_SupportPage::fillShopComboBox()
     for(const QJsonValue &value : doc.array()){
         QJsonObject obj = value.toObject();
         ui->CB_shop->addItem(obj["programName"].toString(),obj["programId"].toInt());
+    }
+}
+
+void P_SupportPage::fillCurrencyComboBox()
+{
+    for(const QJsonValue &value: cur.array()){
+        QJsonObject obj = value.toObject();
+        QString currency = obj["currency"].toString();
+        if(prefferedCurrencies.contains(currency)){
+            prefferedList.append(currency);
+        }else{
+            otherList.append(currency);
+        }
+    }
+
+    std::sort(otherList.begin(), otherList.end());
+
+    for(const QString &currency : prefferedList){
+        ui->CB_Currency->addItem(currency);
+    }
+    for(const QString &currency : otherList){
+        ui->CB_Currency->addItem(currency);
     }
 }
 
@@ -133,13 +159,14 @@ void P_SupportPage::on_PB_AddToList_clicked()
     QPushButton *deleteBTN = new QPushButton;
     deleteBTN->setText("X");
     deleteBTN->setStyleSheet("QPushButton { color: red; }");
-    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,10,deleteBTN);
+    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,11,deleteBTN);
 
     QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
 
     //Delete contents
     ui->LE_value->clear();
     ui->LE_expectedProv_Currency->clear();
+    ui->LE_expectedProv_Percent->clear();
     ui->LE_orderId->clear();
     ui->LE_User->clear();
     ui->DE_transactionDate->setDate(QDate::currentDate());
