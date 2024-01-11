@@ -31,3 +31,17 @@ QNetworkReply* NetworkManager::sendPostRequest(const QString& endpoint, const QS
     // Send the request with the JSON object as the body
     return networkManager->post(request, jsonData);
 }
+
+QNetworkReply* NetworkManager::sendPutRequest(const QString& endpoint, const QString& apiToken, const QJsonObject& data) {
+    QUrl url(endpoint);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json;charset=UTF-8");
+    request.setRawHeader("X-Token", apiToken.toUtf8()); // Set the API token in the request header
+
+    // Convert the QJsonObject to a QByteArray
+    QJsonDocument jsonDoc(data);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    // Send the request with the JSON object as the body
+    return networkManager->put(request, jsonData);
+}

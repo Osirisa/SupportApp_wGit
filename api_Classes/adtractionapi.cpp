@@ -9,12 +9,10 @@
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
 {
-    qDebug()<<"Test Constructor:"<<apiToken;
 }
 
 AdtractionAPI::~AdtractionAPI()
 {
-    qDebug()<<"Test Destructor:"<<apiToken;
 }
 
 void AdtractionAPI::updateCurrencies()
@@ -40,11 +38,8 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
 //Sends a Post-Request to the server with the needed information to get all the accepted shops in the selected market.
 void AdtractionAPI::updateAdvertisers(int channelId)
 {
-    qDebug()<<"Test4";
     //takes the endpoint and adds the apiToken
-    qDebug()<<apiToken;
     QString endpoint = QString("https://api.adtraction.com/v3/partner/programs/?token=%1").arg(apiToken);
-    qDebug()<<endpoint;
     // Create a QJsonObject with all the necessary parameters
     QJsonObject json;
     json.insert("channelId", channelId);        // current channelId of rewardo. ch/de/at, standard.at...
@@ -54,9 +49,7 @@ void AdtractionAPI::updateAdvertisers(int channelId)
 
     //gets the reply from the server and saves it into a QNetworkReply object
     QNetworkReply* reply = networkManager->sendPostRequest(endpoint, apiToken, json);
-    qDebug() << "got it";
     QPointer<QNetworkReply> safeReply = reply;
-    qDebug() << "safe? signal emitted";
 
     //If reply received a signal gets emited to the slot onAdvertisersRequestFinished
     connect(reply, &QNetworkReply::finished, this, [this, safeReply]() {
@@ -146,6 +139,8 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply)
 }
 
 
+
+
 void AdtractionAPI::loadAdvertisersData()
 {
     QJsonDocument jsonDoc = dataManager->json->load("advertisersAdtraction");
@@ -162,5 +157,54 @@ void AdtractionAPI::loadAdvertisersData()
             m_advertisers.insert(key, adData);
         }
         emit advertisersUpdated(m_advertisers);
+    }
+}
+
+void AdtractionAPI::sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId)
+{
+    QString endpoint = QString("https://api.adtraction.com/v2/partner/claims/?token=%1").arg(apiToken);
+
+    // Create a QJsonObject with all the necessary parameters
+    QJsonObject json;
+    json.insert("programId", programId);
+    json.insert("channelId", channelId);
+    json.insert("orderId", orderId);
+    json.insert("commissionId", commissionId);
+    json.insert("expectedCommission", expecetedCom);
+    json.insert("transactionDate", transactionDate);
+    json.insert("orderValue", orderVal);
+    json.insert("currency", currency);
+//    json.insert("epi", "banner top right");
+    json.insert("epi",userId);
+
+    //gets the reply from the server and saves it into a QNetworkReply object
+    QNetworkReply* reply = networkManager->sendPutRequest(endpoint, apiToken, json);
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        onSuppDataRequestFinisehd(reply);
+    });
+}
+void AdtractionAPI::onSuppDataRequestFinisehd(QNetworkReply *reply) {
+    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << "HTTP status code:" << statusCode;
+
+    // Read all the response data
+    QByteArray responseData = reply->readAll();
+    qDebug() << "Response Data:" << responseData;
+    // Parse the response data as JSON
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+    if (!jsonDoc.isNull() && jsonDoc.isObject()) {
+        // Get the JSON object
+        QJsonObject jsonObj = jsonDoc.object();
+
+        // Extract and output the 'success' value
+        if (jsonObj.contains("success") && jsonObj["success"].isBool()) {
+            bool success = jsonObj["success"].toBool();
+            qDebug() << "Success:" << success;
+        } else {
+            qDebug() << "Response JSON does not contain 'success' or it's not a boolean";
+        }
+    } else {
+        qDebug() << "Failed to parse JSON response or response is not a JSON object";
     }
 }

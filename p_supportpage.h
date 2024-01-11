@@ -6,6 +6,7 @@
 #include <QString>
 #include <QDate>
 
+#include "apimanager.h"
 #include "advertiserdata.h"
 #include "DataManager/datamanager.h"
 
@@ -18,7 +19,7 @@ class P_SupportPage : public QWidget
     Q_OBJECT
 
 public:
-    explicit P_SupportPage(DataManager* dataManager,QWidget *parent = nullptr);
+    explicit P_SupportPage(DataManager* dataManager,APIManager* apiManager,QWidget *parent = nullptr);
     ~P_SupportPage();
 
 private:
@@ -31,8 +32,11 @@ private:
     void setupComboBoxConnections();
 
     DataManager* dataManager;
+    APIManager* apiManager;
     QJsonDocument doc;
     QJsonDocument cur;
+
+    QHash<QString,int> shopToProgramIdHash;
 
     QSet<QString> prefferedCurrencies = {"EUR","CHF","USD"};
 
@@ -48,6 +52,7 @@ private slots:
     void on_LE_value_editingFinished();
     void on_PB_AddToList_clicked();
     void on_deleteBTN_clicked();
+    void on_PB_SendOverAPI_clicked();
 };
 
 #endif // P_SUPPORTPAGE_H

@@ -12,6 +12,11 @@ Adtraction::~Adtraction(){
     delete adtractionAPI;
 }
 
+void Adtraction::sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId)
+{
+    adtractionAPI->sendSuppData(programId,channelId,orderId,commissionId,expecetedCom,transactionDate,orderVal,currency,userId);
+}
+
 void Adtraction::refreshAPI()
 {
     if(adtractionAPI){

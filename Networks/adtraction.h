@@ -39,6 +39,7 @@ public:
     UpdateAdvs updater;
     GetAdvs getter;
 
+    void sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId);
     void refreshAPI();
 private:
 

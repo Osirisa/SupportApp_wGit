@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Windows
     SetAPIKeyWindow = new SetAPIKey(dataManager,encryptionHelper, this);
     networkChannelWindow = new NetworkChannels(dataManager,this);
-    suppPage = new P_SupportPage(dataManager,this);
+    suppPage = new P_SupportPage(dataManager,apiManager,this);
 
     //Signal
     connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));

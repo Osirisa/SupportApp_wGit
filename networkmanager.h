@@ -14,6 +14,7 @@ public:
 
     QNetworkReply* sendGetRequest(const QString& endpoint, const QString& apiToken);
     QNetworkReply* sendPostRequest(const QString& endpoint, const QString& apiToken, const QJsonObject& data);
+    QNetworkReply* sendPutRequest(const QString& endpoint, const QString& apiToken, const QJsonObject& data);
 
 signals:
     void requestFinished(QNetworkReply*);

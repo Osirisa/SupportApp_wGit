@@ -5,10 +5,12 @@
 #include <qjsonobject.h>
 #include <QTimer>
 
-P_SupportPage::P_SupportPage(DataManager* dataManager,QWidget *parent) :
+
+P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
     QWidget(parent),
     ui(new Ui::P_SupportPage),
-    dataManager(dataManager)
+    dataManager(dataManager),
+    apiManager(apiManager)
 {
     ui->setupUi(this);
 
@@ -62,7 +64,9 @@ void P_SupportPage::fillShopComboBox()
 
     for(const QJsonValue &value : doc.array()){
         QJsonObject obj = value.toObject();
-        ui->CB_shop->addItem(obj["programName"].toString(),obj["programId"].toInt());
+
+        shopToProgramIdHash.insert(obj["programName"].toString(),obj["programId"].toInt());
+        ui->CB_shop->addItem(obj["programName"].toString());
     }
 }
 
@@ -144,7 +148,7 @@ void P_SupportPage::on_PB_AddToList_clicked()
         new QTableWidgetItem(QString(ui->CB_Currency->currentText())),
         new QTableWidgetItem(QString(ui->LE_orderId->text())),
         new QTableWidgetItem(QString(ui->LE_User->text())),
-        new QTableWidgetItem(QString(ui->DE_transactionDate->date().toString())),
+        new QTableWidgetItem(QString(ui->DE_transactionDate->date().toString("dd.MM.yyyy"))),
         new QTableWidgetItem(QString(ui->CB_ComissionID->currentText())),
         new QTableWidgetItem(QString(ui->CB_SuppType->currentText())),
         new QTableWidgetItem(QString::number(ui->DE_transactionDate->date().daysTo(QDate::currentDate()))),
@@ -175,5 +179,41 @@ void P_SupportPage::on_PB_AddToList_clicked()
 void P_SupportPage::on_deleteBTN_clicked()
 {
     ui->T_NachbuchungsanfragenListe->removeRow(ui->T_NachbuchungsanfragenListe->currentRow());
+}
+
+
+void P_SupportPage::on_PB_SendOverAPI_clicked()
+{
+
+
+    for(int row = 0; row < ui->T_NachbuchungsanfragenListe->rowCount(); ++row){
+        int programId = shopToProgramIdHash.value(ui->T_NachbuchungsanfragenListe->item(row, 1)->text());
+        int channelId = 1592293656;
+        QString orderId= ui->T_NachbuchungsanfragenListe->item(row, 5)->text();
+        int commissionId= ui->T_NachbuchungsanfragenListe->item(row, 8)->text().split(":").at(1).trimmed().toInt();
+        double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, 3)->text().toDouble();
+
+
+        QDate date = QDate::fromString(ui->T_NachbuchungsanfragenListe->item(row, 7)->text(),"dd.MM.yyyy");
+        QString transactionDate = date.toString("yyyy-MM-dd");
+        transactionDate += "T23:59:59+0100";
+
+        double orderVal = ui->T_NachbuchungsanfragenListe->item(row, 2)->text().toDouble();
+        QString currency = ui->T_NachbuchungsanfragenListe->item(row, 4)->text();
+        QString userId = ui->T_NachbuchungsanfragenListe->item(row, 6)->text();
+
+        qDebug()<<programId;
+        qDebug()<<channelId;
+        qDebug()<<orderId;
+        qDebug()<<commissionId;
+        qDebug()<<expecetedCom;
+        qDebug()<<transactionDate;
+        qDebug()<<orderVal;
+        qDebug()<<currency;
+        qDebug()<<userId;
+
+        apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
+    }
+
 }
 
