@@ -694,6 +694,11 @@
         </column>
         <column>
          <property name="text">
+          <string>Network Status</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Delete</string>
          </property>
         </column>

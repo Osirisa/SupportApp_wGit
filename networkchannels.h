@@ -18,6 +18,8 @@ class NetworkChannels : public QDialog {
 public:
     explicit NetworkChannels(DataManager* dataManager, QWidget* parent = nullptr);
     ~NetworkChannels();
+signals:
+    void onNetworkDataSaved();
 
 private slots:
     void on_addButton_clicked();

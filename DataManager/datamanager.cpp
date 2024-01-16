@@ -69,6 +69,31 @@ bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
     return false; // Return false if unable to save the data
 }
 
+bool DataManager::appendToFile(const QString &key, const QByteArray &data) {
+    QString exeDir = QCoreApplication::applicationDirPath(); // Get the executable's directory
+    QString filePath = exeDir + "/" + fileMap[key]; // Construct the absolute file path
+
+    QFile file(filePath);
+    QFileInfo fileInfo(file.fileName());
+    QDir dir;
+
+    // Check if the directory exists, create it if it doesn't
+    if (!dir.exists(fileInfo.dir().absolutePath())) {
+        dir.mkpath(fileInfo.dir().absolutePath());
+    }
+
+    // Attempt to open the file in append mode
+    if (file.open(QIODevice::Append)) {
+        if (file.write(data) != -1) {
+            file.close();
+            return true; // Data was successfully appended
+        }
+        file.close(); // Close the file if append failed
+    }
+
+    return false; // Return false if unable to append the data
+}
+
 /*--------------
  * Name: loadFromFile
  * Usage: Loads data from a file associated with a key.
@@ -136,6 +161,10 @@ DataManager::JsonManager::JsonManager(DataManager *parent) : parent(parent) {}
 
 void DataManager::JsonManager::save(const QString &key, const QJsonDocument &jsonDoc) {
     parent->saveToFile(key, jsonDoc.toJson());
+}
+
+void DataManager::JsonManager::append(const QString &key, const QJsonDocument &jsonDoc){
+    parent->appendToFile(key, jsonDoc.toJson());
 }
 
 QJsonDocument DataManager::JsonManager::load(const QString &key) {

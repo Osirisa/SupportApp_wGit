@@ -22,15 +22,17 @@ public:
 
 public slots:
     void updateApiKey(const QString &newKey);
-
+    void updateNetworks();
 private slots:
 
     void on_actionAPI_Key_triggered();
     void on_actionUpdate_Shops_triggered();
     void on_actionAdd_ChannelIds_triggered();
     void on_actionChannelIDs_triggered();
-
     void on_actionUpdate_Currencies_triggered();
+
+
+    void on_actionUpdate_All_triggered();
 
 private:
     Ui::MainWindow *ui;

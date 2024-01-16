@@ -21,4 +21,6 @@ struct AdvertiserData {
     QList<Commission> commissions;
 };
 
+
+
 #endif  // ADVERTISERDATA_H

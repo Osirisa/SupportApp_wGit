@@ -41,15 +41,12 @@ void Adtraction::UpdateAdvs::currencies()
 }
 
 void Adtraction::UpdateAdvs::byChannel(int channelID) {
-    // Implementation for updating advertisers by channel
+    parentAdtraction->adtractionAPI->updateAdvertisers(channelID);
 }
 
-void Adtraction::UpdateAdvs::allChannels() {
-    // Implementation for updating all channels
-    if(parentAdtraction->adtractionAPI){
-        parentAdtraction->adtractionAPI->updateAdvertisers(1592293656);
-    }
-}
+// void Adtraction::UpdateAdvs::allChannels() {
+//     // Implementation for updating all channels
+// }
 
 Adtraction::GetAdvs::GetAdvs(Adtraction* parent)
     : GetAdvertisersBase(parent), parentAdtraction(parent) {}

@@ -22,6 +22,8 @@ public:
     explicit P_SupportPage(DataManager* dataManager,APIManager* apiManager,QWidget *parent = nullptr);
     ~P_SupportPage();
 
+    void refreshNetworkList();
+
 private:
     Ui::P_SupportPage *ui;
 
@@ -29,6 +31,7 @@ private:
     void initPage();
     void fillShopComboBox();
     void fillCurrencyComboBox();
+    void fillNetworkComboBox();
     void setupComboBoxConnections();
 
     DataManager* dataManager;

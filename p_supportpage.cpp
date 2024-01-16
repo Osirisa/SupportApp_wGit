@@ -27,14 +27,20 @@ P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QW
 
     initTable();
 
-    ui->CB_Network->addItem("Adtraction");
     ui->CB_SuppType->addItem("Untracked");
     QTimer::singleShot(300, this, &P_SupportPage::initPage);
+
+
 }
 
 P_SupportPage::~P_SupportPage()
 {
     delete ui;
+}
+
+void P_SupportPage::refreshNetworkList()
+{
+    fillNetworkComboBox();
 }
 
 void P_SupportPage::initTable()
@@ -47,15 +53,20 @@ void P_SupportPage::initTable()
     //rest is seted seperately
     ui->T_NachbuchungsanfragenListe->setColumnWidth(4,75);
     ui->T_NachbuchungsanfragenListe->setColumnWidth(10,75);
-    ui->T_NachbuchungsanfragenListe->setColumnWidth(11,75);
+    ui->T_NachbuchungsanfragenListe->setColumnWidth(12,75);
 }
 
 void P_SupportPage::initPage()
 {
     doc = dataManager->json->load("advertisersAdtraction");
     cur = dataManager->json->load("currenciesAdtraction");
+
+
+    //Fill Comboboxes
     fillShopComboBox();
     fillCurrencyComboBox();
+    fillNetworkComboBox();
+
     setupComboBoxConnections();
 }
 
@@ -89,6 +100,38 @@ void P_SupportPage::fillCurrencyComboBox()
     }
     for(const QString &currency : otherList){
         ui->CB_Currency->addItem(currency);
+    }
+}
+
+void P_SupportPage::fillNetworkComboBox()
+{
+    ui->CB_Network->clear();
+
+    QStringList allNetworks;
+    QStringList networkPlusALL;
+
+    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+
+    for (const QStringList &rowData : csvData) {
+
+        if(!(networkPlusALL.contains(rowData.at(0)+": ALL"))){
+            networkPlusALL.append(rowData.at(0)+": ALL");
+        }
+    }
+    // Populate the table with this data
+    for (const QStringList &rowData : csvData) {
+
+        QString CombinedText = rowData.at(0)+ ": " + rowData.at(1);
+        allNetworks.append(CombinedText);
+    }
+
+    for (int i=0; i< networkPlusALL.size();++i){
+        allNetworks.append(networkPlusALL.at(i));
+    }
+
+    allNetworks.sort();
+    for (int i=0; i< allNetworks.size();++i){
+        ui->CB_Network->addItem(allNetworks.at(i));
     }
 }
 
@@ -152,6 +195,7 @@ void P_SupportPage::on_PB_AddToList_clicked()
         new QTableWidgetItem(QString(ui->CB_ComissionID->currentText())),
         new QTableWidgetItem(QString(ui->CB_SuppType->currentText())),
         new QTableWidgetItem(QString::number(ui->DE_transactionDate->date().daysTo(QDate::currentDate()))),
+        new QTableWidgetItem,
         new QTableWidgetItem
     };
 
@@ -163,7 +207,7 @@ void P_SupportPage::on_PB_AddToList_clicked()
     QPushButton *deleteBTN = new QPushButton;
     deleteBTN->setText("X");
     deleteBTN->setStyleSheet("QPushButton { color: red; }");
-    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,11,deleteBTN);
+    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,12,deleteBTN);
 
     QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
 

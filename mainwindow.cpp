@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Signal
     connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
+    connect(networkChannelWindow,SIGNAL(onNetworkDataSaved()),this,SLOT(updateNetworks()));
 
     ui->stackedWidget->addWidget(suppPage);
     ui->stackedWidget->setCurrentWidget(suppPage);
@@ -51,6 +52,11 @@ void MainWindow::updateApiKey(const QString &newKey)
     apiManager->refreshApiManager();
 }
 
+void MainWindow::updateNetworks()
+{
+    suppPage->refreshNetworkList();
+}
+
 //Private Slots
 void MainWindow::on_actionAPI_Key_triggered()
 {
@@ -62,11 +68,11 @@ void MainWindow::on_actionAPI_Key_triggered()
 
 void MainWindow::on_actionUpdate_Shops_triggered()
 {
-    if(apiManager->adtraction){
-        apiManager->adtraction->updater.allChannels();
-    }
-    else{
-        qDebug()<<"not init";
+    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+
+    for (const QStringList &rowData : csvData) {
+
+        apiManager->adtraction->updater.byChannel(rowData.at(2).toInt());
     }
 }
 
@@ -88,5 +94,11 @@ void MainWindow::on_actionChannelIDs_triggered()
 void MainWindow::on_actionUpdate_Currencies_triggered()
 {
     apiManager->adtraction->updater.currencies();
+}
+
+
+void MainWindow::on_actionUpdate_All_triggered()
+{
+
 }
 

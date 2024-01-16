@@ -74,6 +74,7 @@ void NetworkChannels::saveChannelsToCsv() {
     }
 
     dataManager->csv->save("NetworkChannels", csvData);
+    emit onNetworkDataSaved();
 }
 
 void NetworkChannels::fillComboBox()

@@ -29,6 +29,7 @@ public:
     public:
         explicit JsonManager(DataManager *parent);
         void save(const QString &key, const QJsonDocument &jsonDoc);
+        void append(const QString &key, const QJsonDocument &jsonDoc);
         QJsonDocument load(const QString &key);
 
     private:
@@ -81,6 +82,11 @@ private:
 
     // Saves data to a file.
     bool saveToFile(const QString &filename, const QByteArray &data);
+
+    //Saves data to a file but wont override anything
+    bool appendToFile(const QString &key, const QByteArray &data);
+
+
     // Loads data from a file.
     QByteArray loadFromFile(const QString &filename);
 };
