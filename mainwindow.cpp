@@ -30,9 +30,10 @@ MainWindow::MainWindow(QWidget *parent)
     //TBD: FileManager dataBank or soemthing like that
     dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
     dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
-    dataManager->registerFile("advertisersAdtraction","dataAdtraction/advertisersAdtraction.json");
     dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
 
+
+    updateNetworks();
    // ui->stackedWidget->addWidget();
 }
 
@@ -54,6 +55,13 @@ void MainWindow::updateApiKey(const QString &newKey)
 
 void MainWindow::updateNetworks()
 {
+
+    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+
+    for (const QStringList &rowData : csvData) {
+        dataManager->registerFile(QString(rowData.at(2)),"dataAdtraction/"+QString(rowData.at(2)));
+        qDebug()<<QString(rowData.at(2));
+    }
     suppPage->refreshNetworkList();
 }
 
@@ -71,7 +79,6 @@ void MainWindow::on_actionUpdate_Shops_triggered()
     QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
 
     for (const QStringList &rowData : csvData) {
-
         apiManager->adtraction->updater.byChannel(rowData.at(2).toInt());
     }
 }

@@ -17,8 +17,8 @@ public:
         explicit UpdateAdvs(Adtraction* parent);
 
         void currencies();
+        void deleteAdvertisers();
         void byChannel(int channelID) override;
-        void allChannels() override;
 
     protected:
         Adtraction* parentAdtraction;

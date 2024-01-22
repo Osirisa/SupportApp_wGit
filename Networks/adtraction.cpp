@@ -40,13 +40,15 @@ void Adtraction::UpdateAdvs::currencies()
     }
 }
 
+void Adtraction::UpdateAdvs::deleteAdvertisers()
+{
+    parentAdtraction->adtractionAPI->deleteAdvertiser();
+}
+
 void Adtraction::UpdateAdvs::byChannel(int channelID) {
     parentAdtraction->adtractionAPI->updateAdvertisers(channelID);
 }
 
-// void Adtraction::UpdateAdvs::allChannels() {
-//     // Implementation for updating all channels
-// }
 
 Adtraction::GetAdvs::GetAdvs(Adtraction* parent)
     : GetAdvertisersBase(parent), parentAdtraction(parent) {}

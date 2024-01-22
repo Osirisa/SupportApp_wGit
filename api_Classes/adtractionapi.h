@@ -18,6 +18,8 @@ public:
 
     void updateCurrencies();
     void updateAdvertisers(int channelId);
+    void deleteAdvertiser();
+
     void loadAdvertisersData();
     void sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId);
 signals:
@@ -26,7 +28,7 @@ signals:
 
 private slots:
     void onCurrenciesRequestFinished(QNetworkReply* reply);
-    void onAdvertisersRequestFinished(QNetworkReply* reply);
+    void onAdvertisersRequestFinished(QNetworkReply* reply, int channelId);
     void onSuppDataRequestFinisehd(QNetworkReply* reply);
 
 private:

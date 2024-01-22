@@ -58,7 +58,6 @@ void P_SupportPage::initTable()
 
 void P_SupportPage::initPage()
 {
-    doc = dataManager->json->load("advertisersAdtraction");
     cur = dataManager->json->load("currenciesAdtraction");
 
 
@@ -72,12 +71,18 @@ void P_SupportPage::initPage()
 
 void P_SupportPage::fillShopComboBox()
 {
+    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
 
-    for(const QJsonValue &value : doc.array()){
-        QJsonObject obj = value.toObject();
+    for (const QStringList &rowData : csvData) {
 
-        shopToProgramIdHash.insert(obj["programName"].toString(),obj["programId"].toInt());
-        ui->CB_shop->addItem(obj["programName"].toString());
+        doc = dataManager->json->load(QString(rowData.at(2)));
+
+        for(const QJsonValue &value : doc.array()){
+            QJsonObject obj = value.toObject();
+
+            shopToProgramIdHash.insert(obj["programName"].toString(),obj["programId"].toInt());
+            ui->CB_shop->addItem(obj["programName"].toString());
+        }
     }
 }
 

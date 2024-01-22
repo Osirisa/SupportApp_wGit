@@ -52,11 +52,11 @@ void AdtractionAPI::updateAdvertisers(int channelId)
     QPointer<QNetworkReply> safeReply = reply;
 
     //If reply received a signal gets emited to the slot onAdvertisersRequestFinished
-    connect(reply, &QNetworkReply::finished, this, [this, safeReply]() {
+    connect(reply, &QNetworkReply::finished, this, [this, safeReply, channelId]() {
         qDebug() << "Finished signal emitted";
         if (safeReply) {
             qDebug() << "Reply is safe to use";
-            onAdvertisersRequestFinished(safeReply);
+            onAdvertisersRequestFinished(safeReply, channelId);
         } else {
             qDebug() << "Reply was deleted before slot execution";
         }
@@ -64,7 +64,7 @@ void AdtractionAPI::updateAdvertisers(int channelId)
 }
 
 //gets called if the the signal from the reply gets emited. Takes in the reply
-void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply)
+void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int channelID)
 {
     //DEBUG -> TBD: set up a visual error feedback
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -130,16 +130,20 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply)
 
         // Create a new JSON document from the modified array and save it
         QJsonDocument newJsonDoc(newAdvertisersArray);
-        dataManager->json->save("advertisersAdtraction", newJsonDoc);
+        dataManager->json->save(QString::number(channelID), newJsonDoc);
+        emit advertisersUpdated(m_advertisers);
     } else {
         qWarning() << "Network request failed:" << reply->errorString();
     }
     reply->deleteLater();
-    emit advertisersUpdated(m_advertisers);
 }
 
 
-
+void AdtractionAPI::deleteAdvertiser()
+{
+    QJsonDocument deleteDocument;
+    dataManager->json->save("advertisersAdtraction", deleteDocument);
+}
 
 void AdtractionAPI::loadAdvertisersData()
 {
