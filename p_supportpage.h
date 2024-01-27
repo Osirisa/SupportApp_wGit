@@ -40,6 +40,8 @@ private:
     QJsonDocument cur;
 
     QHash<QString,int> shopToProgramIdHash;
+    QHash<QString,QString> channelToId;
+    QMap<QString, QJsonDocument> allDocs;
 
     QSet<QString> prefferedCurrencies = {"EUR","CHF","USD"};
 

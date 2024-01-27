@@ -79,11 +79,42 @@ void P_SupportPage::fillShopComboBox()
 
         for(const QJsonValue &value : doc.array()){
             QJsonObject obj = value.toObject();
-
             shopToProgramIdHash.insert(obj["programName"].toString(),obj["programId"].toInt());
-            ui->CB_shop->addItem(obj["programName"].toString());
+            ui->CB_shop->addItem(obj["programName"].toString()+": ("+rowData.at(1) + ")");
         }
+        channelToId.insert(rowData.at(1),rowData.at(2));
+        allDocs.insert(rowData.at(2),doc);
     }
+}
+
+void P_SupportPage::setupComboBoxConnections()
+{
+
+    connect(ui->CB_shop, QOverload<int>::of(&QComboBox::activated),[this](int index) {
+        ui->CB_ComissionID->clear();
+
+        int colonSpaceIndex = ui->CB_shop->currentText().indexOf(": ");
+        QString channel;
+
+        if(colonSpaceIndex != -1){
+            channel = ui->CB_shop->currentText().mid(colonSpaceIndex + 3); // +3 to skip ": ("
+            channel = channel.removeLast();
+        }
+
+
+
+        QJsonDocument commDoc = allDocs.value(channelToId.value(channel));
+        QJsonObject selectedProgram = commDoc.array().at(index).toObject();
+        QJsonArray commissions = selectedProgram["commissions"].toArray();
+
+        for (const QJsonValue &value : commissions) {
+            QJsonObject obj = value.toObject();
+            QString itemId = obj["id"].toString();
+            QString itemName = obj["name"].toString();
+            QString itemText = QString("%1: %2").arg(itemName, itemId);
+            ui->CB_ComissionID->addItem(itemText);
+        }
+    });
 }
 
 void P_SupportPage::fillCurrencyComboBox()
@@ -138,23 +169,6 @@ void P_SupportPage::fillNetworkComboBox()
     for (int i=0; i< allNetworks.size();++i){
         ui->CB_Network->addItem(allNetworks.at(i));
     }
-}
-
-void P_SupportPage::setupComboBoxConnections()
-{
-    connect(ui->CB_shop, QOverload<int>::of(&QComboBox::activated),[this](int index) {
-        ui->CB_ComissionID->clear();
-        QJsonObject selectedProgram = doc.array().at(index).toObject();
-        QJsonArray commissions = selectedProgram["commissions"].toArray();
-
-        for (const QJsonValue &value : commissions) {
-            QJsonObject obj = value.toObject();
-            QString itemId = obj["id"].toString();
-            QString itemName = obj["name"].toString();
-            QString itemText = QString("%1: %2").arg(itemName, itemId);
-            ui->CB_ComissionID->addItem(itemText);
-        }
-    });
 }
 
 //Private Slots
