@@ -23,6 +23,8 @@ public:
 public slots:
     void updateApiKey(const QString &newKey);
     void updateNetworks();
+
+    void forwardSuppMessage();
 private slots:
 
     void on_actionAPI_Key_triggered();
@@ -30,8 +32,6 @@ private slots:
     void on_actionAdd_ChannelIds_triggered();
     void on_actionChannelIDs_triggered();
     void on_actionUpdate_Currencies_triggered();
-
-
     void on_actionUpdate_All_triggered();
 
 private:

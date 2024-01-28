@@ -11,6 +11,7 @@ public:
     explicit Adtraction(DataManager* dataManager, NetworkManager* networkManager, const QString &apiToken, QObject *parent = nullptr);
     ~Adtraction();
 
+
     class UpdateAdvs : public UpdateAdvertisersBase {
 
     public:
@@ -41,6 +42,7 @@ public:
 
     void sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId);
     void refreshAPI();
+
 private:
 
     AdtractionAPI* adtractionAPI;

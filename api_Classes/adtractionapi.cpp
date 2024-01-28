@@ -1,9 +1,11 @@
 #include "api_Classes/adtractionapi.h"
+#include "p_supportpage.h"
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QPointer>
+#include <QEvent>
 
 //Takes in the NetworkManager, the DataManager, the APIToken and the Parent to ensure being loaded the whole time
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
@@ -14,6 +16,9 @@ AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataMa
 AdtractionAPI::~AdtractionAPI()
 {
 }
+
+QEvent::Type AdtractionAPI::SupportMessageEventType = static_cast<QEvent::Type>(QEvent::registerEventType());
+
 
 void AdtractionAPI::updateCurrencies()
 {
@@ -188,27 +193,13 @@ void AdtractionAPI::sendSuppData(int programId, int channelId,QString orderId,in
         onSuppDataRequestFinisehd(reply);
     });
 }
+
 void AdtractionAPI::onSuppDataRequestFinisehd(QNetworkReply *reply) {
+
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "HTTP status code:" << statusCode;
 
     // Read all the response data
     QByteArray responseData = reply->readAll();
     qDebug() << "Response Data:" << responseData;
-    // Parse the response data as JSON
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
-    if (!jsonDoc.isNull() && jsonDoc.isObject()) {
-        // Get the JSON object
-        QJsonObject jsonObj = jsonDoc.object();
-
-        // Extract and output the 'success' value
-        if (jsonObj.contains("success") && jsonObj["success"].isBool()) {
-            bool success = jsonObj["success"].toBool();
-            qDebug() << "Success:" << success;
-        } else {
-            qDebug() << "Response JSON does not contain 'success' or it's not a boolean";
-        }
-    } else {
-        qDebug() << "Failed to parse JSON response or response is not a JSON object";
-    }
 }

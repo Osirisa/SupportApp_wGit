@@ -63,6 +63,8 @@ void NetworkChannels::saveChannelsToCsv() {
 
     QList<QStringList> csvData;
 
+    dataManager->csv->save("NetworkChannels", csvData);
+
     for(int row = 0; row < ui->T_NWC_NetworkChannels->rowCount();++row){
         QStringList rowData;
         for (int column = 0; column< (ui->T_NWC_NetworkChannels->columnCount()-1);++column){

@@ -51,9 +51,10 @@ void P_SupportPage::initTable()
     }
 
     //rest is seted seperately
-    ui->T_NachbuchungsanfragenListe->setColumnWidth(4,75);
-    ui->T_NachbuchungsanfragenListe->setColumnWidth(10,75);
-    ui->T_NachbuchungsanfragenListe->setColumnWidth(12,75);
+    ui->T_NachbuchungsanfragenListe->setColumnWidth(5,75);
+    ui->T_NachbuchungsanfragenListe->setColumnWidth(11,75);
+    ui->T_NachbuchungsanfragenListe->setColumnWidth(13,75);
+    ui->T_NachbuchungsanfragenListe->setColumnWidth(14,75);
 }
 
 void P_SupportPage::initPage()
@@ -100,8 +101,6 @@ void P_SupportPage::setupComboBoxConnections()
             channel = ui->CB_shop->currentText().mid(colonSpaceIndex + 3); // +3 to skip ": ("
             channel = channel.removeLast();
         }
-
-
 
         QJsonDocument commDoc = allDocs.value(channelToId.value(channel));
         QJsonObject selectedProgram = commDoc.array().at(index).toObject();
@@ -199,11 +198,21 @@ void P_SupportPage::on_LE_value_editingFinished()
 
 void P_SupportPage::on_PB_AddToList_clicked()
 {
+
+    int colonSpaceIndex = ui->CB_shop->currentText().indexOf(": ");
+    QString channel;
+
+    if(colonSpaceIndex != -1){
+        channel = ui->CB_shop->currentText().mid(colonSpaceIndex + 3); // +3 to skip ": ("
+        channel = channel.removeLast();
+    }
+
     int rowCount = ui->T_NachbuchungsanfragenListe->rowCount();
     ui->T_NachbuchungsanfragenListe->setRowCount(rowCount + 1);
 
     QTableWidgetItem *items [] = {
         new QTableWidgetItem(QString(ui->CB_Network->currentText())),
+        new QTableWidgetItem(QString(channel)),
         new QTableWidgetItem(QString(ui->CB_shop->currentText())),
         new QTableWidgetItem(QString(ui->LE_value->text())),
         new QTableWidgetItem(QString(ui->LE_expectedProv_Currency->text())),
@@ -223,12 +232,21 @@ void P_SupportPage::on_PB_AddToList_clicked()
         ui->T_NachbuchungsanfragenListe->setItem(rowCount,column,items[column]);
     }
 
+
+
+    QPushButton *sendBTN = new QPushButton;
+    sendBTN->setText("->");
+    sendBTN->setStyleSheet("QPushButton { color: orange; }");
+    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,13,sendBTN);
+
     QPushButton *deleteBTN = new QPushButton;
     deleteBTN->setText("X");
     deleteBTN->setStyleSheet("QPushButton { color: red; }");
-    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,12,deleteBTN);
+    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,14,deleteBTN);
 
     QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
+    QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTN_clicked);
+
 
     //Delete contents
     ui->LE_value->clear();
@@ -244,36 +262,46 @@ void P_SupportPage::on_deleteBTN_clicked()
     ui->T_NachbuchungsanfragenListe->removeRow(ui->T_NachbuchungsanfragenListe->currentRow());
 }
 
+void P_SupportPage::on_sendBTN_clicked(){
+
+    int row = ui->T_NachbuchungsanfragenListe->currentRow();
+
+    int programId = shopToProgramIdHash.value(ui->T_NachbuchungsanfragenListe->item(row, 1)->text());
+    int channelId = 1592293656;
+    QString orderId= ui->T_NachbuchungsanfragenListe->item(row, 6)->text();
+    int commissionId= ui->T_NachbuchungsanfragenListe->item(row, 9)->text().split(":").at(1).trimmed().toInt();
+    double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, 4)->text().toDouble();
+
+
+    QDate date = QDate::fromString(ui->T_NachbuchungsanfragenListe->item(row, 8)->text(),"dd.MM.yyyy");
+    QString transactionDate = date.toString("yyyy-MM-dd");
+    transactionDate += "T23:59:59+0100";
+
+    double orderVal = ui->T_NachbuchungsanfragenListe->item(row, 3)->text().toDouble();
+    QString currency = ui->T_NachbuchungsanfragenListe->item(row, 5)->text();
+    QString userId = ui->T_NachbuchungsanfragenListe->item(row, 7)->text();
+    apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
+}
+
 
 void P_SupportPage::on_PB_SendOverAPI_clicked()
 {
 
-
     for(int row = 0; row < ui->T_NachbuchungsanfragenListe->rowCount(); ++row){
         int programId = shopToProgramIdHash.value(ui->T_NachbuchungsanfragenListe->item(row, 1)->text());
         int channelId = 1592293656;
-        QString orderId= ui->T_NachbuchungsanfragenListe->item(row, 5)->text();
-        int commissionId= ui->T_NachbuchungsanfragenListe->item(row, 8)->text().split(":").at(1).trimmed().toInt();
-        double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, 3)->text().toDouble();
+        QString orderId= ui->T_NachbuchungsanfragenListe->item(row, 6)->text();
+        int commissionId= ui->T_NachbuchungsanfragenListe->item(row, 9)->text().split(":").at(1).trimmed().toInt();
+        double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, 4)->text().toDouble();
 
 
-        QDate date = QDate::fromString(ui->T_NachbuchungsanfragenListe->item(row, 7)->text(),"dd.MM.yyyy");
+        QDate date = QDate::fromString(ui->T_NachbuchungsanfragenListe->item(row, 8)->text(),"dd.MM.yyyy");
         QString transactionDate = date.toString("yyyy-MM-dd");
         transactionDate += "T23:59:59+0100";
 
-        double orderVal = ui->T_NachbuchungsanfragenListe->item(row, 2)->text().toDouble();
-        QString currency = ui->T_NachbuchungsanfragenListe->item(row, 4)->text();
-        QString userId = ui->T_NachbuchungsanfragenListe->item(row, 6)->text();
-
-        qDebug()<<programId;
-        qDebug()<<channelId;
-        qDebug()<<orderId;
-        qDebug()<<commissionId;
-        qDebug()<<expecetedCom;
-        qDebug()<<transactionDate;
-        qDebug()<<orderVal;
-        qDebug()<<currency;
-        qDebug()<<userId;
+        double orderVal = ui->T_NachbuchungsanfragenListe->item(row, 3)->text().toDouble();
+        QString currency = ui->T_NachbuchungsanfragenListe->item(row, 5)->text();
+        QString userId = ui->T_NachbuchungsanfragenListe->item(row, 7)->text();
 
         apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
     }

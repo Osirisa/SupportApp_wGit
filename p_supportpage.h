@@ -23,7 +23,6 @@ public:
     ~P_SupportPage();
 
     void refreshNetworkList();
-
 private:
     Ui::P_SupportPage *ui;
 
@@ -57,6 +56,7 @@ private slots:
     void on_LE_value_editingFinished();
     void on_PB_AddToList_clicked();
     void on_deleteBTN_clicked();
+    void on_sendBTN_clicked();
     void on_PB_SendOverAPI_clicked();
 };
 

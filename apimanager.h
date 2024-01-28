@@ -24,7 +24,6 @@ public:
     //"Network" Classes
     Adtraction* adtraction;
 
-
 private:
 
     //Manager Classes

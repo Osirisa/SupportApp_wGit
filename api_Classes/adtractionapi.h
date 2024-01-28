@@ -15,6 +15,7 @@ public:
     ~AdtractionAPI();
     const QHash<QString, AdvertiserData>& getAdvertisers() const;
     const AdvertiserData& getAdvertiserData(const QString& shopName) const;
+    static QEvent::Type SupportMessageEventType;
 
     void updateCurrencies();
     void updateAdvertisers(int channelId);

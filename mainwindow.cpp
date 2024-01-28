@@ -65,6 +65,11 @@ void MainWindow::updateNetworks()
     suppPage->refreshNetworkList();
 }
 
+void MainWindow::forwardSuppMessage()
+{
+
+}
+
 //Private Slots
 void MainWindow::on_actionAPI_Key_triggered()
 {

@@ -644,6 +644,11 @@
         </column>
         <column>
          <property name="text">
+          <string>Channel</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Shop</string>
          </property>
         </column>
@@ -695,6 +700,11 @@
         <column>
          <property name="text">
           <string>Network Status</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Send</string>
          </property>
         </column>
         <column>
