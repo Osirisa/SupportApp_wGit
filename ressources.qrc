@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>img/Haken.jpg</file>
+        <file>img/Kreuz.jpg</file>
+        <file>img/Send.jpg</file>
+        <file>img/Uhr.jpg</file>
+        <file>img/Haken_trans.png</file>
+        <file>img/Kreuz_trans.png</file>
+        <file>img/Send_trans.png</file>
+        <file>img/Uhr_trans.png</file>
+        <file>img/3Dots_trans.png</file>
+        <file>img/ausrufezeichen.jpg</file>
+        <file>img/ausrufezeichen_green.jpg</file>
+        <file>img/ausrufezeichen_green_trans.png</file>
+        <file>img/ausrufezeichen_orange.jpg</file>
+        <file>img/ausrufezeichen_orange_trans.png</file>
+        <file>img/ausrufezeichen_trans.png</file>
+    </qresource>
+</RCC>

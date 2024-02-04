@@ -1,5 +1,6 @@
 #include "api_Classes/adtractionapi.h"
-#include "p_supportpage.h"
+#include "qjsonobject.h"
+#include "suppeventbus.h"
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -10,8 +11,7 @@
 //Takes in the NetworkManager, the DataManager, the APIToken and the Parent to ensure being loaded the whole time
 AdtractionAPI::AdtractionAPI(NetworkManager* networkManager, DataManager* dataManager, const QString& apiToken, QObject *parent)
     : QObject(parent), networkManager(networkManager), dataManager(dataManager), apiToken(apiToken)
-{
-}
+{}
 
 AdtractionAPI::~AdtractionAPI()
 {
@@ -189,17 +189,50 @@ void AdtractionAPI::sendSuppData(int programId, int channelId,QString orderId,in
     //gets the reply from the server and saves it into a QNetworkReply object
     QNetworkReply* reply = networkManager->sendPutRequest(endpoint, apiToken, json);
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        onSuppDataRequestFinisehd(reply);
+    connect(reply, &QNetworkReply::finished, this, [this, reply, userId,orderId]() {
+        onSuppDataRequestFinished(reply, userId, orderId);
     });
 }
 
-void AdtractionAPI::onSuppDataRequestFinisehd(QNetworkReply *reply) {
+void AdtractionAPI::onSuppDataRequestFinished(QNetworkReply *reply,QString epi, QString orderId) {
+
+    QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
+    QJsonObject jObj;
 
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "HTTP status code:" << statusCode;
 
-    // Read all the response data
-    QByteArray responseData = reply->readAll();
-    qDebug() << "Response Data:" << responseData;
+    if (!suppData.isNull()) {
+        // If the JSON document is not null, use its object
+        jObj = suppData.object();
+    }
+
+    if(jObj.contains(epi)){
+        QJsonObject userObj = jObj[epi].toObject();
+        QJsonArray ordersArray = userObj["orders"].toArray();
+
+        for(int i = 0; i<ordersArray.size(); ++i){
+            QJsonObject orderObj = ordersArray[i].toObject();
+
+            if(orderObj["orderID"].toString() == orderId){
+
+                orderObj["networkStatusCode"] = QString::number(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+                orderObj["networkReply"] = QString::fromUtf8(reply->readAll());
+
+                ordersArray[i] = orderObj;
+
+                break;
+            }
+        }
+
+        userObj["orders"] = ordersArray;
+
+        jObj[epi] = userObj;
+
+        QJsonDocument suppdoc(jObj);
+
+        dataManager->json->save("NetworkSuppAnswers",suppdoc);
+    }
+
+    SuppEventBus::instance()->publish("networkResponse",QString::number(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()),epi,orderId);
 }

@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
     dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
     dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
-
+    dataManager->registerFile("NetworkSuppAnswers","Admin/NetworkSuppAnswers.json");
 
     updateNetworks();
    // ui->stackedWidget->addWidget();
@@ -59,7 +59,7 @@ void MainWindow::updateNetworks()
     QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
 
     for (const QStringList &rowData : csvData) {
-        dataManager->registerFile(QString(rowData.at(2)),"dataAdtraction/"+QString(rowData.at(2)));
+        dataManager->registerFile(QString(rowData.at(2)),"dataAdtraction/"+QString(rowData.at(2)+".json"));
         qDebug()<<QString(rowData.at(2));
     }
     suppPage->refreshNetworkList();

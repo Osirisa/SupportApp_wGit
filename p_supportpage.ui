@@ -659,7 +659,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Erwatete Provision</string>
+          <string>Erw. Provision</string>
          </property>
         </column>
         <column>
@@ -755,6 +755,26 @@
       </item>
       <item>
        <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_toggleTable">
+        <property name="text">
+         <string>Toggle Table</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>

@@ -4,6 +4,7 @@
 #include "BaseClasses/BaseNetwork.h"
 #include "api_Classes/adtractionapi.h"
 
+
 class Adtraction : public BaseNetwork {
     Q_OBJECT
 

@@ -33,6 +33,8 @@ private:
     void fillNetworkComboBox();
     void setupComboBoxConnections();
 
+    void networkRequestMessageReceived(const QString response, const QString userId, const QString orderId);
+
     DataManager* dataManager;
     APIManager* apiManager;
     QJsonDocument doc;
@@ -58,6 +60,7 @@ private slots:
     void on_deleteBTN_clicked();
     void on_sendBTN_clicked();
     void on_PB_SendOverAPI_clicked();
+    void on_pb_toggleTable_clicked();
 };
 
 #endif // P_SUPPORTPAGE_H

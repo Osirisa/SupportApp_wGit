@@ -1,6 +1,5 @@
 #include "Networks/adtraction.h"
 
-
 Adtraction::Adtraction(DataManager* dataManager, NetworkManager* networkManager, const QString &apiToken ,QObject *parent)
     : BaseNetwork(dataManager, networkManager, apiToken, parent), updater(this), getter(this){
 

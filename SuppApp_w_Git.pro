@@ -20,7 +20,8 @@ SOURCES += \
     mainwindow.cpp \
     networkmanager.cpp \
     p_supportpage.cpp \
-    setapikey.cpp
+    setapikey.cpp \
+    suppeventbus.cpp
 
 HEADERS += \
     APIData.h \
@@ -35,7 +36,8 @@ HEADERS += \
     mainwindow.h \
     networkmanager.h \
     p_supportpage.h \
-    setapikey.h
+    setapikey.h \
+    suppeventbus.h
 
 FORMS += \
     networkchannels.ui \
@@ -47,3 +49,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    ressources.qrc

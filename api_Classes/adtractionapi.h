@@ -23,6 +23,7 @@ public:
 
     void loadAdvertisersData();
     void sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId);
+
 signals:
     void requestFinished(QNetworkReply*);
     void advertisersUpdated(const QHash<QString, AdvertiserData> &advertisers);
@@ -30,9 +31,11 @@ signals:
 private slots:
     void onCurrenciesRequestFinished(QNetworkReply* reply);
     void onAdvertisersRequestFinished(QNetworkReply* reply, int channelId);
-    void onSuppDataRequestFinisehd(QNetworkReply* reply);
+    void onSuppDataRequestFinished(QNetworkReply* reply, QString userId, QString orderId);
 
 private:
+   // QJsonObject jsonObject; // Declare jsonObject as a member variable in your class
+
     NetworkManager* networkManager;
     DataManager* dataManager;
     QString apiToken;
