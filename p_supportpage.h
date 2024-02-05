@@ -61,6 +61,7 @@ private slots:
     void on_sendBTN_clicked();
     void on_PB_SendOverAPI_clicked();
     void on_pb_toggleTable_clicked();
+    void on_pushButton_clicked();
 };
 
 #endif // P_SUPPORTPAGE_H

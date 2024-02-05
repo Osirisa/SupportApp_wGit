@@ -6,6 +6,7 @@
 #include <qjsonobject.h>
 #include <QTimer>
 #include <suppeventbus.h>
+#include <QMessageBox>
 
 
 P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
@@ -131,10 +132,84 @@ void P_SupportPage::setupComboBoxConnections()
             QJsonObject obj = value.toObject();
             QString itemId = obj["id"].toString();
             QString itemName = obj["name"].toString();
+            QString typeExpProv = obj["type"].toString();
+            double valExpProv = obj["value"].toDouble();
+
             QString itemText = QString("%1: %2").arg(itemName, itemId);
+
+
             ui->CB_ComissionID->addItem(itemText);
+
+            if(typeExpProv == "%"){
+                ui->LE_expectedProv_Percent->setText(QString::number(valExpProv));
+                ui->LE_expectedProv_Percent->editingFinished();
+            }
+            else{
+                ui->LE_expectedProv_Currency->setText(QString::number(valExpProv));
+            }
+
         }
     });
+
+    //TBD:::::::::
+
+    // connect(ui->CB_ComissionID, QOverload<int>::of(&QComboBox::activated), [this](int) {
+    //     QString currCommissionIDText = ui->CB_ComissionID->currentText();
+    //     QString currShopText = ui->CB_shop->currentText();
+
+    //     int colonSpaceIndex = currCommissionIDText.lastIndexOf(": "); // Find the last ": " to ensure correct splitting
+    //     int colonSpaceIndex2 = ui->CB_shop->currentText().indexOf(": ");
+
+
+    //     QString currCommissionID;
+    //     QString currShop;
+
+
+    //     if (colonSpaceIndex != -1) {
+    //         currCommissionID = currCommissionIDText.mid(colonSpaceIndex + 2);
+    //         // Assuming the ID is after ": ", adjust if necessary
+    //     }
+
+    //     if (colonSpaceIndex2 != -1) {
+    //         currShop = currShopText.mid(colonSpaceIndex + 3);
+    //         currShop.removeLast();
+    //         // Assuming the ID is after ": (", adjust if necessary
+    //     }
+
+    //     // Now currCommissionID should correctly hold the ID string
+    //     QJsonDocument commDoc = allDocs.value(channelToId.value(currShop));
+    //     // Assuming you need to search through all programs for the correct commission
+    //     for (const QJsonValue& programValue : commDoc.array()) {
+    //         QJsonObject programObj = programValue.toObject();
+    //         QJsonArray commissions = programObj["commissions"].toArray();
+
+    //         for (const QJsonValue& value : commissions) {
+    //             QJsonObject obj = value.toObject();
+
+    //             if (currCommissionID == obj["id"].toString()) {
+    //                 // Found the matching commission
+    //                 QString typeExpProv = obj["type"].toString();
+    //                 double valExpProv = obj["value"].toDouble();
+
+    //                 if(typeExpProv == "%"){
+    //                     ui->LE_expectedProv_Percent->setText(QString::number(valExpProv));
+    //                     ui->LE_expectedProv_Percent->editingFinished();
+
+    //                     qDebug()<<typeExpProv;
+    //                     qDebug()<<valExpProv;
+    //                 }
+    //                 else{
+    //                     ui->LE_expectedProv_Currency->setText(QString::number(valExpProv));
+
+    //                     qDebug()<<typeExpProv;
+    //                     qDebug()<<valExpProv;
+    //                 }
+    //                 // Update UI elements as before
+    //                 break; // Exit the loop once the correct commission is found
+    //             }
+    //         }
+    //     }
+    // });
 }
 
 void P_SupportPage::networkRequestMessageReceived(const QString responseCode, const QString userId, const QString orderId)
@@ -272,126 +347,133 @@ void P_SupportPage::on_LE_value_editingFinished()
 
 void P_SupportPage::on_PB_AddToList_clicked()
 {
-    int colonSpaceIndex = ui->CB_shop->currentText().indexOf(": ");
-    QString channel;
+    if(ui->LE_orderId->text().isEmpty() || ui->LE_User->text().isEmpty() || ui->LE_value->text().isEmpty() || ui->LE_expectedProv_Currency->text().isEmpty()){
 
-    if(colonSpaceIndex != -1){
-        channel = ui->CB_shop->currentText().mid(colonSpaceIndex + 3); // +3 to skip ": ("
-        channel = channel.removeLast();
+        QMessageBox::critical(this,"Text Boxes Empty","At least one of the text boxes is empty, please fill out every text box!");
     }
+    else{
 
-    int rowCount = ui->T_NachbuchungsanfragenListe->rowCount();
-    ui->T_NachbuchungsanfragenListe->setRowCount(rowCount + 1);
+        int colonSpaceIndex = ui->CB_shop->currentText().indexOf(": ");
+        QString channel;
 
-    size_t colonPos = ui->CB_Network->currentText().toStdString().find(":");
-    std::string extractedText;
+        if(colonSpaceIndex != -1){
+            channel = ui->CB_shop->currentText().mid(colonSpaceIndex + 3); // +3 to skip ": ("
+            channel = channel.removeLast();
+        }
 
-    if (colonPos != std::string::npos) {
-        // Extract the substring from the beginning to the colon
-        extractedText = ui->CB_Network->currentText().toStdString().substr(0, colonPos);
+        int rowCount = ui->T_NachbuchungsanfragenListe->rowCount();
+        ui->T_NachbuchungsanfragenListe->setRowCount(rowCount + 1);
+
+        size_t colonPos = ui->CB_Network->currentText().toStdString().find(":");
+        std::string extractedText;
+
+        if (colonPos != std::string::npos) {
+            // Extract the substring from the beginning to the colon
+            extractedText = ui->CB_Network->currentText().toStdString().substr(0, colonPos);
+        }
+        QString qExtractedText = QString::fromStdString(extractedText);
+
+        QTableWidgetItem *items [] = {
+            new QTableWidgetItem(QString(qExtractedText)),                                                                  //0     --> Network
+            new QTableWidgetItem(QString(channel)),                                                                         //1     -->
+            new QTableWidgetItem(QString(ui->CB_shop->currentText())),                                                      //2     -->
+            new QTableWidgetItem(QString(ui->LE_value->text())),                                                            //3     -->
+            new QTableWidgetItem(QString(ui->LE_expectedProv_Currency->text())),                                            //4     -->
+            new QTableWidgetItem(QString(ui->CB_Currency->currentText())),                                                  //5     -->
+            new QTableWidgetItem(QString(ui->LE_orderId->text())),                                                          //6     -->
+            new QTableWidgetItem(QString(ui->LE_User->text())),                                                             //7     -->
+            new QTableWidgetItem(QString(ui->DE_transactionDate->date().toString("dd.MM.yyyy"))),                           //8     -->
+            new QTableWidgetItem(QString(ui->CB_ComissionID->currentText())),                                               //9     -->
+            new QTableWidgetItem(QString(ui->CB_SuppType->currentText())),                                                  //10    -->
+            new QTableWidgetItem(QString::number(ui->DE_transactionDate->date().daysTo(QDate::currentDate()))),             //11    -->
+            new QTableWidgetItem,                                                                                           //12    --> networkstatus
+            new QTableWidgetItem,                                                                                           //13    --> send
+            new QTableWidgetItem                                                                                            //14    --> delete
+        };
+
+
+
+        QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
+        QJsonObject jObj;
+
+        if (!suppData.isNull()) {
+            // If the JSON document is not null, use its object
+            jObj = suppData.object();
+        }
+
+        QString userID = ui->LE_User->text();
+
+        if(!jObj.contains(ui->LE_User->text())){
+            QJsonObject userObj;
+            userObj["userID"] = userID;
+            userObj["orders"] = QJsonArray();
+            jObj[userID]=userObj;
+        }
+
+        QJsonObject userObj = jObj[userID].toObject();
+
+        QJsonObject orderObj;
+        orderObj["orderID"] = ui->LE_orderId->text();
+        orderObj["network"] = qExtractedText;
+        orderObj["channel"] = channel;
+        orderObj["shop"] = ui->CB_shop->currentText();
+        orderObj["value"] = ui->LE_value->text();
+        orderObj["expProv"] = ui->LE_expectedProv_Currency->text();
+        orderObj["currency"] = ui->CB_Currency->currentText();
+        orderObj["date"] = ui->DE_transactionDate->date().toString("dd.MM.yyyy");
+        orderObj["comissionID"] = ui->CB_ComissionID->currentText();
+        orderObj["suppType"] = ui->CB_SuppType->currentText();
+
+        QJsonArray ordersArray = userObj["orders"].toArray();
+        ordersArray.append(orderObj);
+
+        userObj["orders"] = ordersArray;
+        jObj[userID] = userObj;
+
+        QJsonDocument suppDoc(jObj);
+
+        dataManager->json->save("NetworkSuppAnswers",suppDoc);
+
+        const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
+        for(size_t column = 0; column < count; column++){
+            ui->T_NachbuchungsanfragenListe->setItem(rowCount,column,items[column]);
+        }
+
+        QPushButton *networkStatusBTN = new QPushButton;
+        QPixmap pm_networkStatus(":/img/img/3Dots_trans.png");
+        QIcon i_networkSatus(pm_networkStatus);
+        networkStatusBTN->setIcon(i_networkSatus);
+        networkStatusBTN->setToolTip("test");
+
+        ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,12,networkStatusBTN);
+
+
+        QPushButton *sendBTN = new QPushButton;
+        QPixmap sendPixmap(":/img/img/Send_trans.png");
+        QIcon sendIcon(sendPixmap);
+        sendBTN->setIcon(sendIcon);
+        ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,13,sendBTN);
+
+        QPushButton *deleteBTN = new QPushButton;
+        QPixmap xPixmap(":/img/img/Kreuz_trans.png");
+        QIcon xIcon(xPixmap);
+        deleteBTN->setIcon(xIcon);
+        ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,14,deleteBTN);
+
+
+
+        QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
+        QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTN_clicked);
+
+
+        //Delete contents
+        ui->LE_value->clear();
+        ui->LE_expectedProv_Currency->clear();
+        ui->LE_expectedProv_Percent->clear();
+        ui->LE_orderId->clear();
+        ui->LE_User->clear();
+        ui->DE_transactionDate->setDate(QDate::currentDate());
     }
-    QString qExtractedText = QString::fromStdString(extractedText);
-
-    QTableWidgetItem *items [] = {
-        new QTableWidgetItem(QString(qExtractedText)),                                                                  //0     --> Network
-        new QTableWidgetItem(QString(channel)),                                                                         //1     -->
-        new QTableWidgetItem(QString(ui->CB_shop->currentText())),                                                      //2     -->
-        new QTableWidgetItem(QString(ui->LE_value->text())),                                                            //3     -->
-        new QTableWidgetItem(QString(ui->LE_expectedProv_Currency->text())),                                            //4     -->
-        new QTableWidgetItem(QString(ui->CB_Currency->currentText())),                                                  //5     -->
-        new QTableWidgetItem(QString(ui->LE_orderId->text())),                                                          //6     -->
-        new QTableWidgetItem(QString(ui->LE_User->text())),                                                             //7     -->
-        new QTableWidgetItem(QString(ui->DE_transactionDate->date().toString("dd.MM.yyyy"))),                           //8     -->
-        new QTableWidgetItem(QString(ui->CB_ComissionID->currentText())),                                               //9     -->
-        new QTableWidgetItem(QString(ui->CB_SuppType->currentText())),                                                  //10    -->
-        new QTableWidgetItem(QString::number(ui->DE_transactionDate->date().daysTo(QDate::currentDate()))),             //11    -->
-        new QTableWidgetItem,                                                                                           //12    --> networkstatus
-        new QTableWidgetItem,                                                                                           //13    --> send
-        new QTableWidgetItem                                                                                            //14    --> delete
-    };
-
-
-
-    QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
-    QJsonObject jObj;
-
-    if (!suppData.isNull()) {
-        // If the JSON document is not null, use its object
-        jObj = suppData.object();
-    }
-
-    QString userID = ui->LE_User->text();
-
-    if(!jObj.contains(ui->LE_User->text())){
-        QJsonObject userObj;
-        userObj["userID"] = userID;
-        userObj["orders"] = QJsonArray();
-        jObj[userID]=userObj;
-    }
-
-    QJsonObject userObj = jObj[userID].toObject();
-
-    QJsonObject orderObj;
-    orderObj["orderID"] = ui->LE_orderId->text();
-    orderObj["network"] = qExtractedText;
-    orderObj["channel"] = channel;
-    orderObj["shop"] = ui->CB_shop->currentText();
-    orderObj["value"] = ui->LE_value->text();
-    orderObj["expProv"] = ui->LE_expectedProv_Currency->text();
-    orderObj["currency"] = ui->CB_Currency->currentText();
-    orderObj["date"] = ui->DE_transactionDate->date().toString("dd.MM.yyyy");
-    orderObj["comissionID"] = ui->CB_ComissionID->currentText();
-    orderObj["suppType"] = ui->CB_SuppType->currentText();
-
-    QJsonArray ordersArray = userObj["orders"].toArray();
-    ordersArray.append(orderObj);
-
-    userObj["orders"] = ordersArray;
-    jObj[userID] = userObj;
-
-    QJsonDocument suppDoc(jObj);
-
-    dataManager->json->save("NetworkSuppAnswers",suppDoc);
-
-    const size_t count = sizeof(items) / sizeof(QTableWidgetItem*);
-    for(size_t column = 0; column < count; column++){
-        ui->T_NachbuchungsanfragenListe->setItem(rowCount,column,items[column]);
-    }
-
-    QPushButton *networkStatusBTN = new QPushButton;
-    QPixmap pm_networkStatus(":/img/img/3Dots_trans.png");
-    QIcon i_networkSatus(pm_networkStatus);
-    networkStatusBTN->setIcon(i_networkSatus);
-    networkStatusBTN->setToolTip("test");
-
-    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,12,networkStatusBTN);
-
-
-    QPushButton *sendBTN = new QPushButton;
-    QPixmap sendPixmap(":/img/img/Send_trans.png");
-    QIcon sendIcon(sendPixmap);
-    sendBTN->setIcon(sendIcon);
-    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,13,sendBTN);
-
-    QPushButton *deleteBTN = new QPushButton;
-    QPixmap xPixmap(":/img/img/Kreuz_trans.png");
-    QIcon xIcon(xPixmap);
-    deleteBTN->setIcon(xIcon);
-    ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,14,deleteBTN);
-
-
-
-    QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
-    QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTN_clicked);
-
-
-    //Delete contents
-    ui->LE_value->clear();
-    ui->LE_expectedProv_Currency->clear();
-    ui->LE_expectedProv_Percent->clear();
-    ui->LE_orderId->clear();
-    ui->LE_User->clear();
-    ui->DE_transactionDate->setDate(QDate::currentDate());
 }
 
 void P_SupportPage::on_deleteBTN_clicked()
@@ -502,5 +584,46 @@ void P_SupportPage::on_pb_toggleTable_clicked()
         ui->T_NachbuchungsanfragenListe->setColumnHidden(10,true);
         ui->T_NachbuchungsanfragenListe->setColumnHidden(11,true);
     }
+}
+
+
+void P_SupportPage::on_pushButton_clicked()
+{
+    QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
+    QJsonObject jObj;
+
+    if (!suppData.isNull()) {
+        jObj = suppData.object();
+    } else {
+        // Handle error: JSON data is null
+        return;
+    }
+
+    for (int i = ui->T_NachbuchungsanfragenListe->rowCount() - 1; i >= 0; --i) {
+        QString userId = ui->T_NachbuchungsanfragenListe->item(i, 7)->text();
+        QString orderId = ui->T_NachbuchungsanfragenListe->item(i, 6)->text();
+
+        if (jObj.contains(userId)) {
+            QJsonObject userObj = jObj.value(userId).toObject();
+            QJsonArray ordersArray = userObj["orders"].toArray();
+
+            for (int v = ordersArray.size() - 1; v >= 0; --v) {
+                QJsonObject orderObj = ordersArray.at(v).toObject();
+                if (orderObj["orderID"].toString() == orderId) {
+                    ordersArray.removeAt(v);
+                    break; // Assuming orderIDs are unique and only one needs to be removed
+                }
+            }
+
+            userObj["orders"] = ordersArray;
+            jObj[userId] = userObj; // Update the modified user object back into the main JSON object
+        }
+
+        ui->T_NachbuchungsanfragenListe->removeRow(i);
+    }
+
+    // Now, save the modified JSON object back to the file, outside the loop
+    QJsonDocument suppdoc(jObj);
+    dataManager->json->save("NetworkSuppAnswers", suppdoc);
 }
 
