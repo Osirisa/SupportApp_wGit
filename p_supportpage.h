@@ -7,7 +7,6 @@
 #include <QDate>
 
 #include "apimanager.h"
-#include "advertiserdata.h"
 #include "DataManager/datamanager.h"
 
 namespace Ui {
@@ -32,16 +31,23 @@ private:
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
     void setupComboBoxConnections();
+    void fillTableWithJson();
 
+    //Custom Eventsubscribe
     void networkRequestMessageReceived(const QString response, const QString userId, const QString orderId);
 
+    //Objects which are needed
     DataManager* dataManager;
     APIManager* apiManager;
+
+    //JsonDocuments which will be used "globally" in this class
     QJsonDocument doc;
     QJsonDocument cur;
 
+    //QHashes, QMaps, QSets, QLists
     QHash<QString,int> shopToProgramIdHash;
     QHash<QString,QString> channelToId;
+
     QMap<QString, QJsonDocument> allDocs;
 
     QSet<QString> prefferedCurrencies = {"EUR","CHF","USD"};
@@ -49,8 +55,26 @@ private:
     QList<QString> prefferedList;
     QList<QString> otherList;
 
+    //Enum for every column in the table for better Code transparency
+    enum ColumnIndexes{
+        eCol_Network        = 0,
+        eCol_Channel        = 1,
+        eCol_Shop           = 2,
+        eCol_Value          = 3,
+        eCol_ExpProv        = 4,
+        eCol_Currency       = 5,
+        eCol_OrderId        = 6,
+        eCol_UserId         = 7,
+        eCol_Date           = 8,
+        eCol_CommissionId   = 9,
+        eCol_CommissionType = 10,
+        eCol_DaysOld        = 11,
+        eCol_Networkstatus  = 12,
+        eCol_SendBTN        = 13,
+        eCol_DeleteBTN      = 14
+    };
+
 public slots:
-   // void onShopsUpdated(const QHash<QString, AdvertiserData> &advertisers);
 private slots:
     void on_RB_expProvCur_clicked();
     void on_RB_expProvPer_clicked();

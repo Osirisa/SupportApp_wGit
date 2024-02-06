@@ -12,6 +12,13 @@ MainWindow::MainWindow(QWidget *parent)
     encryptionHelper = new EncryptionHelper("End,aw..daw;d");
 
     dataManager = new DataManager(this);
+
+    //TBD: FileManager dataBank or soemthing like that
+    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
+    dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
+    dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
+    dataManager->registerFile("NetworkSuppAnswers","Admin/NetworkSuppAnswers.json");
+
     apiManager = new APIManager(dataManager,encryptionHelper);
 
 
@@ -27,11 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->addWidget(suppPage);
     ui->stackedWidget->setCurrentWidget(suppPage);
 
-    //TBD: FileManager dataBank or soemthing like that
-    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
-    dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
-    dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
-    dataManager->registerFile("NetworkSuppAnswers","Admin/NetworkSuppAnswers.json");
+
 
     updateNetworks();
    // ui->stackedWidget->addWidget();
