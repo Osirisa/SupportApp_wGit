@@ -714,7 +714,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Nstat</string>
+          <string>Nstat(hidden)</string>
          </property>
         </column>
        </widget>
@@ -774,7 +774,7 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Table&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Table Sort&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -786,8 +786,21 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="PB_SortNetworkStatus">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Networkstatus</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="0">
+        <item row="2" column="1">
          <widget class="QPushButton" name="PB_SortDate">
           <property name="minimumSize">
            <size>
@@ -796,12 +809,12 @@
            </size>
           </property>
           <property name="text">
-           <string>Toggle Sort Date</string>
+           <string>Date</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="PB_SprtShop">
+        <item row="2" column="0">
+         <widget class="QPushButton" name="PB_SortShop">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -809,37 +822,37 @@
            </size>
           </property>
           <property name="text">
-           <string>Toggle Sort Shop</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="PB_SortNetwork">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Toggle Sort Network</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="pb_toggleTable">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Toggle Table</string>
+           <string>Shop</string>
           </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_toggleTable">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Toggle Table</string>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -936,10 +949,6 @@
   <tabstop>PB_SendOverAPI</tabstop>
   <tabstop>PB_ExportList</tabstop>
   <tabstop>pb_deleteAll</tabstop>
-  <tabstop>pb_toggleTable</tabstop>
-  <tabstop>PB_SortNetwork</tabstop>
-  <tabstop>PB_SortDate</tabstop>
-  <tabstop>PB_SprtShop</tabstop>
  </tabstops>
  <resources/>
  <connections/>

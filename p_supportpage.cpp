@@ -15,13 +15,6 @@
  *
  */
 
-//TBD: Delete Network in Table (this whole page is only for adtracion
-//TBD: Dynamic Channel ID for sending supps ->on_PB_SendOverAPI_clicked | on_sendBTNTable_clicked
-//TBD: NetworkStatus sortable
-//TBD: Rest of the Sorting
-
-//TBD: Import CSV
-
 P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
     QWidget(parent),
     ui(new Ui::P_SupportPage),
@@ -399,6 +392,7 @@ void P_SupportPage::fillTableWithJson() {
                     networkStatusBTN->setToolTip(nreply);
 
                     ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,eCol_Networkstatus,networkStatusBTN);
+                    ui->T_NachbuchungsanfragenListe->item(rowCount,eCol_H_Nstat)->setText(QString::number(eNstat_Good));
                 }
                 else if(responseCode == "409"|| responseCode == "204" || responseCode == "201"){
                     QPushButton *networkStatusBTN = new QPushButton;
@@ -408,6 +402,7 @@ void P_SupportPage::fillTableWithJson() {
                     networkStatusBTN->setToolTip(nreply);
 
                     ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,eCol_Networkstatus,networkStatusBTN);
+                    ui->T_NachbuchungsanfragenListe->item(rowCount,eCol_H_Nstat)->setText(QString::number(eNstat_Okay));
                 }
                 else {
                     QPushButton *networkStatusBTN = new QPushButton;
@@ -417,6 +412,7 @@ void P_SupportPage::fillTableWithJson() {
                     networkStatusBTN->setToolTip(nreply);
 
                     ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount,eCol_Networkstatus,networkStatusBTN);
+                    ui->T_NachbuchungsanfragenListe->item(rowCount,eCol_H_Nstat)->setText(QString::number(eNstat_Error));
                 }
             }
             else{
@@ -573,6 +569,7 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
                 networkStatusBTN->setToolTip(nreply);
 
                 ui->T_NachbuchungsanfragenListe->setCellWidget(i,eCol_Networkstatus,networkStatusBTN);
+                ui->T_NachbuchungsanfragenListe->item(i,eCol_H_Nstat)->setText(QString::number(eNstat_Good));
             }
             else if(responseCode == "409"|| responseCode == "204" || responseCode == "201"){
                 QPushButton *networkStatusBTN = new QPushButton;
@@ -582,6 +579,7 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
                 networkStatusBTN->setToolTip(nreply);
 
                 ui->T_NachbuchungsanfragenListe->setCellWidget(i,eCol_Networkstatus,networkStatusBTN);
+                ui->T_NachbuchungsanfragenListe->item(i,eCol_H_Nstat)->setText(QString::number(eNstat_Okay));
             }
             else {
                 QPushButton *networkStatusBTN = new QPushButton;
@@ -591,6 +589,7 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
                 networkStatusBTN->setToolTip(nreply);
 
                 ui->T_NachbuchungsanfragenListe->setCellWidget(i,eCol_Networkstatus,networkStatusBTN);
+                ui->T_NachbuchungsanfragenListe->item(i,eCol_H_Nstat)->setText(QString::number(eNstat_Error));
             }
         }
     }
@@ -605,7 +604,8 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
 
 //---------------TableStuff----------------
 
-//Toggle and Sort:
+//---Toggle and Sort---
+//Toggle specific Columns to be visible
 void P_SupportPage::on_pb_toggleTable_clicked()
 {
     if(ui->T_NachbuchungsanfragenListe->isColumnHidden(1)){
@@ -624,6 +624,102 @@ void P_SupportPage::on_pb_toggleTable_clicked()
         ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_DaysOld,true);
     }
 }
+
+//Sort by NetworkStatus
+void P_SupportPage::on_PB_SortNetworkStatus_clicked()
+{
+    switch(sortStat_networkStat){
+    case eSStat_None:
+        ui->T_NachbuchungsanfragenListe->sortItems(eCol_H_Nstat,Qt::AscendingOrder);
+
+        sortStat_networkStat = eSStat_Ascending;
+        sortStat_shop = eSStat_None;
+        sortStat_date = eSStat_None;
+        break;
+
+    case eSStat_Ascending:
+        ui->T_NachbuchungsanfragenListe->sortItems(eCol_H_Nstat,Qt::DescendingOrder);
+
+        sortStat_networkStat = eSStat_Descending;
+        break;
+
+    case eSStat_Descending:
+
+        fillTableWithJson();
+        sortStat_networkStat = eSStat_None;
+        break;
+
+    default:
+        qDebug()<<"Error in NetworkStatus-Sorting-Statemachine";
+        break;
+    }
+
+}
+//Sort by Shop
+
+void P_SupportPage::on_PB_SortShop_clicked()
+{
+    switch(sortStat_shop){
+    case eSStat_None:
+        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Shop,Qt::AscendingOrder);
+
+        sortStat_shop = eSStat_Ascending;
+        sortStat_networkStat = eSStat_None;
+        sortStat_date = eSStat_None;
+
+        break;
+
+    case eSStat_Ascending:
+        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Shop,Qt::DescendingOrder);
+
+        sortStat_shop = eSStat_Descending;
+        break;
+
+    case eSStat_Descending:
+
+        fillTableWithJson();
+        sortStat_shop = eSStat_None;
+        break;
+
+    default:
+        qDebug()<<"Error in Shop-Sorting-Statemachine";
+        break;
+    }
+}
+//Sort by Date
+void P_SupportPage::on_PB_SortDate_clicked()
+{
+    switch(sortStat_date){
+    case eSStat_None:
+        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Date,Qt::AscendingOrder);
+
+        sortStat_date = eSStat_Ascending;
+        sortStat_networkStat = eSStat_None;
+        sortStat_shop = eSStat_None;
+        break;
+
+    case eSStat_Ascending:
+        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Date,Qt::DescendingOrder);
+
+        sortStat_date = eSStat_Descending;
+        break;
+
+    case eSStat_Descending:
+
+        fillTableWithJson();
+        sortStat_date = eSStat_None;
+        break;
+
+    default:
+        qDebug()<<"Error in Date-Sorting-Statemachine";
+
+        sortStat_networkStat = eSStat_None;
+        sortStat_shop = eSStat_None;
+        sortStat_date = eSStat_None;
+        break;
+    }
+}
+//------------------
 
 //Inserting, Sending, Deleting direct out of the table
 void P_SupportPage::on_PB_AddToList_clicked()
@@ -669,7 +765,8 @@ void P_SupportPage::on_PB_AddToList_clicked()
             new QTableWidgetItem(QString::number(ui->DE_transactionDate->date().daysTo(QDate::currentDate()))),             //11    -->
             new QTableWidgetItem,                                                                                           //12    --> networkstatus
             new QTableWidgetItem,                                                                                           //13    --> send
-            new QTableWidgetItem                                                                                            //14    --> delete
+            new QTableWidgetItem,                                                                                           //14    --> delete
+            new QTableWidgetItem(QString::number(eNstat_NotSend))
         };
 
 
@@ -1064,3 +1161,11 @@ void P_SupportPage::on_RB_expProvPer_clicked()
     ui->LE_expectedProv_Percent->setEnabled(true);
     ui->LE_expectedProv_Currency->setEnabled(false);
 }
+
+
+
+
+
+
+
+

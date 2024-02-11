@@ -84,6 +84,16 @@ private:
         eNstat_Error        = 3
     };
 
+    enum sortingStatus{
+        eSStat_None,
+        eSStat_Ascending,
+        eSStat_Descending
+    };
+
+    sortingStatus sortStat_networkStat = eSStat_None;
+    sortingStatus sortStat_shop = eSStat_None;
+    sortingStatus sortStat_date = eSStat_None;
+
 public slots:
 private slots:
     void on_RB_expProvCur_clicked();
@@ -97,6 +107,9 @@ private slots:
     void on_pb_toggleTable_clicked();
     void on_PB_ExportList_clicked();
     void on_pb_deleteAll_clicked();
+    void on_PB_SortNetworkStatus_clicked();
+    void on_PB_SortShop_clicked();
+    void on_PB_SortDate_clicked();
 };
 
 #endif // P_SUPPORTPAGE_H
