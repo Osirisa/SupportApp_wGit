@@ -1122,7 +1122,6 @@ void P_SupportPage::on_pb_deleteAll_clicked()
     dataManager->json->save("NetworkSuppAnswers", suppdoc);
 }
 
-
 /*
  *
  * SLOTS - LineEdits
