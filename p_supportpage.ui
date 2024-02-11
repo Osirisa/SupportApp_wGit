@@ -712,6 +712,11 @@
           <string>Delete</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>Nstat</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
@@ -749,7 +754,7 @@
       <item>
        <widget class="QPushButton" name="PB_AddToList">
         <property name="text">
-         <string>Add to List</string>
+         <string>Add</string>
         </property>
        </widget>
       </item>
@@ -767,52 +772,74 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pb_toggleTable">
+       <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Toggle Table</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Table&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>Delete ALL</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_3">
+       <widget class="Line" name="line_3">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="PB_SortNetwork">
-        <property name="text">
-         <string>Toggle Sort Network</string>
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="PB_SortDate">
-        <property name="text">
-         <string>Toggle Sort Date</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="PB_SprtShop">
-        <property name="text">
-         <string>Toggle Sort Shop</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="0">
+         <widget class="QPushButton" name="PB_SortDate">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Toggle Sort Date</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="PB_SprtShop">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Toggle Sort Shop</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="PB_SortNetwork">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Toggle Sort Network</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pb_toggleTable">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Toggle Table</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -828,16 +855,59 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="PB_SendOverAPI">
+       <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Send over API</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Contents&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="PB_ExportList">
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="0">
+         <widget class="QPushButton" name="PB_ExportList">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Export List</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pb_deleteAll">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_SendOverAPI">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>40</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Export List</string>
+         <string>Send To Network</string>
         </property>
        </widget>
       </item>
@@ -846,6 +916,31 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>CB_shop</tabstop>
+  <tabstop>LE_value</tabstop>
+  <tabstop>RB_expProvCur</tabstop>
+  <tabstop>LE_expectedProv_Currency</tabstop>
+  <tabstop>RB_expProvPer</tabstop>
+  <tabstop>LE_expectedProv_Percent</tabstop>
+  <tabstop>CB_Network</tabstop>
+  <tabstop>CB_ComissionID</tabstop>
+  <tabstop>LE_orderId</tabstop>
+  <tabstop>CB_Currency</tabstop>
+  <tabstop>LE_User</tabstop>
+  <tabstop>DE_transactionDate</tabstop>
+  <tabstop>CB_SuppType</tabstop>
+  <tabstop>T_NachbuchungsanfragenListe</tabstop>
+  <tabstop>LE_SearchBar</tabstop>
+  <tabstop>PB_AddToList</tabstop>
+  <tabstop>PB_SendOverAPI</tabstop>
+  <tabstop>PB_ExportList</tabstop>
+  <tabstop>pb_deleteAll</tabstop>
+  <tabstop>pb_toggleTable</tabstop>
+  <tabstop>PB_SortNetwork</tabstop>
+  <tabstop>PB_SortDate</tabstop>
+  <tabstop>PB_SprtShop</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <buttongroups>

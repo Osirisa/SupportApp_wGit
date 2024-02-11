@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->setWindowTitle("Network Supporthelper");
     //TBD: OPENSSL Library Import -> autogenerating KEY Or work with server/password
     encryptionHelper = new EncryptionHelper("End,aw..daw;d");
 

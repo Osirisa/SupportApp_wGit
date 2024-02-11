@@ -27,11 +27,13 @@ private:
 
     void initTable();
     void initPage();
+    void initInputElements();
     void fillShopComboBox();
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
     void setupComboBoxConnections();
     void fillTableWithJson();
+    void outputRowsToCSV(const QString &fileName);
 
     //Custom Eventsubscribe
     void networkRequestMessageReceived(const QString response, const QString userId, const QString orderId);
@@ -71,7 +73,15 @@ private:
         eCol_DaysOld        = 11,
         eCol_Networkstatus  = 12,
         eCol_SendBTN        = 13,
-        eCol_DeleteBTN      = 14
+        eCol_DeleteBTN      = 14,
+        eCol_H_Nstat        = 15
+    };
+
+    enum suppNetStatus{
+        eNstat_NotSend      = 0,
+        eNstat_Good         = 1,
+        eNstat_Okay         = 2,
+        eNstat_Error        = 3
     };
 
 public slots:
@@ -81,11 +91,12 @@ private slots:
     void on_LE_expectedProv_Percent_editingFinished();
     void on_LE_value_editingFinished();
     void on_PB_AddToList_clicked();
-    void on_deleteBTN_clicked();
-    void on_sendBTN_clicked();
+    void on_deleteBTNTable_clicked();
+    void on_sendBTNTable_clicked();
     void on_PB_SendOverAPI_clicked();
     void on_pb_toggleTable_clicked();
-    void on_pushButton_clicked();
+    void on_PB_ExportList_clicked();
+    void on_pb_deleteAll_clicked();
 };
 
 #endif // P_SUPPORTPAGE_H

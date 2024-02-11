@@ -45,25 +45,30 @@ bool DataManager::hasKey(const QString &key) const {
  * Return: bool: Returns true if the data was successfully saved; otherwise, false.
  *-----------------*/
 bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
-    QString exeDir = QCoreApplication::applicationDirPath(); // Get the executable's directory
-    QString filePath = exeDir + "/" + fileMap[key]; // Construct the absolute file path
 
-    QFile file(filePath);
-    QFileInfo fileInfo(file.fileName());
+    QString filePath = fileMap[key]; // Assume fileMap contains an absolute path
+
+    QFileInfo fileInfo(filePath);
+    if (!fileInfo.isAbsolute()) {
+        // If not an absolute path, then prepend the executable's directory
+        QString exeDir = QCoreApplication::applicationDirPath();
+        filePath = exeDir + "/" + filePath;
+    }
+
     QDir dir;
-
     // Check if the directory exists, create it if it doesn't
     if (!dir.exists(fileInfo.dir().absolutePath())) {
         dir.mkpath(fileInfo.dir().absolutePath());
     }
 
+    QFile file(filePath);
     // Attempt to open the file and write the data
     if (file.open(QIODevice::WriteOnly)) {
         if (file.write(data) != -1) {
             file.close();
             return true; // Data was successfully saved
         }
-        file.close(); // Close the file if write failed
+        file.close();
     }
 
     return false; // Return false if unable to save the data

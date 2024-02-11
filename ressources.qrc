@@ -15,5 +15,14 @@
         <file>img/ausrufezeichen_orange.jpg</file>
         <file>img/ausrufezeichen_orange_trans.png</file>
         <file>img/ausrufezeichen_trans.png</file>
+        <file>img/appLogo.png</file>
+        <file>img/3x_Jpg.jpg</file>
+        <file>img/3x_trans.png</file>
+        <file>img/arrowCircle_trans.png</file>
+        <file>img/document.jpg</file>
+        <file>img/document_black.jpg</file>
+        <file>img/document_trans.png</file>
+        <file>img/plusIcon.jpg</file>
+        <file>img/plusIcon_trans.png</file>
     </qresource>
 </RCC>

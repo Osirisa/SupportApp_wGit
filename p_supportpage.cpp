@@ -7,7 +7,20 @@
 #include <QTimer>
 #include <suppeventbus.h>
 #include <QMessageBox>
+#include <QFileDialog>
 
+/*
+ *
+ * Constructor / Destructor
+ *
+ */
+
+//TBD: Delete Network in Table (this whole page is only for adtracion
+//TBD: Dynamic Channel ID for sending supps ->on_PB_SendOverAPI_clicked | on_sendBTNTable_clicked
+//TBD: NetworkStatus sortable
+//TBD: Rest of the Sorting
+
+//TBD: Import CSV
 
 P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
     QWidget(parent),
@@ -17,21 +30,10 @@ P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QW
 {
     ui->setupUi(this);
 
-    QDoubleValidator *dvalidator = new QDoubleValidator(this);
-    ui->LE_value->setValidator(dvalidator);
-    ui->LE_expectedProv_Currency->setValidator(dvalidator);
-    ui->LE_expectedProv_Percent->setValidator(dvalidator);
-
-    ui->RB_expProvCur->setChecked(true);
-    ui->LE_expectedProv_Percent->setEnabled(false);
-
-    ui->DE_transactionDate->setDate(QDate::currentDate());
-    ui->DE_transactionDate->setMaximumDate(QDate::currentDate());
-
-    initTable();
-
-    ui->CB_SuppType->addItem("Untracked");
+    //init the whole Page (has to be on a delay, otherwise problem with fileloading)
     QTimer::singleShot(300, this, &P_SupportPage::initPage);
+
+    //Eventbus connection
     QObject::connect(SuppEventBus::instance(), &SuppEventBus::eventPublished, [this](const QString& eventName, const QVariant& eventData1, const QVariant& eventData2, const QVariant& eventData3) {
         if (eventName == "networkResponse") {
             QString responseCode = eventData1.toString();
@@ -44,16 +46,44 @@ P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QW
     });
 }
 
+//Destructor
 P_SupportPage::~P_SupportPage()
 {
     delete ui;
 }
 
-void P_SupportPage::refreshNetworkList()
+
+/*
+ *
+ * INIT - Stuff
+ *
+ */
+
+//Inits all the Elements on the page
+void P_SupportPage::initPage()
 {
+
+    //Fill Comboboxes
+
+    //In Adtraction there is only one type (maybe delete completely?
+    //TBD:
+    ui->CB_SuppType->addItem("Untracked");
+
+    fillShopComboBox();
+    fillCurrencyComboBox();
     fillNetworkComboBox();
+
+    initTable();
+
+    initInputElements();
+
+    setupComboBoxConnections();
+    ui->CB_shop->activated(ui->CB_shop->currentIndex());
+
+    QTimer::singleShot(300, this, &P_SupportPage::fillTableWithJson);
 }
 
+//Inits the Table (Column Size)
 void P_SupportPage::initTable()
 {
     //standard size is 150 for the columns
@@ -77,24 +107,51 @@ void P_SupportPage::initTable()
     ui->T_NachbuchungsanfragenListe->setColumnWidth(eCol_Networkstatus,90);
     ui->T_NachbuchungsanfragenListe->setColumnWidth(eCol_SendBTN,70);
     ui->T_NachbuchungsanfragenListe->setColumnWidth(eCol_DeleteBTN,70);
+
+    //Hidden Column for Internal Stats
+    ui->T_NachbuchungsanfragenListe->hideColumn(eCol_H_Nstat);
 }
 
-void P_SupportPage::initPage()
+//Sets up all the input elements
+void P_SupportPage::initInputElements()
 {
-    cur = dataManager->json->load("currenciesAdtraction");
 
+    QDoubleValidator *dvalidator = new QDoubleValidator(this);
+    ui->LE_value->setValidator(dvalidator);
+    ui->LE_expectedProv_Currency->setValidator(dvalidator);
+    ui->LE_expectedProv_Percent->setValidator(dvalidator);
 
-    //Fill Comboboxes
-    fillShopComboBox();
-    fillCurrencyComboBox();
-    fillNetworkComboBox();
+    ui->RB_expProvCur->setChecked(true);
+    ui->LE_expectedProv_Percent->setEnabled(false);
 
-    setupComboBoxConnections();
-    ui->CB_shop->activated(ui->CB_shop->currentIndex());
+    ui->DE_transactionDate->setDate(QDate::currentDate());
+    ui->DE_transactionDate->setMaximumDate(QDate::currentDate());
 
-    QTimer::singleShot(300, this, &P_SupportPage::fillTableWithJson);
+    //Add To list Button
+    QPixmap pm_addToList(":/img/img/plusIcon_trans.png");
+    QIcon i_addToList(pm_addToList);
+    ui->PB_AddToList->setIcon(i_addToList);
+    ui->PB_AddToList->setToolTip("Adds the input to the table");
+
+    //Export List to CSV Button
+    QPixmap pm_exportList(":/img/img/document_trans.png");
+    QIcon i_exportList(pm_exportList);
+    ui->PB_ExportList->setIcon(i_exportList);
+    ui->PB_ExportList->setToolTip("Exports either all or only selected Items of the Table to a CSV");
+
+    //Delte All Button
+    QPixmap pm_deleteAllBTN(":/img/img/3x_trans.png");
+    QIcon i_deleteAllBTN(pm_deleteAllBTN);
+    ui->pb_deleteAll->setIcon(i_deleteAllBTN);
+    ui->pb_deleteAll->setToolTip("Delets either all or only selected Items of the table");
+
+    QPixmap pm_soaButton(":/img/img/arrowCircle_trans.png");
+    QIcon i_soaButton(pm_soaButton);
+    ui->PB_SendOverAPI->setIcon(i_soaButton);
+    ui->PB_SendOverAPI->setToolTip("Sends either all or only selected Contents of the Table");
 }
 
+//Fills the shop Combobox with the shops from Adtraction
 void P_SupportPage::fillShopComboBox()
 {
     QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
@@ -124,7 +181,70 @@ void P_SupportPage::fillShopComboBox()
     }
 }
 
+//Fills the Currency Combobox with all the Currencies from Adtraction
+void P_SupportPage::fillCurrencyComboBox()
+{
+    //load the CurrencyFile for adtraction
+    cur = dataManager->json->load("currenciesAdtraction");
 
+
+    //take the json an load it into 2 lists (Preferred / Rest)
+    for(const QJsonValue &value: cur.array()){
+        QJsonObject obj = value.toObject();
+        QString currency = obj["currency"].toString();
+        if(prefferedCurrencies.contains(currency)){
+            prefferedList.append(currency);
+        }else{
+            otherList.append(currency);
+        }
+    }
+
+    //Sort the "rest"-list
+    std::sort(otherList.begin(), otherList.end());
+
+    //Populate the combobox
+    for(const QString &currency : prefferedList){
+        ui->CB_Currency->addItem(currency);
+    }
+    for(const QString &currency : otherList){
+        ui->CB_Currency->addItem(currency);
+    }
+}
+
+//Fills the Network Combobox with all the ChannelIDs Inputted in the Adtraction->ChannelIds Window
+void P_SupportPage::fillNetworkComboBox()
+{
+    ui->CB_Network->clear();
+
+    QStringList allNetworks;
+    QStringList networkPlusALL;
+
+    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+
+    for (const QStringList &rowData : csvData) {
+
+        if(!(networkPlusALL.contains(rowData.at(0)+": ALL"))){
+            networkPlusALL.append(rowData.at(0)+": ALL");
+        }
+    }
+    // Populate the table with this data
+    for (const QStringList &rowData : csvData) {
+
+        QString CombinedText = rowData.at(0)+ ": " + rowData.at(1);
+        allNetworks.append(CombinedText);
+    }
+
+    for (int i=0; i< networkPlusALL.size();++i){
+        allNetworks.append(networkPlusALL.at(i));
+    }
+
+    allNetworks.sort();
+    for (int i=0; i< allNetworks.size();++i){
+        ui->CB_Network->addItem(allNetworks.at(i));
+    }
+}
+
+//Sets up the Connections from the ShopCombobox to the CommissionId and the CommissionId to the Expected Commission [Currency] / %
 void P_SupportPage::setupComboBoxConnections()
 {
 
@@ -168,17 +288,16 @@ void P_SupportPage::setupComboBoxConnections()
 
         int currIndex = ui->CB_ComissionID->currentIndex();
         ui->CB_ComissionID->activated(currIndex);
+        ui->LE_value->editingFinished();
     });
 
-    //TBD:::::::::
-
     connect(ui->CB_ComissionID, QOverload<int>::of(&QComboBox::activated), [this](int) {
+
         QString currCommissionIDText = ui->CB_ComissionID->currentText();
         QString currShopText = ui->CB_shop->currentText();
 
         int colonSpaceIndex = currCommissionIDText.lastIndexOf(": "); // Find the last ": " to ensure correct splitting
-        int colonSpaceIndex2 = ui->CB_shop->currentText().indexOf(": ");
-
+        int colonSpaceIndex2 = currShopText.indexOf(": ");
 
         QString currCommissionID;
         QString currShop;
@@ -226,6 +345,7 @@ void P_SupportPage::setupComboBoxConnections()
     });
 }
 
+//on Startup fills the Table with the last session / if not deleted
 void P_SupportPage::fillTableWithJson() {
 
     QJsonDocument suppAnswers = dataManager->json->load("NetworkSuppAnswers");
@@ -244,7 +364,7 @@ void P_SupportPage::fillTableWithJson() {
         QJsonObject userObj = jObj.value(userID).toObject();
         QJsonArray ordersArray = userObj["orders"].toArray();
 
-        foreach (const QJsonValue &ordersValue, ordersArray) {
+        for(const QJsonValue &ordersValue : ordersArray) {
             QJsonObject orderObj = ordersValue.toObject();
             QDate orderDate = QDate::fromString(orderObj["date"].toString(), "dd.MM.yyyy");
 
@@ -316,13 +436,104 @@ void P_SupportPage::fillTableWithJson() {
             ui->T_NachbuchungsanfragenListe->setCellWidget(rowCount, eCol_DeleteBTN, deleteBTN);
 
             // Connect button signals to slots for handling user actions
-            QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
-            QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTN_clicked);
+            QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTNTable_clicked);
+            QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTNTable_clicked);
         }
     }
 }
 
+/*
+ *
+ * Public Functions
+ *
+ */
 
+void P_SupportPage::refreshNetworkList()
+{
+    fillNetworkComboBox();
+}
+
+/*
+ *
+ * Private Functions
+ *
+ */
+
+void P_SupportPage::outputRowsToCSV(const QString &fileName)
+{
+    QList<QTableWidgetSelectionRange> rowSelections = ui->T_NachbuchungsanfragenListe->selectedRanges();
+    QList<QStringList> csvData;
+
+    for(const QTableWidgetSelectionRange &rowSelect : rowSelections){
+        for(int row = rowSelect.topRow(); row <= rowSelect.bottomRow();++row){
+
+            QStringList rowData;
+
+            QString currCommissionIDText = ui->T_NachbuchungsanfragenListe->item(row,eCol_CommissionId)->text();
+            QString currShopText = ui->T_NachbuchungsanfragenListe->item(row,eCol_Shop)->text();
+
+            int colonSpaceIndex = currCommissionIDText.lastIndexOf(": ");       // Find the last ": " to ensure correct splitting
+            int colonSpaceIndex2 = currShopText.indexOf(": ");
+
+
+            QString currCommissionID;
+            QString currShop;
+
+
+            if (colonSpaceIndex != -1) {
+                currCommissionID = currCommissionIDText.mid(colonSpaceIndex + 2);
+            }
+
+            if (colonSpaceIndex2 != -1) {
+                currShop = currShopText.mid(colonSpaceIndex2 + 3).chopped(1);
+            }
+
+            //orderValue
+            QTableWidgetItem *itemToCSV = ui->T_NachbuchungsanfragenListe->item(row,eCol_Value);
+            rowData << (itemToCSV ? itemToCSV->text() : QString());
+
+
+            //ChannelID
+            rowData << channelToId.value(currShop);
+
+            //commissionId
+            rowData << currCommissionID;
+
+            //currency
+            itemToCSV = ui->T_NachbuchungsanfragenListe->item(row,eCol_Currency);
+            rowData << (itemToCSV ? itemToCSV->text() : QString());
+
+            //transactionDate
+            itemToCSV = ui->T_NachbuchungsanfragenListe->item(row,eCol_Date);
+            QString originalDateString = itemToCSV ? itemToCSV->text() : QString();
+            QDate date = QDate::fromString(originalDateString, "dd.MM.yyyy"); // Adjust this format
+            QString formattedDateString = date.toString("yyyy-MM-dd");
+            rowData << formattedDateString;
+
+            //orderID
+            itemToCSV = ui->T_NachbuchungsanfragenListe->item(row,eCol_OrderId);
+            rowData << (itemToCSV ? itemToCSV->text() : QString());
+
+            //epi (user)
+            itemToCSV = ui->T_NachbuchungsanfragenListe->item(row,eCol_UserId);
+            rowData << (itemToCSV ? itemToCSV->text() : QString());
+
+            //productcategoryId -- EMPTY
+            rowData << "";
+
+            //expectedCommission
+            itemToCSV = ui->T_NachbuchungsanfragenListe->item(row,eCol_ExpProv);
+            rowData << (itemToCSV ? itemToCSV->text() : QString());
+
+            csvData.append(rowData);
+        }
+    }
+
+    dataManager->registerFile("csvExportFile",fileName);
+    dataManager->csv->save("csvExportFile",csvData);
+}
+
+//Event after the request was received from the server
 void P_SupportPage::networkRequestMessageReceived(const QString responseCode, const QString userId, const QString orderId)
 {
     QJsonDocument suppAnswers = dataManager->json->load("NetworkSuppAnswers");
@@ -385,88 +596,36 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
     }
 }
 
-void P_SupportPage::fillCurrencyComboBox()
+
+/*
+ *
+ * SLOTS - Buttons
+ *
+ */
+
+//---------------TableStuff----------------
+
+//Toggle and Sort:
+void P_SupportPage::on_pb_toggleTable_clicked()
 {
-    for(const QJsonValue &value: cur.array()){
-        QJsonObject obj = value.toObject();
-        QString currency = obj["currency"].toString();
-        if(prefferedCurrencies.contains(currency)){
-            prefferedList.append(currency);
-        }else{
-            otherList.append(currency);
-        }
-    }
+    if(ui->T_NachbuchungsanfragenListe->isColumnHidden(1)){
 
-    std::sort(otherList.begin(), otherList.end());
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_Channel,false);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_ExpProv,false);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionId,false);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionType,false);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_DaysOld,false);
+    }else{
 
-    for(const QString &currency : prefferedList){
-        ui->CB_Currency->addItem(currency);
-    }
-    for(const QString &currency : otherList){
-        ui->CB_Currency->addItem(currency);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_Channel,true);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_ExpProv,true);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionId,true);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionType,true);
+        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_DaysOld,true);
     }
 }
 
-void P_SupportPage::fillNetworkComboBox()
-{
-    ui->CB_Network->clear();
-
-    QStringList allNetworks;
-    QStringList networkPlusALL;
-
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
-
-    for (const QStringList &rowData : csvData) {
-
-        if(!(networkPlusALL.contains(rowData.at(0)+": ALL"))){
-            networkPlusALL.append(rowData.at(0)+": ALL");
-        }
-    }
-    // Populate the table with this data
-    for (const QStringList &rowData : csvData) {
-
-        QString CombinedText = rowData.at(0)+ ": " + rowData.at(1);
-        allNetworks.append(CombinedText);
-    }
-
-    for (int i=0; i< networkPlusALL.size();++i){
-        allNetworks.append(networkPlusALL.at(i));
-    }
-
-    allNetworks.sort();
-    for (int i=0; i< allNetworks.size();++i){
-        ui->CB_Network->addItem(allNetworks.at(i));
-    }
-}
-
-//Private Slots
-void P_SupportPage::on_RB_expProvCur_clicked()
-{
-    ui->LE_expectedProv_Percent->clear();
-    ui->LE_expectedProv_Percent->setEnabled(false);
-    ui->LE_expectedProv_Currency->setEnabled(true);
-}
-
-void P_SupportPage::on_RB_expProvPer_clicked()
-{
-    ui->LE_expectedProv_Currency->clear();
-    ui->LE_expectedProv_Percent->setEnabled(true);
-    ui->LE_expectedProv_Currency->setEnabled(false);
-}
-void P_SupportPage::on_LE_expectedProv_Percent_editingFinished()
-{
-    double valueCalc = ui->LE_value->text().toDouble()*(ui->LE_expectedProv_Percent->text().toDouble()/100);
-    ui->LE_expectedProv_Currency->setText(QString::number(valueCalc,'f',2));
-}
-
-void P_SupportPage::on_LE_value_editingFinished()
-{
-    if(ui->RB_expProvPer->isChecked()){
-        on_LE_expectedProv_Percent_editingFinished();
-    }
-}
-
-
+//Inserting, Sending, Deleting direct out of the table
 void P_SupportPage::on_PB_AddToList_clicked()
 {
     if(ui->LE_orderId->text().isEmpty() || ui->LE_User->text().isEmpty() || ui->LE_value->text().isEmpty() || ui->LE_expectedProv_Currency->text().isEmpty()){
@@ -584,8 +743,8 @@ void P_SupportPage::on_PB_AddToList_clicked()
 
 
 
-        QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTN_clicked);
-        QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTN_clicked);
+        QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTNTable_clicked);
+        QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTNTable_clicked);
 
 
         //Delete contents
@@ -596,7 +755,8 @@ void P_SupportPage::on_PB_AddToList_clicked()
     }
 }
 
-void P_SupportPage::on_deleteBTN_clicked()
+//deleting one Element from the Table directly
+void P_SupportPage::on_deleteBTNTable_clicked()
 {
     QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
     QJsonObject jObj;
@@ -636,14 +796,24 @@ void P_SupportPage::on_deleteBTN_clicked()
     ui->T_NachbuchungsanfragenListe->removeRow(currRow);
 }
 
-void P_SupportPage::on_sendBTN_clicked(){
+//sending one Element from the Table directly
+void P_SupportPage::on_sendBTNTable_clicked(){
 
     int row = ui->T_NachbuchungsanfragenListe->currentRow();
+
+    QString currShopText = ui->T_NachbuchungsanfragenListe->item(row,eCol_Shop)->text();
+
+    int colonSpaceIndex2 = currShopText.indexOf(": ");
+    QString currShop;
+
+    if (colonSpaceIndex2 != -1) {
+        currShop = currShopText.mid(colonSpaceIndex2 + 3).chopped(1);
+    }
 
     QStringList programIdStrL = ui->T_NachbuchungsanfragenListe->item(row, eCol_Shop)->text().split(":");
     QString programIdStr = programIdStrL.first().trimmed();
     int programId = shopToProgramIdHash.value(programIdStr);
-    int channelId = 1592293656;
+    int channelId = channelToId.value(currShop).toInt();
     QString orderId= ui->T_NachbuchungsanfragenListe->item(row, eCol_OrderId)->text();
     int commissionId= ui->T_NachbuchungsanfragenListe->item(row, eCol_CommissionId)->text().split(":").at(1).trimmed().toInt();
     double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, eCol_ExpProv)->text().toDouble();
@@ -656,57 +826,133 @@ void P_SupportPage::on_sendBTN_clicked(){
     double orderVal = ui->T_NachbuchungsanfragenListe->item(row, eCol_Value)->text().toDouble();
     QString currency = ui->T_NachbuchungsanfragenListe->item(row, eCol_Currency)->text();
     QString userId = ui->T_NachbuchungsanfragenListe->item(row, eCol_UserId)->text();
+
+    // qDebug()<<programId;
+    // qDebug()<<channelId;
+    // qDebug()<<orderId;
+    // qDebug()<<commissionId;
+    // qDebug()<<expecetedCom;
+    // qDebug()<<transactionDate;
+    // qDebug()<<orderVal;
+    // qDebug()<<currency;
+    // qDebug()<<userId;
+    // qDebug()<<"------------------------------SEND------------------------------";
     apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
 }
 
-
+//Sending selection / all
 void P_SupportPage::on_PB_SendOverAPI_clicked()
 {
-
-    for(int row = 0; row < ui->T_NachbuchungsanfragenListe->rowCount(); ++row){
-        QStringList programIdStrL = ui->T_NachbuchungsanfragenListe->item(row, eCol_Shop)->text().split(":");
-        QString programIdStr = programIdStrL.first().trimmed();
-        int programId = shopToProgramIdHash.value(programIdStr);
-        int channelId = 1592293656;
-        QString orderId= ui->T_NachbuchungsanfragenListe->item(row, eCol_OrderId)->text();
-        int commissionId= ui->T_NachbuchungsanfragenListe->item(row, eCol_CommissionId)->text().split(":").at(1).trimmed().toInt();
-        double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, eCol_ExpProv)->text().toDouble();
-
-
-        QDate date = QDate::fromString(ui->T_NachbuchungsanfragenListe->item(row, eCol_Date)->text(),"dd.MM.yyyy");
-        QString transactionDate = date.toString("yyyy-MM-dd");
-        transactionDate += "T23:59:59+0100";
-
-        double orderVal = ui->T_NachbuchungsanfragenListe->item(row, eCol_Value)->text().toDouble();
-        QString currency = ui->T_NachbuchungsanfragenListe->item(row, eCol_Currency)->text();
-        QString userId = ui->T_NachbuchungsanfragenListe->item(row, eCol_UserId)->text();
-
-        apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
+    //Checks if the Table has at least one Entry
+    if (ui->T_NachbuchungsanfragenListe->rowCount() < 1) {
+        QMessageBox::information(this, tr("No Contents"), tr("There are no Contents in the Table"));
+        return;
     }
 
+    if (ui->T_NachbuchungsanfragenListe->rowCount() == 1){
+        ui->T_NachbuchungsanfragenListe->selectAll();
+    }
+    else if (!ui->T_NachbuchungsanfragenListe->selectionModel()->hasSelection()) {
+
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Send all Contents to the Network", "Are you sure you want to send all the Contents to the Network?",
+                                      QMessageBox::Yes|QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Yes) {
+
+            ui->T_NachbuchungsanfragenListe->selectAll();
+        }
+        else {
+            return;
+        }
+    }
+
+    QList<QTableWidgetSelectionRange> rowSelections = ui->T_NachbuchungsanfragenListe->selectedRanges();
+
+    for(const QTableWidgetSelectionRange &rowSelect : rowSelections){
+        for(int row = rowSelect.topRow(); row <= rowSelect.bottomRow();++row){
+
+            QString currShopText = ui->T_NachbuchungsanfragenListe->item(row,eCol_Shop)->text();
+
+            int colonSpaceIndex2 = currShopText.indexOf(": ");
+            QString currShop;
+
+            if (colonSpaceIndex2 != -1) {
+                currShop = currShopText.mid(colonSpaceIndex2 + 3).chopped(1);
+            }
+
+            QStringList programIdStrL = ui->T_NachbuchungsanfragenListe->item(row, eCol_Shop)->text().split(":");
+            QString programIdStr = programIdStrL.first().trimmed();
+            int programId = shopToProgramIdHash.value(programIdStr);
+
+            int channelId = channelToId.value(currShop).toInt();
+            QString orderId= ui->T_NachbuchungsanfragenListe->item(row, eCol_OrderId)->text();
+            int commissionId= ui->T_NachbuchungsanfragenListe->item(row, eCol_CommissionId)->text().split(":").at(1).trimmed().toInt();
+            double expecetedCom = ui->T_NachbuchungsanfragenListe->item(row, eCol_ExpProv)->text().toDouble();
+
+
+            QDate date = QDate::fromString(ui->T_NachbuchungsanfragenListe->item(row, eCol_Date)->text(),"dd.MM.yyyy");
+            QString transactionDate = date.toString("yyyy-MM-dd");
+            transactionDate += "T23:59:59+0100";
+
+            double orderVal = ui->T_NachbuchungsanfragenListe->item(row, eCol_Value)->text().toDouble();
+            QString currency = ui->T_NachbuchungsanfragenListe->item(row, eCol_Currency)->text();
+            QString userId = ui->T_NachbuchungsanfragenListe->item(row, eCol_UserId)->text();
+
+            // qDebug()<<programId;
+            // qDebug()<<channelId;
+            // qDebug()<<orderId;
+            // qDebug()<<commissionId;
+            // qDebug()<<expecetedCom;
+            // qDebug()<<transactionDate;
+            // qDebug()<<orderVal;
+            // qDebug()<<currency;
+            // qDebug()<<userId;
+            // qDebug()<<"------------------------------SEND------------------------------";
+            apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
+        }
+    }
 }
 
-void P_SupportPage::on_pb_toggleTable_clicked()
+//Exporting selection / all
+//goes into windows explorer to get the path to save
+void P_SupportPage::on_PB_ExportList_clicked()
 {
-    if(ui->T_NachbuchungsanfragenListe->isColumnHidden(1)){
 
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_Channel,false);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_ExpProv,false);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionId,false);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionType,false);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_DaysOld,false);
-    }else{
+    //Checks if the Table has at least one Entry
+    if (ui->T_NachbuchungsanfragenListe->rowCount() < 1) {
+        QMessageBox::information(this, tr("No Contents"), tr("There are no Contents in the Table"));
+        return;
+    }
 
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_Channel,true);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_ExpProv,true);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionId,true);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_CommissionType,true);
-        ui->T_NachbuchungsanfragenListe->setColumnHidden(eCol_DaysOld,true);
+    if (ui->T_NachbuchungsanfragenListe->rowCount() == 1){
+        ui->T_NachbuchungsanfragenListe->selectAll();
+    }
+    else if (!ui->T_NachbuchungsanfragenListe->selectionModel()->hasSelection()) {
+
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Export all Elements to CSV", "Are you sure you want to export all Table Contents into a CSV?",
+                                      QMessageBox::Yes|QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Yes) {
+
+            ui->T_NachbuchungsanfragenListe->selectAll();
+        }
+        else {
+            return;
+        }
+    }
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save CSV"), QDir::homePath(),tr("CSV Files (*.csv"));
+    if(!fileName.isEmpty()){
+        if(!fileName.endsWith(".csv",Qt::CaseInsensitive)){
+            fileName+= ".csv";
+        }
+        outputRowsToCSV(fileName);
     }
 }
 
-
-void P_SupportPage::on_pushButton_clicked()
+//Deleting selection / all
+void P_SupportPage::on_pb_deleteAll_clicked()
 {
     QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
     QJsonObject jObj;
@@ -715,10 +961,43 @@ void P_SupportPage::on_pushButton_clicked()
         jObj = suppData.object();
     } else {
         // Handle error: JSON data is null
+        QMessageBox::critical(this, tr("Error"), tr("Failed to load data."));
         return;
     }
 
-    for (int i = ui->T_NachbuchungsanfragenListe->rowCount() - 1; i >= 0; --i) {
+    // Checks if the Table has at least one Entry
+    if (ui->T_NachbuchungsanfragenListe->rowCount() < 1) {
+        QMessageBox::information(this, tr("No Contents"), tr("There are no Contents in the Table"));
+        return;
+    }
+
+    QMessageBox::StandardButton reply;
+    if (!ui->T_NachbuchungsanfragenListe->selectionModel()->hasSelection()) {
+        // If nothing is selected, ask if the user wants to delete all contents
+        reply = QMessageBox::question(this, "Delete all Contents", "Are you sure you want to delete all the Contents?",
+                                      QMessageBox::Yes | QMessageBox::Cancel);
+        if (reply == QMessageBox::Yes) {
+            ui->T_NachbuchungsanfragenListe->selectAll(); // Select all rows to delete
+        } else {
+            return; // Exit if the user decides not to delete
+        }
+    } else {
+        // Confirm deletion of selected contents
+        reply = QMessageBox::question(this, "Delete Selected Contents", "Are you sure you want to delete the selected Content/s?",
+                                      QMessageBox::Yes | QMessageBox::Cancel);
+        if (reply != QMessageBox::Yes) {
+            return; // Exit if the user decides not to delete
+        }
+    }
+
+    QModelIndexList rows = ui->T_NachbuchungsanfragenListe->selectionModel()->selectedRows();
+    // Sort QModelIndexList in descending order by row numbers
+    std::sort(rows.begin(), rows.end(), [](const QModelIndex &a, const QModelIndex &b) {
+        return a.row() > b.row();
+    });
+
+    for (const QModelIndex &index : rows) {
+        int i = index.row();
         QString userId = ui->T_NachbuchungsanfragenListe->item(i, eCol_UserId)->text();
         QString orderId = ui->T_NachbuchungsanfragenListe->item(i, eCol_OrderId)->text();
 
@@ -741,8 +1020,47 @@ void P_SupportPage::on_pushButton_clicked()
         ui->T_NachbuchungsanfragenListe->removeRow(i);
     }
 
-    // Now, save the modified JSON object back to the file, outside the loop
+    // Save the modified JSON object back to the file
     QJsonDocument suppdoc(jObj);
     dataManager->json->save("NetworkSuppAnswers", suppdoc);
 }
 
+
+/*
+ *
+ * SLOTS - LineEdits
+ *
+ */
+
+void P_SupportPage::on_LE_expectedProv_Percent_editingFinished()
+{
+    double valueCalc = ui->LE_value->text().toDouble()*(ui->LE_expectedProv_Percent->text().toDouble()/100);
+    ui->LE_expectedProv_Currency->setText(QString::number(valueCalc,'f',2));
+}
+
+void P_SupportPage::on_LE_value_editingFinished()
+{
+    if(ui->RB_expProvPer->isChecked()){
+        on_LE_expectedProv_Percent_editingFinished();
+    }
+}
+
+/*
+ *
+ * SLOTS - RadioButtons
+ *
+ */
+
+void P_SupportPage::on_RB_expProvCur_clicked()
+{
+    ui->LE_expectedProv_Percent->clear();
+    ui->LE_expectedProv_Percent->setEnabled(false);
+    ui->LE_expectedProv_Currency->setEnabled(true);
+}
+
+void P_SupportPage::on_RB_expProvPer_clicked()
+{
+    ui->LE_expectedProv_Currency->clear();
+    ui->LE_expectedProv_Percent->setEnabled(true);
+    ui->LE_expectedProv_Currency->setEnabled(false);
+}
