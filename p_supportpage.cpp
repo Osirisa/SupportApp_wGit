@@ -177,6 +177,8 @@ void P_SupportPage::fillShopComboBox()
     QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
     QStringList comboBoxItems;
 
+    ui->CB_shop->clear();
+
     for (const QStringList &rowData : csvData) {
         QJsonDocument doc = dataManager->json->load(QString(rowData.at(2)));
 
@@ -193,7 +195,9 @@ void P_SupportPage::fillShopComboBox()
     }
 
     // Sort the items alphabetically
-    std::sort(comboBoxItems.begin(), comboBoxItems.end());
+    std::sort(comboBoxItems.begin(), comboBoxItems.end(), [](const QString &a, const QString &b) {
+        return QString::compare(a, b, Qt::CaseInsensitive) < 0;
+    });
 
     // Add sorted items to the combo box
     for (const QString &item : comboBoxItems) {
@@ -369,6 +373,7 @@ void P_SupportPage::setupComboBoxConnections()
                         ui->LE_expectedProv_Currency->setText(QString::number(valExpProv));
                         ui->RB_expProvCur->click();;
                     }
+                    ui->LE_value->editingFinished();
                     // Update UI elements as before
                     break; // Exit the loop once the correct commission is found
                 }
@@ -800,6 +805,7 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
             }
 
             addNStatButton(currentRow,nreply,netStatForObject);
+            ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_H_Nstat)->setText(QString::number(netStatForObject));
             break;
         }
     }
@@ -896,6 +902,7 @@ void P_SupportPage::on_pb_select_Orange_clicked()
     for (int currRow = 0; currRow < ui->T_NachbuchungsanfragenListe->rowCount(); ++currRow){
 
         if(ui->T_NachbuchungsanfragenListe->item(currRow,eCol_H_Nstat)->text().toInt() == eNstat_Okay){
+            qDebug()<<"notopk";
             ui->T_NachbuchungsanfragenListe->selectRow(currRow);
         }
     }
