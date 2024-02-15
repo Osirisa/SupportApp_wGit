@@ -107,6 +107,7 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int chann
             //fills up a AdvertiserData Structure with the needed Data -> specific the comissionID
             QJsonArray commissionsArray = advertiserObj["commissions"].toArray();
             QJsonArray newCommissionsArray;
+
             for(const QJsonValue& commissionValue : commissionsArray) {
                 QJsonObject commissionObj = commissionValue.toObject();
                 Commission commission;

@@ -7,6 +7,7 @@
 #include <QDate>
 
 #include "apimanager.h"
+#include "advertiserdata.h"
 #include "DataManager/datamanager.h"
 
 namespace Ui {
@@ -23,16 +24,28 @@ public:
 
     void refreshNetworkList();
 private:
+
+    //QT Stuff
     Ui::P_SupportPage *ui;
 
+    //Methods
     void initTable();
     void initPage();
     void initInputElements();
+    void fillTableWithJson();
     void fillShopComboBox();
+    void setupComboBoxConnections();
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
-    void setupComboBoxConnections();
-    void fillTableWithJson();
+
+    void addItemToTable(const SuppDetail& suppDetails, const bool addOrderToSessionJson);
+    void addNStatButton(const int currentRow,const QString& netReply, const suppNetStatus currentStat);
+    bool addItemToSessionJson(const SuppDetail& suppDetails);
+
+    void disableEditingForRow(const int currentRow);
+
+    suppNetStatus convStringTosuppNetStat(const QString& suppNetStatString);
+
     void outputRowsToCSV(const QString &fileName);
 
     //Custom Eventsubscribe
@@ -57,43 +70,15 @@ private:
     QList<QString> prefferedList;
     QList<QString> otherList;
 
-    //Enum for every column in the table for better Code transparency
-    enum ColumnIndexes{
-        eCol_Network        = 0,
-        eCol_Channel        = 1,
-        eCol_Shop           = 2,
-        eCol_Value          = 3,
-        eCol_ExpProv        = 4,
-        eCol_Currency       = 5,
-        eCol_OrderId        = 6,
-        eCol_UserId         = 7,
-        eCol_Date           = 8,
-        eCol_CommissionId   = 9,
-        eCol_CommissionType = 10,
-        eCol_DaysOld        = 11,
-        eCol_Networkstatus  = 12,
-        eCol_SendBTN        = 13,
-        eCol_DeleteBTN      = 14,
-        eCol_H_Nstat        = 15
-    };
 
-    enum suppNetStatus{
-        eNstat_NotSend      = 0,
-        eNstat_Good         = 1,
-        eNstat_Okay         = 2,
-        eNstat_Error        = 3
-    };
-
-    enum sortingStatus{
-        eSStat_None,
-        eSStat_Ascending,
-        eSStat_Descending
-    };
 
     sortingStatus sortStat_networkStat = eSStat_None;
     sortingStatus sortStat_shop = eSStat_None;
     sortingStatus sortStat_date = eSStat_None;
 
+    toggleTable toggleStatusTable = eTT_Normal;
+
+    AdvertiserData aD_advertData;
 public slots:
 private slots:
     void on_RB_expProvCur_clicked();
@@ -110,6 +95,10 @@ private slots:
     void on_PB_SortNetworkStatus_clicked();
     void on_PB_SortShop_clicked();
     void on_PB_SortDate_clicked();
+    void on_pb_select_Red_clicked();
+    void on_pb_select_90Days_clicked();
+    void on_pb_select_Orange_clicked();
+    void on_pb_select_Green_clicked();
 };
 
 #endif // P_SUPPORTPAGE_H

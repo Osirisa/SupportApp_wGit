@@ -639,11 +639,6 @@
         </property>
         <column>
          <property name="text">
-          <string>Network</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>Channel</string>
          </property>
         </column>
@@ -715,6 +710,21 @@
         <column>
          <property name="text">
           <string>Nstat(hidden)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Network</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ProgramID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>CommissionID</string>
          </property>
         </column>
        </widget>
@@ -858,30 +868,30 @@
       <item>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="pb_select_Red">
           <property name="text">
-           <string>PushButton</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="pb_select_90Days">
           <property name="text">
-           <string>PushButton</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="pb_select_Orange">
           <property name="text">
-           <string>PushButton</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="pb_select_Green">
           <property name="text">
-           <string>PushButton</string>
+           <string/>
           </property>
          </widget>
         </item>
