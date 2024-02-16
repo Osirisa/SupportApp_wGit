@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "suppeventbus.h"
 
 //-------------Constructor----------------
 MainWindow::MainWindow(QWidget *parent)
@@ -25,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Windows
     SetAPIKeyWindow = new SetAPIKey(dataManager,encryptionHelper, this);
     networkChannelWindow = new NetworkChannels(dataManager,this);
-    suppPage = new P_SupportPage(dataManager,apiManager,this);
+    suppPage = new P_SupportPageAdtraction(dataManager,apiManager,this);
 
     //Signal
     connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
@@ -35,7 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->setCurrentWidget(suppPage);
 
 
+    QObject::connect(SuppEventBus::instance(), &SuppEventBus::eventPublished, [this](const QString& eventName) {
+        if (eventName == "shopsUpdated") {
 
+            //qDebug() << "Received networkResponse:" << responseCode;
+            suppPage->refreshShops();
+
+        }
+    });
     updateNetworks();
    // ui->stackedWidget->addWidget();
 }
@@ -66,11 +74,6 @@ void MainWindow::updateNetworks()
         qDebug()<<QString(rowData.at(2));
     }
     suppPage->refreshNetworkList();
-}
-
-void MainWindow::forwardSuppMessage()
-{
-
 }
 
 //Private Slots

@@ -5,7 +5,7 @@
 #include "setapikey.h"
 #include "apimanager.h"
 #include "networkchannels.h"
-#include "p_supportpage.h"
+#include "p_supportpageAdtraction.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -24,7 +24,6 @@ public slots:
     void updateApiKey(const QString &newKey);
     void updateNetworks();
 
-    void forwardSuppMessage();
 private slots:
 
     void on_actionAPI_Key_triggered();
@@ -40,7 +39,7 @@ private:
     //Windows
     SetAPIKey* SetAPIKeyWindow;
     NetworkChannels* networkChannelWindow;
-    P_SupportPage* suppPage;
+    P_SupportPageAdtraction* suppPage;
 
     //GeneralClasses
     DataManager* dataManager;

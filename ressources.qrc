@@ -24,5 +24,11 @@
         <file>img/document_trans.png</file>
         <file>img/plusIcon.jpg</file>
         <file>img/plusIcon_trans.png</file>
+        <file>img/AdcellLogo_trans.png</file>
+        <file>img/adtractionLogo_trans.png</file>
+        <file>img/arrowCircle_black.png</file>
+        <file>img/AwinLogo_trans.png</file>
+        <file>img/CJ_Logo.png</file>
+        <file>img/WebGainsLogo.png</file>
     </qresource>
 </RCC>

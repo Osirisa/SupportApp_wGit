@@ -1,5 +1,5 @@
-#ifndef P_SUPPORTPAGE_H
-#define P_SUPPORTPAGE_H
+#ifndef P_SUPPORTPAGEADTRACTION_H
+#define P_SUPPORTPAGEADTRACTION_H
 
 #include <QWidget>
 #include <QTableWidgetItem>
@@ -11,22 +11,24 @@
 #include "DataManager/datamanager.h"
 
 namespace Ui {
-class P_SupportPage;
+class P_SupportPageAdtraction;
 }
 
-class P_SupportPage : public QWidget
+class P_SupportPageAdtraction : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit P_SupportPage(DataManager* dataManager,APIManager* apiManager,QWidget *parent = nullptr);
-    ~P_SupportPage();
+    explicit P_SupportPageAdtraction(DataManager* dataManager,APIManager* apiManager,QWidget *parent = nullptr);
+    ~P_SupportPageAdtraction();
 
     void refreshNetworkList();
+    void refreshShops();
+
 private:
 
     //QT Stuff
-    Ui::P_SupportPage *ui;
+    Ui::P_SupportPageAdtraction *ui;
 
     //Methods
     void initTable();
@@ -38,7 +40,7 @@ private:
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
 
-    void addItemToTable(const SuppDetail& suppDetails, const bool addOrderToSessionJson);
+    void addItemToTable(const SuppDetail& suppDetails, const bool addOrderToSessionJson, const QString& nStatText = "");
     void addNStatButton(const int currentRow,const QString& netReply, const suppNetStatus currentStat);
     bool addItemToSessionJson(const SuppDetail& suppDetails);
 
@@ -101,4 +103,4 @@ private slots:
     void on_pb_select_Green_clicked();
 };
 
-#endif // P_SUPPORTPAGE_H
+#endif // P_SUPPORTPAGEADTRACTION_H

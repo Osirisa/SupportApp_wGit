@@ -1,5 +1,5 @@
-#include "p_supportpage.h"
-#include "ui_p_supportpage.h"
+#include "p_supportpageAdtraction.h"
+#include "ui_p_supportpageAdtraction.h"
 #include "qjsonobject.h"
 #include <QJsonValue>
 #include <QJsonArray>
@@ -15,16 +15,16 @@
  *
  */
 
-P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
+P_SupportPageAdtraction::P_SupportPageAdtraction(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::P_SupportPage),
+    ui(new Ui::P_SupportPageAdtraction),
     dataManager(dataManager),
     apiManager(apiManager)
 {
     ui->setupUi(this);
 
     //init the whole Page (has to be on a delay, otherwise problem with fileloading)
-    QTimer::singleShot(300, this, &P_SupportPage::initPage);
+    QTimer::singleShot(300, this, &P_SupportPageAdtraction::initPage);
 
     //Eventbus connection
     QObject::connect(SuppEventBus::instance(), &SuppEventBus::eventPublished, [this](const QString& eventName, const QVariant& eventData1, const QVariant& eventData2, const QVariant& eventData3) {
@@ -40,7 +40,7 @@ P_SupportPage::P_SupportPage(DataManager* dataManager, APIManager* apiManager,QW
 }
 
 //Destructor
-P_SupportPage::~P_SupportPage()
+P_SupportPageAdtraction::~P_SupportPageAdtraction()
 {
     delete ui;
 }
@@ -52,8 +52,12 @@ P_SupportPage::~P_SupportPage()
  */
 
 //Inits all the Elements on the page
-void P_SupportPage::initPage()
+void P_SupportPageAdtraction::initPage()
 {
+
+    QPixmap networkPixmap(":/img/img/adtractionLogo_trans.png");
+    networkPixmap = networkPixmap.scaledToHeight(20*1.33, Qt::SmoothTransformation); //scale it down to 20pt
+    ui->L_NetworkNamePic->setPixmap(networkPixmap);
 
     //Fill Comboboxes
 
@@ -72,11 +76,11 @@ void P_SupportPage::initPage()
     setupComboBoxConnections();
     ui->CB_shop->activated(ui->CB_shop->currentIndex());
 
-    QTimer::singleShot(300, this, &P_SupportPage::fillTableWithJson);
+    QTimer::singleShot(300, this, &P_SupportPageAdtraction::fillTableWithJson);
 }
 
 //Inits the Table (Column Size)
-void P_SupportPage::initTable()
+void P_SupportPageAdtraction::initTable()
 {
     //standard size is 150 for the columns
     for(int i=0;i<ui->T_NachbuchungsanfragenListe->columnCount();++i){
@@ -108,7 +112,7 @@ void P_SupportPage::initTable()
 }
 
 //Sets up all the input elements
-void P_SupportPage::initInputElements()
+void P_SupportPageAdtraction::initInputElements()
 {
 
     QDoubleValidator *dvalidator = new QDoubleValidator(this);
@@ -172,7 +176,7 @@ void P_SupportPage::initInputElements()
 }
 
 //Fills the shop Combobox with the shops from Adtraction
-void P_SupportPage::fillShopComboBox()
+void P_SupportPageAdtraction::fillShopComboBox()
 {
     QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
     QStringList comboBoxItems;
@@ -206,7 +210,7 @@ void P_SupportPage::fillShopComboBox()
 }
 
 //Fills the Currency Combobox with all the Currencies from Adtraction
-void P_SupportPage::fillCurrencyComboBox()
+void P_SupportPageAdtraction::fillCurrencyComboBox()
 {
     //load the CurrencyFile for adtraction
     cur = dataManager->json->load("currenciesAdtraction");
@@ -236,7 +240,7 @@ void P_SupportPage::fillCurrencyComboBox()
 }
 
 //Fills the Network Combobox with all the ChannelIDs Inputted in the Adtraction->ChannelIds Window
-void P_SupportPage::fillNetworkComboBox()
+void P_SupportPageAdtraction::fillNetworkComboBox()
 {
     ui->CB_Network->clear();
 
@@ -269,7 +273,7 @@ void P_SupportPage::fillNetworkComboBox()
 }
 
 //Sets up the Connections from the ShopCombobox to the CommissionId and the CommissionId to the Expected Commission [Currency] / %
-void P_SupportPage::setupComboBoxConnections()
+void P_SupportPageAdtraction::setupComboBoxConnections()
 {
 
     connect(ui->CB_shop, QOverload<int>::of(&QComboBox::activated),[this](int) {
@@ -383,7 +387,7 @@ void P_SupportPage::setupComboBoxConnections()
 }
 
 //on Startup fills the Table with the last session / if not deleted
-void P_SupportPage::fillTableWithJson() {
+void P_SupportPageAdtraction::fillTableWithJson() {
 
     QJsonDocument suppAnswers = dataManager->json->load("NetworkSuppAnswers");
 
@@ -405,19 +409,13 @@ void P_SupportPage::fillTableWithJson() {
 
             QJsonObject orderObj = ordersValue.toObject();
 
-            int colonSpaceIndex = ui->CB_shop->currentText().indexOf(": ");
-            QString channel;
-            if(colonSpaceIndex != -1){
-                channel = ui->CB_shop->currentText().mid(colonSpaceIndex + 3); // +3 to skip ": ("
-                channel = channel.removeLast();
-            }
-
+            QString channel         = orderObj["channel"].toString();
             QString shop            = orderObj["shop"].toString();
             QString value           = orderObj["value"].toString();
             QString expProv         = orderObj["expProv"].toString();
             QString currency        = orderObj["currency"].toString();
             QString orderId         = orderObj["orderID"].toString();
-            QString juserId          = userID;
+            QString juserId         = userID;
             QString date            = orderObj["date"].toString();
             QString commissionText  = orderObj["commissionText"].toString();
             QString suppType        = orderObj["suppType"].toString();
@@ -426,7 +424,7 @@ void P_SupportPage::fillTableWithJson() {
             QString commissionId    = orderObj["comissionID"].toString();
 
             QString nStat=QString::number(eNstat_NotSend);
-
+            QString nStatText = orderObj["networkReply"].toString();
             if(!orderObj["networkStatusCode"].isNull()){
 
                 QString responseCode = orderObj["networkStatusCode"].toString();
@@ -445,7 +443,7 @@ void P_SupportPage::fillTableWithJson() {
             }
             SuppDetail tableSuppDetails(channel,shop,value,expProv,currency,orderId,juserId,date,commissionText,suppType,nStat,network,programId,commissionId);
 
-            addItemToTable(tableSuppDetails,false);
+            addItemToTable(tableSuppDetails,false, nStatText);
         }
     }
 }
@@ -456,9 +454,14 @@ void P_SupportPage::fillTableWithJson() {
  *
  */
 
-void P_SupportPage::refreshNetworkList()
+void P_SupportPageAdtraction::refreshNetworkList()
 {
     fillNetworkComboBox();
+}
+
+void P_SupportPageAdtraction::refreshShops()
+{
+    fillShopComboBox();
 }
 
 /*
@@ -467,7 +470,7 @@ void P_SupportPage::refreshNetworkList()
  *
  */
 
-suppNetStatus P_SupportPage::convStringTosuppNetStat(const QString& suppNetStatString)
+suppNetStatus P_SupportPageAdtraction::convStringTosuppNetStat(const QString& suppNetStatString)
 {
     if (suppNetStatString == "0") {
         return eNstat_NotSend;
@@ -484,7 +487,7 @@ suppNetStatus P_SupportPage::convStringTosuppNetStat(const QString& suppNetStatS
     }
 }
 
-void P_SupportPage::addItemToTable(const SuppDetail &suppDetails, const bool addOrderToSessionJson)
+void P_SupportPageAdtraction::addItemToTable(const SuppDetail &suppDetails, const bool addOrderToSessionJson, const QString &nStatText)
 {
     bool success = true;
     if(addOrderToSessionJson){
@@ -518,7 +521,7 @@ void P_SupportPage::addItemToTable(const SuppDetail &suppDetails, const bool add
 
         //qDebug()<<suppDetails.nStat;
         suppNetStatus networkSatusForCurrObj = convStringTosuppNetStat(suppDetails.nStat);
-        addNStatButton(actRowCount,"",networkSatusForCurrObj);
+        addNStatButton(actRowCount,nStatText,networkSatusForCurrObj);
 
         QPushButton *sendBTN = new QPushButton;
         QPixmap sendPixmap(":/img/img/Send_trans.png");
@@ -534,12 +537,12 @@ void P_SupportPage::addItemToTable(const SuppDetail &suppDetails, const bool add
 
         disableEditingForRow(actRowCount);
 
-        QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPage::on_deleteBTNTable_clicked);
-        QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPage::on_sendBTNTable_clicked);
+        QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPageAdtraction::on_deleteBTNTable_clicked);
+        QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPageAdtraction::on_sendBTNTable_clicked);
     }
 }
 
-void P_SupportPage::addNStatButton(const int currentRow,const QString &netReply ,const suppNetStatus currentStat)
+void P_SupportPageAdtraction::addNStatButton(const int currentRow,const QString &netReply ,const suppNetStatus currentStat)
 {
     QPushButton *networkStatusBTN = new QPushButton;
 
@@ -591,7 +594,7 @@ void P_SupportPage::addNStatButton(const int currentRow,const QString &netReply 
     }
 }
 
-bool P_SupportPage::addItemToSessionJson(const SuppDetail &suppDetails)
+bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails)
 {
 
 
@@ -692,7 +695,7 @@ bool P_SupportPage::addItemToSessionJson(const SuppDetail &suppDetails)
     return true;
 }
 
-void P_SupportPage::disableEditingForRow(const int currentRow)
+void P_SupportPageAdtraction::disableEditingForRow(const int currentRow)
 {
     for(int column = 0; column < ui->T_NachbuchungsanfragenListe->columnCount();++column){
 
@@ -705,7 +708,7 @@ void P_SupportPage::disableEditingForRow(const int currentRow)
 
 }
 
-void P_SupportPage::outputRowsToCSV(const QString &fileName)
+void P_SupportPageAdtraction::outputRowsToCSV(const QString &fileName)
 {
     QList<QTableWidgetSelectionRange> rowSelections = ui->T_NachbuchungsanfragenListe->selectedRanges();
     QList<QStringList> csvData;
@@ -761,7 +764,7 @@ void P_SupportPage::outputRowsToCSV(const QString &fileName)
 }
 
 //Event after the request was received from the server
-void P_SupportPage::networkRequestMessageReceived(const QString responseCode, const QString userId, const QString orderId)
+void P_SupportPageAdtraction::networkRequestMessageReceived(const QString responseCode, const QString userId, const QString orderId)
 {
     QJsonDocument suppAnswers = dataManager->json->load("NetworkSuppAnswers");
     QJsonObject jObj;
@@ -821,7 +824,7 @@ void P_SupportPage::networkRequestMessageReceived(const QString responseCode, co
 
 //---Toggle and Sort---
 //Toggle specific Columns to be visible
-void P_SupportPage::on_pb_toggleTable_clicked()
+void P_SupportPageAdtraction::on_pb_toggleTable_clicked()
 {
 
     switch(toggleStatusTable){
@@ -866,7 +869,7 @@ void P_SupportPage::on_pb_toggleTable_clicked()
     }
 }
 
-void P_SupportPage::on_pb_select_90Days_clicked()
+void P_SupportPageAdtraction::on_pb_select_90Days_clicked()
 {
     ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
     ui->T_NachbuchungsanfragenListe->clearSelection();
@@ -880,7 +883,7 @@ void P_SupportPage::on_pb_select_90Days_clicked()
     ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
-void P_SupportPage::on_pb_select_Red_clicked()
+void P_SupportPageAdtraction::on_pb_select_Red_clicked()
 {
     ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
     ui->T_NachbuchungsanfragenListe->clearSelection();
@@ -894,7 +897,7 @@ void P_SupportPage::on_pb_select_Red_clicked()
     ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
-void P_SupportPage::on_pb_select_Orange_clicked()
+void P_SupportPageAdtraction::on_pb_select_Orange_clicked()
 {
     ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
     ui->T_NachbuchungsanfragenListe->clearSelection();
@@ -909,7 +912,7 @@ void P_SupportPage::on_pb_select_Orange_clicked()
     ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
-void P_SupportPage::on_pb_select_Green_clicked()
+void P_SupportPageAdtraction::on_pb_select_Green_clicked()
 {
     ui->T_NachbuchungsanfragenListe->clearSelection();
 
@@ -922,7 +925,7 @@ void P_SupportPage::on_pb_select_Green_clicked()
 }
 
 //Sort by NetworkStatus
-void P_SupportPage::on_PB_SortNetworkStatus_clicked()
+void P_SupportPageAdtraction::on_PB_SortNetworkStatus_clicked()
 {
     switch(sortStat_networkStat){
     case eSStat_None:
@@ -953,7 +956,7 @@ void P_SupportPage::on_PB_SortNetworkStatus_clicked()
 }
 
 //Sort by Shop
-void P_SupportPage::on_PB_SortShop_clicked()
+void P_SupportPageAdtraction::on_PB_SortShop_clicked()
 {
     switch(sortStat_shop){
     case eSStat_None:
@@ -984,7 +987,7 @@ void P_SupportPage::on_PB_SortShop_clicked()
 }
 
 //Sort by Date
-void P_SupportPage::on_PB_SortDate_clicked()
+void P_SupportPageAdtraction::on_PB_SortDate_clicked()
 {
     switch(sortStat_date){
     case eSStat_None:
@@ -1019,7 +1022,7 @@ void P_SupportPage::on_PB_SortDate_clicked()
 //------------------
 
 //Inserting, Sending, Deleting direct out of the table
-void P_SupportPage::on_PB_AddToList_clicked()
+void P_SupportPageAdtraction::on_PB_AddToList_clicked()
 {
     if(ui->LE_orderId->text().isEmpty() || ui->LE_User->text().isEmpty() || ui->LE_value->text().isEmpty() || ui->LE_expectedProv_Currency->text().isEmpty()){
 
@@ -1064,7 +1067,7 @@ void P_SupportPage::on_PB_AddToList_clicked()
 }
 
 //deleting one Element from the Table directly
-void P_SupportPage::on_deleteBTNTable_clicked()
+void P_SupportPageAdtraction::on_deleteBTNTable_clicked()
 {
     QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
     QJsonObject jObj;
@@ -1109,7 +1112,7 @@ void P_SupportPage::on_deleteBTNTable_clicked()
 }
 
 //sending one Element from the Table directly
-void P_SupportPage::on_sendBTNTable_clicked(){
+void P_SupportPageAdtraction::on_sendBTNTable_clicked(){
 
     int row = ui->T_NachbuchungsanfragenListe->currentRow();
 
@@ -1158,7 +1161,7 @@ void P_SupportPage::on_sendBTNTable_clicked(){
 }
 
 //Sending selection / all
-void P_SupportPage::on_PB_SendOverAPI_clicked()
+void P_SupportPageAdtraction::on_PB_SendOverAPI_clicked()
 {
     bool filter = true;
     //Checks if the Table has at least one Entry
@@ -1236,7 +1239,7 @@ void P_SupportPage::on_PB_SendOverAPI_clicked()
 
 //Exporting selection / all
 //goes into windows explorer to get the path to save
-void P_SupportPage::on_PB_ExportList_clicked()
+void P_SupportPageAdtraction::on_PB_ExportList_clicked()
 {
 
     //Checks if the Table has at least one Entry
@@ -1272,7 +1275,7 @@ void P_SupportPage::on_PB_ExportList_clicked()
 }
 
 //Deleting selection / all
-void P_SupportPage::on_pb_deleteAll_clicked()
+void P_SupportPageAdtraction::on_pb_deleteAll_clicked()
 {
     QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
     QJsonObject jObj;
@@ -1351,13 +1354,13 @@ void P_SupportPage::on_pb_deleteAll_clicked()
  *
  */
 
-void P_SupportPage::on_LE_expectedProv_Percent_editingFinished()
+void P_SupportPageAdtraction::on_LE_expectedProv_Percent_editingFinished()
 {
     double valueCalc = ui->LE_value->text().toDouble()*(ui->LE_expectedProv_Percent->text().toDouble()/100);
     ui->LE_expectedProv_Currency->setText(QString::number(valueCalc,'f',2));
 }
 
-void P_SupportPage::on_LE_value_editingFinished()
+void P_SupportPageAdtraction::on_LE_value_editingFinished()
 {
     if(ui->RB_expProvPer->isChecked()){
         on_LE_expectedProv_Percent_editingFinished();
@@ -1370,14 +1373,14 @@ void P_SupportPage::on_LE_value_editingFinished()
  *
  */
 
-void P_SupportPage::on_RB_expProvCur_clicked()
+void P_SupportPageAdtraction::on_RB_expProvCur_clicked()
 {
     ui->LE_expectedProv_Percent->clear();
     ui->LE_expectedProv_Percent->setEnabled(false);
     ui->LE_expectedProv_Currency->setEnabled(true);
 }
 
-void P_SupportPage::on_RB_expProvPer_clicked()
+void P_SupportPageAdtraction::on_RB_expProvPer_clicked()
 {
     ui->LE_expectedProv_Currency->clear();
     ui->LE_expectedProv_Percent->setEnabled(true);

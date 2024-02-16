@@ -142,6 +142,7 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int chann
         qWarning() << "Network request failed:" << reply->errorString();
     }
     reply->deleteLater();
+    SuppEventBus::instance()->publish("shopsUpdated");
 }
 
 

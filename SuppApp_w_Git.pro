@@ -21,7 +21,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     networkmanager.cpp \
-    p_supportpage.cpp \
+    p_supportpageAdtraction.cpp \
     setapikey.cpp \
     suppeventbus.cpp
 
@@ -37,14 +37,14 @@ HEADERS += \
     encryptionhelper.h \
     mainwindow.h \
     networkmanager.h \
-    p_supportpage.h \
+    p_supportpageAdtraction.h \
     setapikey.h \
     suppeventbus.h
 
 FORMS += \
     networkchannels.ui \
     mainwindow.ui \
-    p_supportpage.ui \
+    p_supportpageAdtraction.ui \
     setapikey.ui
 
 # Default rules for deployment.
