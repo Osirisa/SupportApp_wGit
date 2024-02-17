@@ -21,9 +21,9 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     networkmanager.cpp \
-    p_supportpageAdtraction.cpp \
     setapikey.cpp \
-    suppeventbus.cpp
+    suppeventbus.cpp \
+    supportPages/p_supportpageAdtraction.cpp
 
 HEADERS += \
     APIData.h \
@@ -37,15 +37,15 @@ HEADERS += \
     encryptionhelper.h \
     mainwindow.h \
     networkmanager.h \
-    p_supportpageAdtraction.h \
     setapikey.h \
-    suppeventbus.h
+    suppeventbus.h \
+    supportPages/p_supportpageAdtraction.h
 
 FORMS += \
     networkchannels.ui \
     mainwindow.ui \
-    p_supportpageAdtraction.ui \
-    setapikey.ui
+    setapikey.ui \
+    supportPages/p_supportpageAdtraction.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

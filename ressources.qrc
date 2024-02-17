@@ -24,11 +24,26 @@
         <file>img/document_trans.png</file>
         <file>img/plusIcon.jpg</file>
         <file>img/plusIcon_trans.png</file>
+        <file>img/arrowCircle_black.png</file>
+        <file>img/Zahnrad.jpg</file>
+        <file>img/Zahnrad_trans.png</file>
+        <file>img/Haus.jpg</file>
+        <file>img/Haus_trans.png</file>
+        <file>img/statistics_color_Trans.png</file>
+        <file>img/statistics_Trans.png</file>
+        <file>img/Buecher.jpg</file>
+        <file>img/Buecher_trans.png</file>
+        <file>img/Buecher_trans_pink.png</file>
+        <file>img/networkstatusPic__colortrans.png</file>
+        <file>img/networkstatusPic_trans.png</file>
+        <file>img/addFolder_orNetwork.png</file>
+    </qresource>
+    <qresource prefix="/Logos">
         <file>img/AdcellLogo_trans.png</file>
         <file>img/adtractionLogo_trans.png</file>
-        <file>img/arrowCircle_black.png</file>
         <file>img/AwinLogo_trans.png</file>
         <file>img/CJ_Logo.png</file>
+        <file>img/tradeDoublerLogo_trans.png</file>
         <file>img/WebGainsLogo.png</file>
     </qresource>
 </RCC>

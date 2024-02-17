@@ -26,26 +26,27 @@ MainWindow::MainWindow(QWidget *parent)
     //Windows
     SetAPIKeyWindow = new SetAPIKey(dataManager,encryptionHelper, this);
     networkChannelWindow = new NetworkChannels(dataManager,this);
-    suppPage = new P_SupportPageAdtraction(dataManager,apiManager,this);
+    adtractionSuppPage = new P_SupportPageAdtraction(dataManager,apiManager,this);
 
     //Signal
     connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
     connect(networkChannelWindow,SIGNAL(onNetworkDataSaved()),this,SLOT(updateNetworks()));
 
-    ui->stackedWidget->addWidget(suppPage);
-    ui->stackedWidget->setCurrentWidget(suppPage);
+    ui->stackedWidget->addWidget(adtractionSuppPage);
+    ui->stackedWidget->setCurrentWidget(adtractionSuppPage);
 
 
     QObject::connect(SuppEventBus::instance(), &SuppEventBus::eventPublished, [this](const QString& eventName) {
         if (eventName == "shopsUpdated") {
 
             //qDebug() << "Received networkResponse:" << responseCode;
-            suppPage->refreshShops();
+            adtractionSuppPage->refreshShops();
 
         }
     });
     updateNetworks();
-   // ui->stackedWidget->addWidget();
+
+    initUI();
 }
 
 //-------------Destructor----------------
@@ -73,7 +74,7 @@ void MainWindow::updateNetworks()
         dataManager->registerFile(QString(rowData.at(2)),"dataAdtraction/"+QString(rowData.at(2)+".json"));
         qDebug()<<QString(rowData.at(2));
     }
-    suppPage->refreshNetworkList();
+    adtractionSuppPage->refreshNetworkList();
 }
 
 //Private Slots
@@ -117,6 +118,25 @@ void MainWindow::on_actionUpdate_Currencies_triggered()
 
 void MainWindow::on_actionUpdate_All_triggered()
 {
+
+}
+
+void MainWindow::initUI()
+{
+    //General Buttons
+    ui->PB_Home_Page->setIcon(QIcon(":/img/img/Haus_trans.png"));
+    ui->PB_settings_Page->setIcon(QIcon(":/img/img/Zahnrad_trans.png"));
+    ui->PB_statistics_Page->setIcon(QIcon(":/img/img/statistics_color_Trans.png"));
+    ui->PB_networkStatus_Page->setIcon(QIcon(":/img/img/networkstatusPic__colortrans.png"));
+    ui->PB_archiv_Page->setIcon(QIcon(":/img/img/Buecher_trans.png"));
+
+    //NetworkButtons
+    ui->PB_adcell_suppPageBTN->setIcon(QIcon(":/Logos/img/AdcellLogo_trans.png"));
+    ui->PB_adtraction_suppPage->setIcon(QIcon(":/Logos/img/adtractionLogo_trans.png"));
+    ui->PB_awin_suppPage->setIcon(QIcon(":/Logos/img/AwinLogo_trans.png"));
+    ui->PB_cj_suppPage->setIcon(QIcon(":/Logos/img/CJ_Logo.png"));
+    ui->PB_tradeDoubler_suppPage->setIcon(QIcon(":/Logos/img/tradeDoublerLogo_trans.png"));
+    ui->PB_webgains_suppPage->setIcon(QIcon(":/Logos/img/WebGainsLogo.png"));
 
 }
 

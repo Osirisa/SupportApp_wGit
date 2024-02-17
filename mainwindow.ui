@@ -40,6 +40,38 @@
         <number>10</number>
        </property>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="PB_Home_Page">
+           <property name="text">
+            <string>Home</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="PB_statistics_Page">
+           <property name="text">
+            <string>Statistics</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="PB_archiv_Page">
+         <property name="text">
+          <string>Archiv</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -53,7 +85,14 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="PB_adcell_suppPageBTN">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>7</horstretch>
@@ -66,7 +105,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="PB_adtraction_suppPage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>7</horstretch>
@@ -79,7 +118,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="PB_awin_suppPage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>7</horstretch>
@@ -92,7 +131,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="PB_cj_suppPage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>7</horstretch>
@@ -105,14 +144,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_9">
+        <widget class="QPushButton" name="PB_tradeDoubler_suppPage">
          <property name="text">
           <string>TradeDoubler</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_5">
+        <widget class="QPushButton" name="PB_webgains_suppPage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>7</horstretch>
@@ -125,25 +164,9 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_2">
+        <widget class="Line" name="line_3">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Minimum</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>80</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_8">
-         <property name="text">
-          <string>Archiv</string>
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -161,30 +184,41 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_6">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>7</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Settings</string>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_7">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>7</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Network Status</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="PB_settings_Page">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>7</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Settings</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="PB_networkStatus_Page">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>7</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Network Status</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -240,15 +274,30 @@
      <property name="title">
       <string>AdTraction</string>
      </property>
+     <property name="icon">
+      <iconset resource="ressources.qrc">
+       <normaloff>:/Logos/img/adtractionLogo_trans.png</normaloff>:/Logos/img/adtractionLogo_trans.png</iconset>
+     </property>
      <addaction name="actionUpdate_Shops"/>
      <addaction name="actionUpdate_Currencies"/>
      <addaction name="separator"/>
      <addaction name="actionAPI_Key"/>
      <addaction name="actionAdd_ChannelIds"/>
     </widget>
+    <widget class="QMenu" name="menuAwin">
+     <property name="title">
+      <string>Awin</string>
+     </property>
+     <property name="icon">
+      <iconset resource="ressources.qrc">
+       <normaloff>:/Logos/img/AwinLogo_trans.png</normaloff>:/Logos/img/AwinLogo_trans.png</iconset>
+     </property>
+     <addaction name="actionUpdateShops"/>
+     <addaction name="actionUpdate_Currencies_2"/>
+    </widget>
     <addaction name="actionAdcell"/>
     <addaction name="menuAdTraction"/>
-    <addaction name="actionAwin"/>
+    <addaction name="menuAwin"/>
     <addaction name="actionCJ"/>
     <addaction name="actionTradeDoubler"/>
     <addaction name="actionWebgains"/>
@@ -270,12 +319,11 @@
    <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAwin">
-   <property name="text">
-    <string>Awin</string>
-   </property>
-  </action>
   <action name="actionCJ">
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/Logos/img/CJ_Logo.png</normaloff>:/Logos/img/CJ_Logo.png</iconset>
+   </property>
    <property name="text">
     <string>CJ</string>
    </property>
@@ -321,6 +369,10 @@
    </property>
   </action>
   <action name="actionUpdate_All">
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/img/img/arrowCircle_black.png</normaloff>:/img/img/arrowCircle_black.png</iconset>
+   </property>
    <property name="text">
     <string>Update All</string>
    </property>
@@ -331,6 +383,10 @@
    </property>
   </action>
   <action name="actionChannelIDs">
+   <property name="icon">
+    <iconset theme="accessories-calculator" resource="ressources.qrc">
+     <normaloff>:/img/img/addFolder_orNetwork.png</normaloff>:/img/img/addFolder_orNetwork.png</iconset>
+   </property>
    <property name="text">
     <string>ChannelIDs</string>
    </property>
@@ -346,21 +402,45 @@
    </property>
   </action>
   <action name="actionTradeDoubler">
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/Logos/img/tradeDoublerLogo_trans.png</normaloff>:/Logos/img/tradeDoublerLogo_trans.png</iconset>
+   </property>
    <property name="text">
     <string>TradeDoubler</string>
    </property>
   </action>
   <action name="actionWebgains">
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/Logos/img/WebGainsLogo.png</normaloff>:/Logos/img/WebGainsLogo.png</iconset>
+   </property>
    <property name="text">
     <string>Webgains</string>
    </property>
   </action>
   <action name="actionAdcell">
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/Logos/img/AdcellLogo_trans.png</normaloff>:/Logos/img/AdcellLogo_trans.png</iconset>
+   </property>
    <property name="text">
     <string>Adcell</string>
    </property>
   </action>
+  <action name="actionUpdateShops">
+   <property name="text">
+    <string>UpdateShops</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Currencies_2">
+   <property name="text">
+    <string>Update Currencies</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="ressources.qrc"/>
+ </resources>
  <connections/>
 </ui>

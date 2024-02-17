@@ -5,7 +5,8 @@
 #include "setapikey.h"
 #include "apimanager.h"
 #include "networkchannels.h"
-#include "p_supportpageAdtraction.h"
+
+#include "supportPages/p_supportpageAdtraction.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -36,10 +37,12 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    void initUI();
+
     //Windows
     SetAPIKey* SetAPIKeyWindow;
     NetworkChannels* networkChannelWindow;
-    P_SupportPageAdtraction* suppPage;
+    P_SupportPageAdtraction* adtractionSuppPage;
 
     //GeneralClasses
     DataManager* dataManager;

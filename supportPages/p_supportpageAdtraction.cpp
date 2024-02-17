@@ -1,5 +1,7 @@
-#include "p_supportpageAdtraction.h"
+
+#include "supportPages/p_supportpageAdtraction.h"
 #include "ui_p_supportpageAdtraction.h"
+
 #include "qjsonobject.h"
 #include <QJsonValue>
 #include <QJsonArray>
@@ -55,7 +57,7 @@ P_SupportPageAdtraction::~P_SupportPageAdtraction()
 void P_SupportPageAdtraction::initPage()
 {
 
-    QPixmap networkPixmap(":/img/img/adtractionLogo_trans.png");
+    QPixmap networkPixmap(":/Logos/img/adtractionLogo_trans.png");
     networkPixmap = networkPixmap.scaledToHeight(20*1.33, Qt::SmoothTransformation); //scale it down to 20pt
     ui->L_NetworkNamePic->setPixmap(networkPixmap);
 
