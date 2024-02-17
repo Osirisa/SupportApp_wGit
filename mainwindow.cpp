@@ -138,5 +138,18 @@ void MainWindow::initUI()
     ui->PB_tradeDoubler_suppPage->setIcon(QIcon(":/Logos/img/tradeDoublerLogo_trans.png"));
     ui->PB_webgains_suppPage->setIcon(QIcon(":/Logos/img/WebGainsLogo.png"));
 
+    //General Buttons
+    ui->PB_Home_Page->setDisabled(true);
+    ui->PB_settings_Page->setDisabled(true);
+    ui->PB_statistics_Page->setDisabled(true);
+    ui->PB_networkStatus_Page->setDisabled(true);
+    ui->PB_archiv_Page->setDisabled(true);
+
+    //NetworkButtons
+    ui->PB_adcell_suppPageBTN->setDisabled(true);
+    ui->PB_awin_suppPage->setDisabled(true);
+    ui->PB_cj_suppPage->setDisabled(true);
+    ui->PB_tradeDoubler_suppPage->setDisabled(true);
+    ui->PB_webgains_suppPage->setDisabled(true);
 }
 
