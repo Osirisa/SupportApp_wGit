@@ -41,7 +41,7 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
 
 
 //Sends a Post-Request to the server with the needed information to get all the accepted shops in the selected market.
-void AdtractionAPI::updateAdvertisers(int channelId)
+void AdtractionAPI::updateAdvertisers(int channelId, const QString &marketRegion)
 {
     //takes the endpoint and adds the apiToken
     QString endpoint = QString("https://api.adtraction.com/v3/partner/programs/?token=%1").arg(apiToken);
@@ -49,7 +49,7 @@ void AdtractionAPI::updateAdvertisers(int channelId)
     QJsonObject json;
     json.insert("channelId", channelId);        // current channelId of rewardo. ch/de/at, standard.at...
     json.insert("approvalStatus", 1);           // 0 rejected, 1 approved, 2 pending review
-    json.insert("market", "CH");                // market: CH AT DE
+    json.insert("market", marketRegion);                // market: CH AT DE
     json.insert("status", 0);                   // 0 Live, 3 closing
 
     //gets the reply from the server and saves it into a QNetworkReply object
@@ -237,4 +237,29 @@ void AdtractionAPI::onSuppDataRequestFinished(QNetworkReply *reply,QString epi, 
     }
 
     SuppEventBus::instance()->publish("networkResponse",QString::number(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()),epi,orderId);
+}
+
+void AdtractionAPI::updateRegions()
+{
+    QNetworkReply* reply = networkManager->sendGetRequest("https://api.adtraction.com/v2/partner/markets/", apiToken);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        onRegionsRequestFinished(reply);
+    });
+}
+
+void AdtractionAPI::onRegionsRequestFinished(QNetworkReply *reply)
+{
+    if(reply->error() == QNetworkReply::NoError) {
+
+        //gets the reply and copies it onto a QBytearray
+        QByteArray responseData = reply->readAll();
+
+        //saves it into a JSONDOC
+        QJsonDocument replyJsonDoc = QJsonDocument::fromJson(responseData);
+        dataManager->json->save("AdtractionRegions",replyJsonDoc);
+        SuppEventBus::instance()->publish("adtractionRegionsUpdated");
+    } else {
+        qWarning() << "Network request failed:" << reply->errorString();
+    }
+    reply->deleteLater();
 }

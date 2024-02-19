@@ -18,9 +18,10 @@ public:
     public:
         explicit UpdateAdvs(Adtraction* parent);
 
+        void regions();
         void currencies();
         void deleteAdvertisers();
-        void byChannel(int channelID) override;
+        void byChannel(int channelID,const QString &channelRegion) override;
 
     protected:
         Adtraction* parentAdtraction;

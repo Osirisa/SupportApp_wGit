@@ -41,12 +41,17 @@
      </column>
      <column>
       <property name="text">
-       <string>ChannelName</string>
+       <string>Name</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>ChannelID</string>
+       <string>ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Region</string>
       </property>
      </column>
      <column>
@@ -71,13 +76,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QComboBox" name="CB_NWC_Network"/>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>Update Channels</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </item>
@@ -109,7 +107,7 @@
        <item>
         <widget class="QLabel" name="L_NWC_ChannelID">
          <property name="text">
-          <string>ChannelID</string>
+          <string>Channel ID</string>
          </property>
         </widget>
        </item>
@@ -122,6 +120,20 @@
           </sizepolicy>
          </property>
         </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="L_NWC_regions">
+         <property name="text">
+          <string>Region</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="CB_NWC_regions"/>
        </item>
       </layout>
      </item>

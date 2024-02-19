@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include "qjsonarray.h"
+#include "qjsonobject.h"
 #include "ui_mainwindow.h"
 #include "suppeventbus.h"
 
@@ -15,13 +17,13 @@ MainWindow::MainWindow(QWidget *parent)
     dataManager = new DataManager(this);
 
     //TBD: FileManager dataBank or soemthing like that
-    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
     dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
     dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
+    dataManager->registerFile("AdtractionRegions","dataAdtraction/adtractionRegions.json");
+    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
     dataManager->registerFile("NetworkSuppAnswers","Admin/NetworkSuppAnswers.json");
 
     apiManager = new APIManager(dataManager,encryptionHelper);
-
 
     //Windows
     SetAPIKeyWindow = new SetAPIKey(dataManager,encryptionHelper, this);
@@ -44,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
 
         }
     });
+
     updateNetworks();
 
     initUI();
@@ -60,7 +63,7 @@ MainWindow::~MainWindow()
 }
 
 //Public Slots
-void MainWindow::updateApiKey(const QString &newKey)
+void MainWindow::updateApiKey(const QString& newKey)
 {
     apiManager->refreshApiManager();
 }
@@ -89,24 +92,42 @@ void MainWindow::on_actionAPI_Key_triggered()
 void MainWindow::on_actionUpdate_Shops_triggered()
 {
     QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+    QJsonDocument marketRegionsAdtraction = dataManager->json->load("AdtractionRegions");
 
+    QJsonArray marketArray = marketRegionsAdtraction.array();
+
+
+    QString marketShort;
     for (const QStringList &rowData : csvData) {
-        apiManager->adtraction->updater.byChannel(rowData.at(2).toInt());
+        for(int i = 0; i< marketArray.size(); ++i){
+            QJsonObject marketObject = marketArray[i].toObject();
+
+            if(rowData.at(3) == marketObject["marketName"].toString()){
+                marketShort = marketObject["market"].toString();
+                break;
+            }
+        }
+
+        apiManager->adtraction->updater.byChannel(rowData.at(2).toInt(),marketShort);
     }
 }
 
 
 void MainWindow::on_actionAdd_ChannelIds_triggered()
 {
+    updateRegions();
     networkChannelWindow->setModal(true);
     networkChannelWindow->exec();
+
 }
 
 
 void MainWindow::on_actionChannelIDs_triggered()
 {
+    updateRegions();
     networkChannelWindow->setModal(true);
     networkChannelWindow->exec();
+
 }
 
 
@@ -151,5 +172,10 @@ void MainWindow::initUI()
     ui->PB_cj_suppPage->setDisabled(true);
     ui->PB_tradeDoubler_suppPage->setDisabled(true);
     ui->PB_webgains_suppPage->setDisabled(true);
+}
+
+void MainWindow::updateRegions()
+{
+    apiManager->adtraction->updater.regions();
 }
 

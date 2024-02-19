@@ -23,7 +23,7 @@ public:
     void FillLE();
 
     signals:
-    void apiKeyChanged(const QString &newKey);
+    void apiKeyChanged(const QString& newKey);
 
 private slots:
     void on_PB_Cancel_clicked();

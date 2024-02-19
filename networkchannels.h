@@ -25,9 +25,7 @@ private slots:
     void on_addButton_clicked();
     void on_saveButton_clicked();
     void on_deleteBTN_clicked();
-
     void on_PB_NWC_Cancel_clicked();
-
     void updateTableWidget();
 
 private:
@@ -39,7 +37,10 @@ private:
     void loadChannelsFromCsv();
     void sortTableWidget();
     void fillComboBox();
+    void setupRegionsComboBox();
     void addDeleteButton(int row);
+    void initUiElements();
+
 };
 
 #endif // NETWORKCHANNELS_H

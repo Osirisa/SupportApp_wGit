@@ -19,7 +19,7 @@ public:
 
     public:
         explicit UpdateAdvertisersBase(BaseNetwork* parent) : QObject(parent), parentNetwork(parent) {}
-        virtual void byChannel(int channelID) {}
+        virtual void byChannel(int channelID, const QString &channelRegion) {}
         virtual void allChannels() {}
 
     protected:

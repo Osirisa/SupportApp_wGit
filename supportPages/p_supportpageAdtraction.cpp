@@ -176,7 +176,38 @@ void P_SupportPageAdtraction::initInputElements()
     ui->pb_select_90Days->setIcon(i_select_90Days);
     ui->pb_select_90Days->setToolTip("Selects all the Supports which are older than 90 Days");
 }
+//Fills the Network Combobox with all the ChannelIDs Inputted in the Adtraction->ChannelIds Window
+void P_SupportPageAdtraction::fillNetworkComboBox()
+{
+    ui->CB_Network->clear();
 
+    QStringList allNetworks;
+    QStringList networkPlusALL;
+
+    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+
+    for (const QStringList &rowData : csvData) {
+
+        if(!(networkPlusALL.contains(rowData.at(0)+": ALL"))){
+            networkPlusALL.append(rowData.at(0)+": ALL");
+        }
+    }
+    // Populate the table with this data
+    for (const QStringList &rowData : csvData) {
+
+        QString CombinedText = rowData.at(0)+ ": " + rowData.at(1);
+        allNetworks.append(CombinedText);
+    }
+
+    for (int i=0; i< networkPlusALL.size();++i){
+        allNetworks.append(networkPlusALL.at(i));
+    }
+
+    allNetworks.sort();
+    for (int i=0; i< allNetworks.size();++i){
+        ui->CB_Network->addItem(allNetworks.at(i));
+    }
+}
 //Fills the shop Combobox with the shops from Adtraction
 void P_SupportPageAdtraction::fillShopComboBox()
 {
@@ -238,39 +269,6 @@ void P_SupportPageAdtraction::fillCurrencyComboBox()
     }
     for(const QString &currency : otherList){
         ui->CB_Currency->addItem(currency);
-    }
-}
-
-//Fills the Network Combobox with all the ChannelIDs Inputted in the Adtraction->ChannelIds Window
-void P_SupportPageAdtraction::fillNetworkComboBox()
-{
-    ui->CB_Network->clear();
-
-    QStringList allNetworks;
-    QStringList networkPlusALL;
-
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
-
-    for (const QStringList &rowData : csvData) {
-
-        if(!(networkPlusALL.contains(rowData.at(0)+": ALL"))){
-            networkPlusALL.append(rowData.at(0)+": ALL");
-        }
-    }
-    // Populate the table with this data
-    for (const QStringList &rowData : csvData) {
-
-        QString CombinedText = rowData.at(0)+ ": " + rowData.at(1);
-        allNetworks.append(CombinedText);
-    }
-
-    for (int i=0; i< networkPlusALL.size();++i){
-        allNetworks.append(networkPlusALL.at(i));
-    }
-
-    allNetworks.sort();
-    for (int i=0; i< allNetworks.size();++i){
-        ui->CB_Network->addItem(allNetworks.at(i));
     }
 }
 

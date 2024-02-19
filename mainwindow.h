@@ -22,7 +22,7 @@ public:
     ~MainWindow();
 
 public slots:
-    void updateApiKey(const QString &newKey);
+    void updateApiKey(const QString& newKey);
     void updateNetworks();
 
 private slots:
@@ -38,6 +38,7 @@ private:
     Ui::MainWindow *ui;
 
     void initUI();
+    void updateRegions();
 
     //Windows
     SetAPIKey* SetAPIKeyWindow;

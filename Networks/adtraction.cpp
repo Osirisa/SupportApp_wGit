@@ -32,6 +32,11 @@ void Adtraction::initApi()
 Adtraction::UpdateAdvs::UpdateAdvs(Adtraction* parent)
     : UpdateAdvertisersBase(parent), parentAdtraction(parent) {}
 
+void Adtraction::UpdateAdvs::regions()
+{
+    parentAdtraction->adtractionAPI->updateRegions();
+}
+
 void Adtraction::UpdateAdvs::currencies()
 {
     if(parentAdtraction->adtractionAPI){
@@ -44,8 +49,8 @@ void Adtraction::UpdateAdvs::deleteAdvertisers()
     parentAdtraction->adtractionAPI->deleteAdvertiser();
 }
 
-void Adtraction::UpdateAdvs::byChannel(int channelID) {
-    parentAdtraction->adtractionAPI->updateAdvertisers(channelID);
+void Adtraction::UpdateAdvs::byChannel(int channelID, const QString &channelRegion) {
+    parentAdtraction->adtractionAPI->updateAdvertisers(channelID,channelRegion);
 }
 
 
