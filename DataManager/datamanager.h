@@ -10,6 +10,7 @@
 #include <QTextStream>
 #include <QStringList>
 #include <QMap>
+#include <QStandardPaths>
 
 /*--------------
  * Name: DataManager
@@ -73,6 +74,8 @@ public:
     TxtManager *txt;
 
 private:
+    QString standardAppDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
     QMap<QString, QString> fileMap; // Map to associate keys with file names.
 
     // Converts a list of string lists to a CSV byte array.

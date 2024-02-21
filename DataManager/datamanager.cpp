@@ -10,6 +10,11 @@ DataManager::DataManager(QObject *parent) : QObject(parent) {
     json = new JsonManager(this);
     csv = new CsvManager(this);
     txt = new TxtManager(this);
+
+    QDir dir(standardAppDataPath);
+    if (!dir.exists()) {
+        dir.mkpath(standardAppDataPath);
+    }
 }
 
 /*--------------
@@ -48,17 +53,22 @@ bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
 
     QString filePath = fileMap[key]; // Assume fileMap contains an absolute path
 
-    QFileInfo fileInfo(filePath);
-    if (!fileInfo.isAbsolute()) {
+
+    if (!QFileInfo(filePath).isAbsolute()) {
         // If not an absolute path, then prepend the executable's directory
-        QString exeDir = QCoreApplication::applicationDirPath();
-        filePath = exeDir + "/" + filePath;
+        filePath = standardAppDataPath + "/" + filePath;
+        qDebug()<<filePath;
     }
 
+    QFileInfo fileInfo(filePath);
     QDir dir;
     // Check if the directory exists, create it if it doesn't
     if (!dir.exists(fileInfo.dir().absolutePath())) {
         dir.mkpath(fileInfo.dir().absolutePath());
+        qDebug()<<"Test";
+    }
+    else{
+        qDebug()<< fileInfo.dir().absolutePath();
     }
 
     QFile file(filePath);
@@ -75,8 +85,7 @@ bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
 }
 
 bool DataManager::appendToFile(const QString &key, const QByteArray &data) {
-    QString exeDir = QCoreApplication::applicationDirPath(); // Get the executable's directory
-    QString filePath = exeDir + "/" + fileMap[key]; // Construct the absolute file path
+    QString filePath = standardAppDataPath + "/" + fileMap[key]; // Construct the absolute file path
 
     QFile file(filePath);
     QFileInfo fileInfo(file.fileName());
@@ -107,8 +116,8 @@ bool DataManager::appendToFile(const QString &key, const QByteArray &data) {
  * Return: QByteArray: The data loaded from the file.
  *-----------------*/
 QByteArray DataManager::loadFromFile(const QString &key) {
-    QString exeDir = QCoreApplication::applicationDirPath(); // Get the executable's directory
-    QString filePath = exeDir + "/" + fileMap[key]; // Construct the absolute file path
+
+    QString filePath = standardAppDataPath + "/" + fileMap[key]; // Construct the absolute file path
 
     QFile file(filePath);
     if (!file.exists()) {
