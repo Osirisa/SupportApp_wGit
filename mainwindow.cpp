@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
     dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
     dataManager->registerFile("AdtractionRegions","dataAdtraction/adtractionRegions.json");
-    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.csv");
+    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.json");
     dataManager->registerFile("NetworkSuppAnswers","Admin/NetworkSuppAnswers.json");
 
     apiManager = new APIManager(dataManager,encryptionHelper);
@@ -70,13 +70,24 @@ void MainWindow::updateApiKey(const QString& newKey)
 
 void MainWindow::updateNetworks()
 {
+    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonObject networksObj = networksDoc.object();
 
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+    for (auto network = networksObj.begin(); network != networksObj.end(); ++network) {
+        // Each network's key is the network name, and its value is another JSON object containing channels
+        QJsonObject channelsObj = network.value().toObject();
 
-    for (const QStringList &rowData : csvData) {
-        dataManager->registerFile(QString(rowData.at(2)),"dataAdtraction/"+QString(rowData.at(2)+".json"));
-        qDebug()<<QString(rowData.at(2));
+        // Iterate through each channel in the network
+        for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+            // Each channel's key is the channel ID, and its value is another JSON object containing channel details
+            QJsonObject channelDetails = channel.value().toObject();
+
+            // Extract channel details
+            QString channelID = channel.key();
+            dataManager->registerFile(network.key()+channelID,"dataAdtraction/"+ network.key()+channelID +".json");
+        }
     }
+
     adtractionSuppPage->refreshNetworkList();
 }
 
@@ -91,24 +102,41 @@ void MainWindow::on_actionAPI_Key_triggered()
 
 void MainWindow::on_actionUpdate_Shops_triggered()
 {
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonObject networksObj = networksDoc.object();
+
     QJsonDocument marketRegionsAdtraction = dataManager->json->load("AdtractionRegions");
 
     QJsonArray marketArray = marketRegionsAdtraction.array();
 
 
     QString marketShort;
-    for (const QStringList &rowData : csvData) {
-        for(int i = 0; i< marketArray.size(); ++i){
-            QJsonObject marketObject = marketArray[i].toObject();
 
-            if(rowData.at(3) == marketObject["marketName"].toString()){
-                marketShort = marketObject["market"].toString();
-                break;
+    for (auto network = networksObj.begin(); network != networksObj.end(); ++network) {
+        // Each network's key is the network name, and its value is another JSON object containing channels
+        QJsonObject channelsObj = network.value().toObject();
+
+        // Iterate through each channel in the network
+        for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+            // Each channel's key is the channel ID, and its value is another JSON object containing channel details
+            QJsonObject channelDetails = channel.value().toObject();
+
+            // Extract channel details
+            QString channelID = channel.key();
+            QString channelName = channelDetails["channelName"].toString();
+            QString channelRegion = channelDetails["channelRegion"].toString();
+
+            for(int i = 0; i< marketArray.size(); ++i){
+                QJsonObject marketObject = marketArray[i].toObject();
+
+                if(channelRegion == marketObject["marketName"].toString()){
+                    marketShort = marketObject["market"].toString();
+                    break;
+                }
             }
-        }
 
-        apiManager->adtraction->updater.byChannel(rowData.at(2).toInt(),marketShort);
+            apiManager->adtraction->updater.byChannel(channelID.toInt(),marketShort);
+        }
     }
 }
 

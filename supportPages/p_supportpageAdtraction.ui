@@ -405,32 +405,20 @@
             </widget>
            </item>
            <item>
-            <widget class="QFrame" name="A_Tophalf_4">
+            <widget class="QFrame" name="B_BottomHalf_2">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>1</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_10">
-              <property name="leftMargin">
-               <number>9</number>
-              </property>
-              <property name="topMargin">
-               <number>9</number>
-              </property>
-              <property name="rightMargin">
-               <number>9</number>
-              </property>
-              <property name="bottomMargin">
-               <number>9</number>
-              </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="L_Currency">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
+                  <verstretch>1</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="font">
@@ -439,15 +427,15 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Network</string>
+                 <string>Währung</string>
                 </property>
                 <property name="buddy">
-                 <cstring>CB_Network</cstring>
+                 <cstring>CB_Currency</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="CB_Network">
+               <widget class="QComboBox" name="CB_Currency">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -455,7 +443,7 @@
                  </sizepolicy>
                 </property>
                 <property name="editable">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -531,52 +519,6 @@
               </item>
               <item>
                <widget class="QLineEdit" name="LE_orderId"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="B_BottomHalf_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>2</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QLabel" name="L_Currency">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>1</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>14</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Währung</string>
-                </property>
-                <property name="buddy">
-                 <cstring>CB_Currency</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="CB_Currency">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>1</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="editable">
-                 <bool>true</bool>
-                </property>
-               </widget>
               </item>
              </layout>
             </widget>
@@ -719,6 +661,19 @@
              </layout>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="PB_AddToList">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Add</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -850,23 +805,63 @@
        <number>10</number>
       </property>
       <item>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Channel</string>
+        </property>
+        <property name="buddy">
+         <cstring>CB_Network</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="CB_Network">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Search</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLineEdit" name="LE_SearchBar">
         <property name="text">
          <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="PB_AddToList">
-        <property name="text">
-         <string>Add</string>
         </property>
        </widget>
       </item>
@@ -1107,7 +1102,6 @@
   <tabstop>LE_expectedProv_Currency</tabstop>
   <tabstop>RB_expProvPer</tabstop>
   <tabstop>LE_expectedProv_Percent</tabstop>
-  <tabstop>CB_Network</tabstop>
   <tabstop>CB_ComissionID</tabstop>
   <tabstop>LE_orderId</tabstop>
   <tabstop>CB_Currency</tabstop>
@@ -1116,7 +1110,6 @@
   <tabstop>CB_SuppType</tabstop>
   <tabstop>T_NachbuchungsanfragenListe</tabstop>
   <tabstop>LE_SearchBar</tabstop>
-  <tabstop>PB_AddToList</tabstop>
   <tabstop>PB_SendOverAPI</tabstop>
   <tabstop>PB_ExportList</tabstop>
   <tabstop>pb_deleteAll</tabstop>

@@ -37,6 +37,8 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
         qWarning() << "Network request failed:" << reply->errorString();
     }
     reply->deleteLater();
+
+    SuppEventBus::instance()->publish("currenciesUpdated");
 }
 
 
@@ -136,7 +138,7 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int chann
 
         // Create a new JSON document from the modified array and save it
         QJsonDocument newJsonDoc(newAdvertisersArray);
-        dataManager->json->save(QString::number(channelID), newJsonDoc);
+        dataManager->json->save("Adtraction"+QString::number(channelID), newJsonDoc);
         emit advertisersUpdated(m_advertisers);
     } else {
         qWarning() << "Network request failed:" << reply->errorString();

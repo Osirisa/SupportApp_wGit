@@ -31,10 +31,12 @@ private slots:
 private:
     Ui::NetworkChannels* ui;
     DataManager* dataManager;
-    void addEntryToTable();
-    void saveChannelsToCsv();
 
-    void loadChannelsFromCsv();
+    void addEntryToTable();
+
+    void saveChannelsToJson();
+    void loadChannelsFromJson();
+
     void sortTableWidget();
     void fillComboBox();
     void setupRegionsComboBox();

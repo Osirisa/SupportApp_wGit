@@ -64,35 +64,44 @@ void NetworkChannels::on_addButton_clicked() {
 }
 
 void NetworkChannels::on_saveButton_clicked() {
-    saveChannelsToCsv();
+    saveChannelsToJson();
     hide();
 }
 
-void NetworkChannels::saveChannelsToCsv() {
+void NetworkChannels::saveChannelsToJson() {
 
-    QList<QStringList> csvData;
+    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonObject networksObj = networksDoc.object();
 
-    dataManager->csv->save("NetworkChannels", csvData);
+    for(int row = 0; row < ui->T_NWC_NetworkChannels->rowCount(); ++row){
 
-    for(int row = 0; row < ui->T_NWC_NetworkChannels->rowCount();++row){
-        QStringList rowData;
-        for (int column = 0; column < (ui->T_NWC_NetworkChannels->columnCount()-1);++column){
+        QString network = ui->T_NWC_NetworkChannels->item(row, eColCh_Network)->text();
+        QString channelID = ui->T_NWC_NetworkChannels->item(row, eColCh_ChannelId)->text();
+        QString channelName = ui->T_NWC_NetworkChannels->item(row, eColCh_ChannelName)->text();
+        QString channelRegion = ui->T_NWC_NetworkChannels->item(row, eColCh_ChannelRegion)->text();
 
-            QTableWidgetItem *item = ui->T_NWC_NetworkChannels->item(row,column);
-            rowData <<(item ? item->text() : QString());
+        QJsonObject channelDetails;
+        channelDetails["channelName"] = channelName;
+        channelDetails["channelRegion"] = channelRegion;
 
+        QJsonObject networkObj;
+        if(networksObj.contains(network)){
+            networkObj = networksObj[network].toObject();
         }
-        csvData.append(rowData);
+        networkObj.insert(channelID, channelDetails);
+        networksObj.insert(network, networkObj);            // Make sure the updated networkObj is put back into networksObj
     }
 
-    dataManager->csv->save("NetworkChannels", csvData);
+    QJsonDocument jsonDoc(networksObj);
+    dataManager->json->save("NetworkChannels", jsonDoc);
+
     emit onNetworkDataSaved();
 }
 
 void NetworkChannels::fillComboBox()
 {
 
-    QStringList channels = {"Adcell", "Adtraction", "AWIN", "Webgains", "CJ", "TradeDoubler", "Adcell"};
+    QStringList channels = {"Adcell", "Adtraction", "AWIN", "Webgains", "CJ", "TradeDoubler"};
 
     // Sort the list alphabetically
     std::sort(channels.begin(), channels.end());
@@ -199,19 +208,47 @@ void NetworkChannels::sortTableWidget() {
     ui->T_NWC_NetworkChannels->setSortingEnabled(true);
 }
 
-void NetworkChannels::loadChannelsFromCsv() {
-    // Load your CSV data into a QList<QStringList>
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+void NetworkChannels::loadChannelsFromJson() {
 
-    // Populate the table with this data
-    for (const QStringList &rowData : csvData) {
-        int rowCount = ui->T_NWC_NetworkChannels->rowCount();
-        ui->T_NWC_NetworkChannels->insertRow(rowCount);
-        for (int column = 0; column < rowData.size(); ++column) {
-            ui->T_NWC_NetworkChannels->setItem(rowCount, column, new QTableWidgetItem(rowData.at(column)));
+    // Clear existing rows in the table
+    ui->T_NWC_NetworkChannels->setRowCount(0);
+
+    // Load the JSON document
+    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonObject networksObj = networksDoc.object();
+
+    // Iterate through each network in the JSON object
+    for (auto network = networksObj.begin(); network != networksObj.end(); ++network) {
+        // Each network's key is the network name, and its value is another JSON object containing channels
+        QJsonObject channelsObj = network.value().toObject();
+
+        // Iterate through each channel in the network
+        for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+            // Each channel's key is the channel ID, and its value is another JSON object containing channel details
+            QJsonObject channelDetails = channel.value().toObject();
+
+            // Extract channel details
+            QString channelID = channel.key();
+            QString channelName = channelDetails["channelName"].toString();
+            QString channelRegion = channelDetails["channelRegion"].toString();
+
+            // Insert a new row at the end of the table
+            int newRow = ui->T_NWC_NetworkChannels->rowCount();
+            ui->T_NWC_NetworkChannels->insertRow(newRow);
+
+            // Create new QTableWidgetItem for each piece of data
+            QTableWidgetItem *newNetworkItem = new QTableWidgetItem(network.key());
+            QTableWidgetItem *newChannelIDItem = new QTableWidgetItem(channelID);
+            QTableWidgetItem *newChannelNameItem = new QTableWidgetItem(channelName);
+            QTableWidgetItem *newChannelRegionItem = new QTableWidgetItem(channelRegion);
+
+            // Add the items to the table
+            ui->T_NWC_NetworkChannels->setItem(newRow, eColCh_Network, newNetworkItem);
+            ui->T_NWC_NetworkChannels->setItem(newRow, eColCh_ChannelId, newChannelIDItem);
+            ui->T_NWC_NetworkChannels->setItem(newRow, eColCh_ChannelName, newChannelNameItem);
+            ui->T_NWC_NetworkChannels->setItem(newRow, eColCh_ChannelRegion, newChannelRegionItem);
         }
     }
-    // Sort the table after loading the data
     sortTableWidget();
 }
 
@@ -224,6 +261,25 @@ void NetworkChannels::addDeleteButton(int row) {
 
     connect(deleteBTN, &QPushButton::clicked, this, [this, row]() {
 
+        QString channelID = ui->T_NWC_NetworkChannels->item(row, eColCh_ChannelId)->text();
+        QString networkName = ui->T_NWC_NetworkChannels->item(row, eColCh_Network)->text();
+
+        QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+        QJsonObject networksObj = networksDoc.object();
+
+        if (networksObj.contains(networkName)) {
+            // Get the network object
+            QJsonObject networkObj = networksObj[networkName].toObject();
+
+            // Remove the channel from the network object
+            networkObj.remove(channelID);
+
+            // Update the network object in the main JSON object
+            networksObj[networkName] = networkObj;
+
+            // Assuming you have a method to save your JSON object, for example:
+            // saveJson(networksObj); // Implement this function to save the modified JSON object
+        }
         ui->T_NWC_NetworkChannels->removeRow(row);
         sortTableWidget();
     });
@@ -245,13 +301,13 @@ void NetworkChannels::initUiElements()
 void NetworkChannels::on_PB_NWC_Cancel_clicked()
 {
     ui->T_NWC_NetworkChannels->setRowCount(0);
-    loadChannelsFromCsv();
+    loadChannelsFromJson();
     hide();
 }
 
 void NetworkChannels::updateTableWidget()
 {
-    loadChannelsFromCsv();
+    loadChannelsFromJson();
 }
 
 

@@ -35,7 +35,7 @@ private:
     void initPage();
     void initInputElements();
     void fillTableWithJson();
-    void fillShopComboBox();
+    void fillShopComboBox(QString &channel,QString &channelID);
     void setupComboBoxConnections();
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
@@ -101,6 +101,7 @@ private slots:
     void on_pb_select_90Days_clicked();
     void on_pb_select_Orange_clicked();
     void on_pb_select_Green_clicked();
+    void on_LE_SearchBar_textChanged(const QString &arg1);
 };
 
 #endif // P_SUPPORTPAGEADTRACTION_H

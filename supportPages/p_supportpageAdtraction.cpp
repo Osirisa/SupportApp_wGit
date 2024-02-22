@@ -39,6 +39,12 @@ P_SupportPageAdtraction::P_SupportPageAdtraction(DataManager* dataManager, APIMa
             networkRequestMessageReceived(responseCode, userId, orderId);
         }
     });
+    QObject::connect(SuppEventBus::instance(), &SuppEventBus::eventPublished, [this](const QString& eventName){
+        if (eventName == "currenciesUpdated") {
+            fillCurrencyComboBox();
+        }
+    });
+
 }
 
 //Destructor
@@ -67,7 +73,6 @@ void P_SupportPageAdtraction::initPage()
     //TBD:
     ui->CB_SuppType->addItem("Untracked");
 
-    fillShopComboBox();
     fillCurrencyComboBox();
     fillNetworkComboBox();
 
@@ -76,6 +81,8 @@ void P_SupportPageAdtraction::initPage()
     initInputElements();
 
     setupComboBoxConnections();
+
+    ui->CB_Network->activated(0);
     ui->CB_shop->activated(ui->CB_shop->currentIndex());
 
     QTimer::singleShot(300, this, &P_SupportPageAdtraction::fillTableWithJson);
@@ -115,8 +122,7 @@ void P_SupportPageAdtraction::initTable()
 
 //Sets up all the input elements
 void P_SupportPageAdtraction::initInputElements()
-{
-
+{    
     QDoubleValidator *dvalidator = new QDoubleValidator(this);
     ui->LE_value->setValidator(dvalidator);
     ui->LE_expectedProv_Currency->setValidator(dvalidator);
@@ -181,57 +187,86 @@ void P_SupportPageAdtraction::fillNetworkComboBox()
 {
     ui->CB_Network->clear();
 
-    QStringList allNetworks;
-    QStringList networkPlusALL;
+    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonObject networksObj = networksDoc.object();
 
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
+    // Each network's key is the network name, and its value is another JSON object containing channels
+    QJsonObject channelsObj = networksObj["Adtraction"].toObject();
 
-    for (const QStringList &rowData : csvData) {
+    QStringList cbItems;
+    QHash<QString,QString> channelChannelIDMap;
+    // Iterate through each channel in the network
+    for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+        // Each channel's key is the channel ID, and its value is another JSON object containing channel details
+        QJsonObject channelDetails = channel.value().toObject();
 
-        if(!(networkPlusALL.contains(rowData.at(0)+": ALL"))){
-            networkPlusALL.append(rowData.at(0)+": ALL");
+        // Extract channel details
+        QString channelID = channel.key();
+        QString channelName = channelDetails["channelName"].toString();
+
+        cbItems.append(channelName);
+        channelChannelIDMap.insert(channelName,channelID);
         }
-    }
-    // Populate the table with this data
-    for (const QStringList &rowData : csvData) {
 
-        QString CombinedText = rowData.at(0)+ ": " + rowData.at(1);
-        allNetworks.append(CombinedText);
-    }
+    cbItems.sort(Qt::CaseInsensitive);
+    ui->CB_Network->addItem("All");
 
-    for (int i=0; i< networkPlusALL.size();++i){
-        allNetworks.append(networkPlusALL.at(i));
-    }
-
-    allNetworks.sort();
-    for (int i=0; i< allNetworks.size();++i){
-        ui->CB_Network->addItem(allNetworks.at(i));
+    for(QString &cbItem : cbItems){
+        QString extraText = channelChannelIDMap.value(cbItem);
+        ui->CB_Network->addItem(cbItem, QVariant(extraText));
     }
 }
+
 //Fills the shop Combobox with the shops from Adtraction
-void P_SupportPageAdtraction::fillShopComboBox()
+void P_SupportPageAdtraction::fillShopComboBox(QString &fi_channel, QString &fi_channelID)
 {
-    QList<QStringList> csvData = dataManager->csv->load("NetworkChannels");
     QStringList comboBoxItems;
 
+    channelToId.clear();
+
     ui->CB_shop->clear();
+    if(fi_channel == "All"){
 
-    for (const QStringList &rowData : csvData) {
-        QJsonDocument doc = dataManager->json->load(QString(rowData.at(2)));
+        QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+        QJsonObject networksObj = networksDoc.object();
+        QJsonObject channelsObj = networksObj["Adtraction"].toObject();
 
-        for(const QJsonValue &value : doc.array()){
+        for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+            // Each channel's key is the channel ID, and its value is another JSON object containing channel details
+            QJsonObject channelDetails = channel.value().toObject();
+
+            // Extract channel details
+            QString channelID = channel.key();
+            QString channelName = channelDetails["channelName"].toString();
+
+            QJsonDocument channelShopsDoc = dataManager->json->load("Adtraction"+channelID);
+
+            for(const QJsonValue &value : channelShopsDoc.array()){
+                QJsonObject obj = value.toObject();
+                shopToProgramIdHash.insert(obj["programName"].toString(), obj["programId"].toInt());
+
+                // Collect items in the list
+                comboBoxItems.append(obj["programName"].toString() + ": (" + channelName + ")");
+
+            }
+            channelToId.insert(channelName,channelID);
+            allDocs.insert(channelID,channelShopsDoc);
+        }
+    }
+    else{
+        QJsonDocument channelShopsDoc = dataManager->json->load("Adtraction"+fi_channelID);
+
+        for(const QJsonValue &value : channelShopsDoc.array()){
             QJsonObject obj = value.toObject();
             shopToProgramIdHash.insert(obj["programName"].toString(), obj["programId"].toInt());
 
             // Collect items in the list
-            comboBoxItems.append(obj["programName"].toString() + ": (" + rowData.at(1) + ")");
+            comboBoxItems.append(obj["programName"].toString() + ": (" + fi_channel + ")");
         }
 
-        channelToId.insert(rowData.at(1), rowData.at(2));
-        allDocs.insert(rowData.at(2), doc);
+        channelToId.insert(fi_channel,fi_channelID);
     }
 
-    // Sort the items alphabetically
     std::sort(comboBoxItems.begin(), comboBoxItems.end(), [](const QString &a, const QString &b) {
         return QString::compare(a, b, Qt::CaseInsensitive) < 0;
     });
@@ -384,6 +419,16 @@ void P_SupportPageAdtraction::setupComboBoxConnections()
             }
         }
     });
+
+    connect(ui->CB_Network, QOverload<int>::of(&QComboBox::activated), [this](int index) {
+
+        QVariant channelIdInvisible = ui->CB_Network->itemData(index,Qt::UserRole);
+        QString channelId = channelIdInvisible.toString();
+        QString channel = ui->CB_Network->itemText(index);
+
+        fillShopComboBox(channel,channelId);
+        ui->CB_shop->activated(0);
+    });
 }
 
 //on Startup fills the Table with the last session / if not deleted
@@ -461,7 +506,8 @@ void P_SupportPageAdtraction::refreshNetworkList()
 
 void P_SupportPageAdtraction::refreshShops()
 {
-    fillShopComboBox();
+    ui->CB_Network->setCurrentIndex(0);
+    ui->CB_Network->activated(0);
 }
 
 /*
@@ -1201,7 +1247,7 @@ void P_SupportPageAdtraction::on_PB_SendOverAPI_clicked()
                 }
             }
             else if(!(ui->T_NachbuchungsanfragenListe->item(row,eCol_H_Nstat)->text().toInt() == eNstat_NotSend ||
-                         ui->T_NachbuchungsanfragenListe->item(row,eCol_H_Nstat)->text().toInt() == eNstat_Error)){
+                       ui->T_NachbuchungsanfragenListe->item(row,eCol_H_Nstat)->text().toInt() == eNstat_Error)){
                 continue;
             }
 
@@ -1265,13 +1311,34 @@ void P_SupportPageAdtraction::on_PB_ExportList_clicked()
             return;
         }
     }
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save CSV"), QDir::homePath(),tr("CSV Files (*.csv"));
-    if(!fileName.isEmpty()){
-        if(!fileName.endsWith(".csv",Qt::CaseInsensitive)){
-            fileName+= ".csv";
+
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);           // Allows selection of any file, existing or not
+    dialog.setAcceptMode(QFileDialog::AcceptSave);      // Set the dialog to save mode
+    dialog.setWindowTitle(tr("Save CSV"));
+    dialog.setDirectory(QDir::homePath());
+    dialog.setNameFilter(tr("CSV Files (*.csv)"));
+    dialog.setDefaultSuffix("csv");                     // Ensure the file is saved with a .csv extension
+
+    if(dialog.exec() == QDialog::Accepted) {
+        QString fileName = dialog.selectedFiles().first();
+        if (!fileName.isEmpty()) {
+            // Check if the file ends with .csv, add if not
+            if (!fileName.endsWith(".csv", Qt::CaseInsensitive)) {
+                fileName += ".csv";
+            }
+            outputRowsToCSV(fileName);
         }
-        outputRowsToCSV(fileName);
     }
+
+    //****OLD*****//
+    // QString fileName = QFileDialog::getSaveFileName(this, tr("Save CSV"), QDir::homePath(),tr("CSV Files (*.csv"));
+    // if(!fileName.isEmpty()){
+    //     if(!fileName.endsWith(".csv",Qt::CaseInsensitive)){
+    //         fileName+= ".csv";
+    //     }
+    //     outputRowsToCSV(fileName);
+    // }
 }
 
 //Deleting selection / all
@@ -1386,3 +1453,19 @@ void P_SupportPageAdtraction::on_RB_expProvPer_clicked()
     ui->LE_expectedProv_Percent->setEnabled(true);
     ui->LE_expectedProv_Currency->setEnabled(false);
 }
+
+void P_SupportPageAdtraction::on_LE_SearchBar_textChanged(const QString &arg1)
+{
+    for (int i = 0; i < ui->T_NachbuchungsanfragenListe->rowCount(); ++i) {
+        bool match = false;
+        for (int j = 0; j < ui->T_NachbuchungsanfragenListe->columnCount(); ++j) {
+            QTableWidgetItem *item = ui->T_NachbuchungsanfragenListe->item(i, j);
+            if (item && item->text().contains(arg1, Qt::CaseInsensitive)) {
+                match = true;
+                break; // No need to check other columns if we have a match
+            }
+        }
+        ui->T_NachbuchungsanfragenListe->setRowHidden(i, !match); // Hide the row if there is no match
+    }
+}
+
