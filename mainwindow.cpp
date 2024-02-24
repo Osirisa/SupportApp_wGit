@@ -2,6 +2,8 @@
 #include "qjsonarray.h"
 #include "qjsonobject.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
+#include <QProcess>
 #include "suppeventbus.h"
 
 //-------------Constructor----------------
@@ -205,5 +207,56 @@ void MainWindow::initUI()
 void MainWindow::updateRegions()
 {
     apiManager->adtraction->updater.regions();
+}
+
+
+void MainWindow::on_actionUpdate_triggered()
+{
+    checkForApplicationUpdates();
+}
+
+void MainWindow::checkForApplicationUpdates()
+{
+    QUrl versionUrl("https://osirisa.github.io/updates/updatesSuppHelper/extra/currentVersion.txt");
+    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+    connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::onVersionCheckFinished);
+    manager->get(QNetworkRequest(versionUrl));
+}
+
+void MainWindow::onVersionCheckFinished(QNetworkReply* reply)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        QString latestVersion = QString::fromUtf8(reply->readAll().trimmed());
+        QString currentVersion = QApplication::applicationVersion();
+
+        if (latestVersion > currentVersion) {
+            // New version is available
+            launchMaintenanceTool();
+
+        } else {
+            // No new version available
+            QMessageBox::information(this,"Current Version is up to Date","The Current Version is up to Date!");
+        }
+    }
+    reply->deleteLater();
+}
+
+void MainWindow::launchMaintenanceTool()
+{
+    QString maintenanceToolPath = QCoreApplication::applicationDirPath() + QDir::separator() + "maintenancetool";
+
+#ifdef Q_OS_WIN
+    maintenanceToolPath += ".exe";
+#endif
+
+    if (!QFile::exists(maintenanceToolPath)) {
+        qDebug() << "Maintenance Tool does not exist.";
+        return;
+    }
+
+    QStringList arguments;
+    arguments << "--updater";
+
+    QProcess::startDetached(maintenanceToolPath, arguments);
 }
 

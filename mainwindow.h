@@ -33,10 +33,15 @@ private slots:
     void on_actionChannelIDs_triggered();
     void on_actionUpdate_Currencies_triggered();
     void on_actionUpdate_All_triggered();
+    void on_actionUpdate_triggered();
+    void onVersionCheckFinished(QNetworkReply* reply);
 
 private:
     Ui::MainWindow *ui;
 
+
+    void checkForApplicationUpdates();
+    void launchMaintenanceTool();
     void initUI();
     void updateRegions();
 
