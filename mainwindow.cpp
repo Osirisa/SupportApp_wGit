@@ -231,6 +231,7 @@ void MainWindow::onVersionCheckFinished(QNetworkReply* reply)
 
         if (latestVersion > currentVersion) {
             // New version is available
+            //QMessageBox::information(this,"Current Version is up to Date","The Current Version is up to Date! current vers:" + currentVersion + "latest vers:" +latestVersion);
             launchMaintenanceTool();
 
         } else {

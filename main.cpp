@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QIcon appIcon(":/img/img/appLogo.png");
     a.setWindowIcon(appIcon);
     QCoreApplication::setApplicationName("SupportHelper");
-    QCoreApplication::setApplicationVersion("0.1.0");
+    QCoreApplication::setApplicationVersion("0.2.1");
     QCoreApplication::setOrganizationName("Osirisa Software");
 
     MainWindow w;
