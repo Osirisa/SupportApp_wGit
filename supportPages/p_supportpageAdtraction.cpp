@@ -206,7 +206,7 @@ void P_SupportPageAdtraction::fillNetworkComboBox()
 
         cbItems.append(channelName);
         channelChannelIDMap.insert(channelName,channelID);
-        }
+    }
 
     cbItems.sort(Qt::CaseInsensitive);
     ui->CB_Network->addItem("All");
@@ -225,11 +225,25 @@ void P_SupportPageAdtraction::fillShopComboBox(QString &fi_channel, QString &fi_
     channelToId.clear();
 
     ui->CB_shop->clear();
-    if(fi_channel == "All"){
 
-        QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
-        QJsonObject networksObj = networksDoc.object();
-        QJsonObject channelsObj = networksObj["Adtraction"].toObject();
+    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonObject networksObj = networksDoc.object();
+    QJsonObject channelsObj = networksObj["Adtraction"].toObject();
+
+
+    //Fill channelToID Map
+    for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+        // Each channel's key is the channel ID, and its value is another JSON object containing channel details
+        QJsonObject channelDetails = channel.value().toObject();
+
+        // Extract channel details
+        QString channelID = channel.key();
+        QString channelName = channelDetails["channelName"].toString();
+        channelToId.insert(channelName,channelID);
+
+    }
+
+    if(fi_channel == "All"){
 
         for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
             // Each channel's key is the channel ID, and its value is another JSON object containing channel details
@@ -263,8 +277,6 @@ void P_SupportPageAdtraction::fillShopComboBox(QString &fi_channel, QString &fi_
             // Collect items in the list
             comboBoxItems.append(obj["programName"].toString() + ": (" + fi_channel + ")");
         }
-
-        channelToId.insert(fi_channel,fi_channelID);
     }
 
     std::sort(comboBoxItems.begin(), comboBoxItems.end(), [](const QString &a, const QString &b) {
@@ -535,6 +547,8 @@ suppNetStatus P_SupportPageAdtraction::convStringTosuppNetStat(const QString& su
 
 void P_SupportPageAdtraction::addItemToTable(const SuppDetail &suppDetails, const bool addOrderToSessionJson, const QString &nStatText)
 {
+    ui->T_NachbuchungsanfragenListe->blockSignals(true);
+
     bool success = true;
     if(addOrderToSessionJson){
         success = addItemToSessionJson(suppDetails);
@@ -586,6 +600,8 @@ void P_SupportPageAdtraction::addItemToTable(const SuppDetail &suppDetails, cons
         QObject::connect(deleteBTN, &QPushButton::clicked, this, &P_SupportPageAdtraction::on_deleteBTNTable_clicked);
         QObject::connect(sendBTN, &QPushButton::clicked, this, &P_SupportPageAdtraction::on_sendBTNTable_clicked);
     }
+
+    ui->T_NachbuchungsanfragenListe->blockSignals(false);
 }
 
 void P_SupportPageAdtraction::addNStatButton(const int currentRow,const QString &netReply ,const suppNetStatus currentStat)
@@ -743,12 +759,13 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
 
 void P_SupportPageAdtraction::disableEditingForRow(const int currentRow)
 {
-    for(int column = 0; column < ui->T_NachbuchungsanfragenListe->columnCount();++column){
+    QList<int> columnsToDisable = {eCol_UserId, eCol_OrderId, eCol_Shop, eCol_DaysOld, eCol_Networkstatus, eCol_CommissionText, eCol_CommissionType, eCOl_H_CommissionId, eCol_H_Nstat, eCol_H_ProgramId, eCol_H_Network};
 
-        QTableWidgetItem* item = ui->T_NachbuchungsanfragenListe->item(currentRow,column);
-        if(item){
-
-            item->setFlags(item->flags()& ~Qt::ItemIsEditable);
+    for (int col : columnsToDisable) {
+        QTableWidgetItem *item = ui->T_NachbuchungsanfragenListe->item(currentRow, col);
+        if (item) { // Make sure the item exists
+            Qt::ItemFlags flags = item->flags();
+            item->setFlags(flags & ~Qt::ItemIsEditable);
         }
     }
 
@@ -960,6 +977,8 @@ void P_SupportPageAdtraction::on_pb_select_Orange_clicked()
 
 void P_SupportPageAdtraction::on_pb_select_Green_clicked()
 {
+    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
+
     ui->T_NachbuchungsanfragenListe->clearSelection();
 
     for (int currRow = 0; currRow < ui->T_NachbuchungsanfragenListe->rowCount(); ++currRow){
@@ -968,6 +987,8 @@ void P_SupportPageAdtraction::on_pb_select_Green_clicked()
             ui->T_NachbuchungsanfragenListe->selectRow(currRow);
         }
     }
+    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
 }
 
 //Sort by NetworkStatus
@@ -1466,6 +1487,89 @@ void P_SupportPageAdtraction::on_LE_SearchBar_textChanged(const QString &arg1)
             }
         }
         ui->T_NachbuchungsanfragenListe->setRowHidden(i, !match); // Hide the row if there is no match
+    }
+}
+
+
+void P_SupportPageAdtraction::on_PB_select_search_clicked()
+{
+    if(ui->LE_SearchBar->text().isEmpty()){
+        QMessageBox::critical(this,"Search is Empty","Please put in a search before pressing this button.");
+        return;
+    }
+
+    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
+    for (int i = 0; i < ui->T_NachbuchungsanfragenListe->rowCount(); ++i) {
+
+        if(!ui->T_NachbuchungsanfragenListe->isRowHidden(i)){
+
+            ui->T_NachbuchungsanfragenListe->selectRow(i);
+        }
+    }
+    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
+}
+
+
+void P_SupportPageAdtraction::on_T_NachbuchungsanfragenListe_itemChanged(QTableWidgetItem *item)
+{
+    int currentCol = item->column();
+    bool editCorrect = false;
+
+    switch (currentCol) {
+
+    case eCol_Channel: {
+
+        bool isEqualToOneItem = false;
+        QJsonDocument networksDoc= dataManager->json->load("NetworkChannels");
+        QJsonObject networksObj = networksDoc.object();
+        QJsonObject channelsObj = networksObj["Adtraction"].toObject();
+
+        for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
+
+            QJsonObject channelDetails = channel.value().toObject();
+
+            QString channelName = channelDetails["channelName"].toString();
+
+            if(item->text() == channelName){
+                isEqualToOneItem = true;
+                break;
+            }
+        }
+
+        if(!isEqualToOneItem){
+            QMessageBox::critical(this,"Does not match channels","The input does not match previously input Channels (NetworkChannels)");
+        }
+        else{
+            editCorrect = true;
+        }
+
+        break;
+    }
+    case eCol_Value:
+
+        break;
+
+    case eCol_ExpProv:
+
+        break;
+
+    case eCol_Currency:
+
+        break;
+
+    case eCol_Date:
+
+        break;
+
+    default:
+        break;
+    }
+
+    if(editCorrect){
+        //TBD: Implement saving changes
+    }
+    else{
+        QTimer::singleShot(0, [this]() { fillTableWithJson(); });
     }
 }
 

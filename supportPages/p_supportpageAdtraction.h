@@ -102,6 +102,8 @@ private slots:
     void on_pb_select_Orange_clicked();
     void on_pb_select_Green_clicked();
     void on_LE_SearchBar_textChanged(const QString &arg1);
+    void on_PB_select_search_clicked();
+    void on_T_NachbuchungsanfragenListe_itemChanged(QTableWidgetItem *item);
 };
 
 #endif // P_SUPPORTPAGEADTRACTION_H

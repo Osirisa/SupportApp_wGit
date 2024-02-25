@@ -177,6 +177,9 @@
                 <property name="editable">
                  <bool>true</bool>
                 </property>
+                <property name="insertPolicy">
+                 <enum>QComboBox::NoInsert</enum>
+                </property>
                </widget>
               </item>
              </layout>
@@ -971,6 +974,13 @@
           </property>
          </widget>
         </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pb_select_Green">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QPushButton" name="pb_select_90Days">
           <property name="text">
@@ -985,14 +995,14 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="pb_select_Green">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_select_search">
+        <property name="text">
+         <string>Search</string>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="verticalSpacer_4">
