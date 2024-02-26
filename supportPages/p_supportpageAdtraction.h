@@ -42,7 +42,7 @@ private:
 
     void addItemToTable(const SuppDetail& suppDetails, const bool addOrderToSessionJson, const QString& nStatText = "");
     void addNStatButton(const int currentRow,const QString& netReply, const suppNetStatus currentStat);
-    bool addItemToSessionJson(const SuppDetail& suppDetails);
+    bool addItemToSessionJson(const SuppDetail& suppDetails, bool withCheck = true);
 
     void disableEditingForRow(const int currentRow);
 

@@ -656,9 +656,8 @@ void P_SupportPageAdtraction::addNStatButton(const int currentRow,const QString 
     }
 }
 
-bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails)
+bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails, bool withCheck)
 {
-
 
     QJsonDocument suppDataDoc = dataManager->json->load("NetworkSuppAnswers");
     QJsonObject suppDataObj;
@@ -688,13 +687,35 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
             QJsonObject orderObj = ordersArray[i].toObject();
 
             if(orderObj["orderID"].toString() == orderID){
+                if(withCheck){
+                    QMessageBox::StandardButton reply;
 
-                QMessageBox::StandardButton reply;
+                    // If nothing is selected, ask if the user wants to delete all contents
+                    reply = QMessageBox::question(this, "OrderId Already Exists", "This orderID: " + suppDetails.orderId + " already exists for this user, do you want to override it?",
+                                                  QMessageBox::Yes | QMessageBox::Cancel);
+                    if (reply == QMessageBox::Yes) {
 
-                // If nothing is selected, ask if the user wants to delete all contents
-                reply = QMessageBox::question(this, "OrderId Already Exists", "This orderID: " + suppDetails.orderId + " already exists for this user, do you want to override it?",
-                                              QMessageBox::Yes | QMessageBox::Cancel);
-                if (reply == QMessageBox::Yes) {
+                        for (int currentRow = 0; currentRow < ui->T_NachbuchungsanfragenListe->rowCount();++currentRow){
+                            if (userID == ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_UserId)->text()&& orderID == ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_OrderId)->text()){
+
+                                ui->T_NachbuchungsanfragenListe->removeRow(currentRow);
+                                break;
+                            }
+                        }
+
+                        ordersArray.removeAt(i);
+
+                        userObj["orders"] = ordersArray;
+                        suppDataObj[userID] = userObj;
+                        QJsonDocument suppDoc(suppDataObj);
+
+                        dataManager->json->save("NetworkSuppAnswers",suppDoc);
+                    } else {
+
+                        return false; // Exit if the user decides not to delete
+                    }
+                }
+                else{
 
                     for (int currentRow = 0; currentRow < ui->T_NachbuchungsanfragenListe->rowCount();++currentRow){
                         if (userID == ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_UserId)->text()&& orderID == ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_OrderId)->text()){
@@ -703,6 +724,7 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
                             break;
                         }
                     }
+
                     ordersArray.removeAt(i);
 
                     userObj["orders"] = ordersArray;
@@ -710,9 +732,7 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
                     QJsonDocument suppDoc(suppDataObj);
 
                     dataManager->json->save("NetworkSuppAnswers",suppDoc);
-                } else {
 
-                    return false; // Exit if the user decides not to delete
                 }
 
                 break;
@@ -1513,7 +1533,11 @@ void P_SupportPageAdtraction::on_PB_select_search_clicked()
 void P_SupportPageAdtraction::on_T_NachbuchungsanfragenListe_itemChanged(QTableWidgetItem *item)
 {
     int currentCol = item->column();
+    int currentRow = item->row();
     bool editCorrect = false;
+
+    QRegularExpression regExp("^\\d+(\\.\\d+)?$");
+    QRegularExpression dateRegExp("^\\d{2}\\.\\d{2}\\.\\d{4}$");
 
     switch (currentCol) {
 
@@ -1546,20 +1570,59 @@ void P_SupportPageAdtraction::on_T_NachbuchungsanfragenListe_itemChanged(QTableW
         break;
     }
     case eCol_Value:
-
+    case eCol_ExpProv: {
+        // Check if the item's text matches the required format
+        QRegularExpressionMatch match = regExp.match(item->text());
+        if (!match.hasMatch()) {
+            QMessageBox::critical(this, "Invalid Format", "The input must be a number with or without decimal points (e.g., 9, 8.75, 66.50).");
+        } else {
+            editCorrect = true;
+        }
         break;
+    }
 
-    case eCol_ExpProv:
+    case eCol_Currency: {
+        QStringList currencies;
+        QJsonDocument currencyFile = dataManager->json->load("currenciesAdtraction");
 
+        // Load currencies into the list
+        for(const QJsonValue &value: currencyFile.array()){
+            QJsonObject obj = value.toObject();
+            QString currency = obj["currency"].toString();
+            currencies.append(currency);
+        }
+
+        // Check if the entered currency is in the list of valid currencies
+        if (!currencies.contains(item->text())) {
+            QMessageBox::critical(this, "Invalid Currency", "The entered currency is not valid. Please enter a currency from the list.");
+
+        } else {
+            editCorrect = true; // Mark the edit as correct
+        }
         break;
+    }
 
-    case eCol_Currency:
+    case eCol_Date: {
+        // Regular expression for date format dd.mm.yyyy
+        QRegularExpression dateRegExp("^\\d{2}\\.\\d{2}\\.\\d{4}$");
+        QRegularExpressionMatch match = dateRegExp.match(item->text());
 
+        if (!match.hasMatch()) {
+            QMessageBox::critical(this, "Invalid Date Format", "The input must be a date in the format dd.mm.yyyy (e.g., 31.12.2024).");
+        } else {
+            // Check if the date is valid and not in the future
+            QDate date = QDate::fromString(item->text(), "dd.MM.yyyy");
+            QDate today = QDate::currentDate();
+            if (!date.isValid()) {
+                QMessageBox::critical(this, "Invalid Date", "The entered date does not exist. Please enter a valid date in the format dd.mm.yyyy.");
+            } else if (date > today) {
+                QMessageBox::critical(this, "Date in the Future", "The entered date cannot be in the future. Please enter a date that is today or in the past.");
+            } else {
+                editCorrect = true;
+            }
+        }
         break;
-
-    case eCol_Date:
-
-        break;
+    }
 
     default:
         break;
@@ -1567,6 +1630,27 @@ void P_SupportPageAdtraction::on_T_NachbuchungsanfragenListe_itemChanged(QTableW
 
     if(editCorrect){
         //TBD: Implement saving changes
+        QString channel         = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_Channel)->text();
+        QString shop            = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_Shop)->text();
+        QString value           = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_Value)->text();
+        QString expProv         = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_ExpProv)->text();
+        QString currency        = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_Currency)->text();
+        QString orderId         = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_OrderId)->text();
+        QString userId          = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_UserId)->text();
+        QString date            = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_Date)->text();
+        QString commissionText  = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_CommissionText)->text();
+        QString suppType        = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_CommissionType)->text();
+        QString nStat           = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_H_Nstat)->text();
+        QString network         = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_H_Network)->text();
+        QString programId       = ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_H_ProgramId)->text();
+        QString commissionId    = ui->T_NachbuchungsanfragenListe->item(currentRow,eCOl_H_CommissionId)->text();
+
+        SuppDetail changedSuppDetails (channel,shop,value,expProv,currency,orderId,userId,date,commissionText,suppType,nStat,network,programId,commissionId);
+
+        QTimer::singleShot(0, [this, changedSuppDetails = std::move(changedSuppDetails)]() mutable {
+            addItemToSessionJson(changedSuppDetails, false);
+            addItemToTable(changedSuppDetails,false);
+        });
     }
     else{
         QTimer::singleShot(0, [this]() { fillTableWithJson(); });
