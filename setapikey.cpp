@@ -15,10 +15,30 @@ SetAPIKey::~SetAPIKey()
 {
     delete ui;
 }
+void SetAPIKey::saveAPIKey(const QByteArray &apiKey)
+{
+    QByteArray encryptedKey = encryptionHelper->encrypt(apiKey, "hello");
+
+    // Convert the encrypted data to Base64 for safe storage
+    QByteArray base64EncryptedKey = encryptedKey.toBase64();
+    qDebug() << base64EncryptedKey;
+
+    // Save the Base64 encoded encrypted key
+    dataManager->txt->save("adtractionKey", base64EncryptedKey);
+
+    emit apiKeyChanged(apiKey);
+}
 
 QString SetAPIKey::loadAPIKey()
 {
-    QString decryptedKey = encryptionHelper->encryptDecrypt(dataManager->txt->load("adtractionKey"));
+    // Load the encrypted API key
+    QByteArray encryptedData = dataManager->txt->load("adtractionKey").toUtf8();
+
+    // Assuming the data is stored in Base64 encoding
+    QByteArray decodedData = QByteArray::fromBase64(encryptedData);
+
+    // Decrypt the API key
+    QString decryptedKey = encryptionHelper->decrypt(decodedData, "hello");
     return decryptedKey;
 }
 
@@ -35,13 +55,6 @@ void SetAPIKey::on_PB_Cancel_clicked()
 
 void SetAPIKey::on_PB_Save_clicked()
 {
-    saveAPIKey(ui->LE_APIKey->text());
+    saveAPIKey(ui->LE_APIKey->text().toUtf8());
     hide();
-}
-void SetAPIKey::saveAPIKey(const QString &apiKey)
-{
-    QString encryptedKey = encryptionHelper->encryptDecrypt(apiKey);
-    dataManager->txt->save("adtractionKey",encryptedKey.toUtf8());
-
-    emit apiKeyChanged(apiKey);
 }

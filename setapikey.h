@@ -34,7 +34,7 @@ private:
     DataManager* dataManager;
     EncryptionHelper* encryptionHelper;
 
-    void saveAPIKey(const QString &key);
+    void saveAPIKey(const QByteArray &key);
 };
 
 #endif // SETAPIKEY_H

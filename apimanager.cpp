@@ -21,9 +21,16 @@ void APIManager::refreshApiManager()
 
 void APIManager::initApiNetwork()
 {
-    QString adtractionApiKey = encryptionHelper->encryptDecrypt(dataManager->txt->load("adtractionKey"));
-    qDebug() << QString("%1").arg(adtractionApiKey);
+    QByteArray encryptedData = dataManager->txt->load("adtractionKey").toUtf8();
+
+    // Assuming the data is stored in Base64 encoding
+    QByteArray decodedData = QByteArray::fromBase64(encryptedData);
+
+    // Decrypt the API key
+    QString decryptedKey = encryptionHelper->decrypt(decodedData, "hello");
+
+    qDebug() << QString("%1").arg(decryptedKey);
     networkManager = new NetworkManager(this);
 
-    adtraction = new Adtraction(dataManager,networkManager,adtractionApiKey,this);
+    adtraction = new Adtraction(dataManager,networkManager,decryptedKey,this);
 }
