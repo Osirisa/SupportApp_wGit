@@ -21,7 +21,7 @@ void APIManager::refreshApiManager()
 
 void APIManager::initApiNetwork()
 {
-    QByteArray encryptedData = dataManager->txt->load("adtractionKey").toUtf8();
+    QByteArray encryptedData = dataManager->txt->load("AdtractionKey").toUtf8();
 
     // Assuming the data is stored in Base64 encoding
     QByteArray decodedData = QByteArray::fromBase64(encryptedData);

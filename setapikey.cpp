@@ -24,7 +24,7 @@ void SetAPIKey::saveAPIKey(const QByteArray &apiKey)
     qDebug() << base64EncryptedKey;
 
     // Save the Base64 encoded encrypted key
-    dataManager->txt->save("adtractionKey", base64EncryptedKey);
+    dataManager->txt->save("AdtractionKey", base64EncryptedKey);
 
     emit apiKeyChanged(apiKey);
 }
@@ -32,7 +32,7 @@ void SetAPIKey::saveAPIKey(const QByteArray &apiKey)
 QString SetAPIKey::loadAPIKey()
 {
     // Load the encrypted API key
-    QByteArray encryptedData = dataManager->txt->load("adtractionKey").toUtf8();
+    QByteArray encryptedData = dataManager->txt->load("AdtractionKey").toUtf8();
 
     // Assuming the data is stored in Base64 encoding
     QByteArray decodedData = QByteArray::fromBase64(encryptedData);

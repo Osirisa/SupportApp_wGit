@@ -21,6 +21,8 @@ release:LIBS += -L"C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD" -llibcrypto -ll
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    DataManager/basesuppdatamanager.cpp \
+    DataManager/standardfiles.cpp \
     networkchannels.cpp \
     Networks/adtraction.cpp \
     api_Classes/adtractionapi.cpp \
@@ -32,10 +34,14 @@ SOURCES += \
     networkmanager.cpp \
     setapikey.cpp \
     suppeventbus.cpp \
+    supportClasses/adtractionsuppcase.cpp \
+    supportClasses/supportcaseBase.cpp \
     supportPages/p_supportpageAdtraction.cpp
 
 HEADERS += \
     APIData.h \
+    DataManager/basesuppdatamanager.h \
+    DataManager/standardfiles.h \
     networkchannels.h \
     Networks/adtraction.h \
     api_Classes/adtractionapi.h \
@@ -48,6 +54,8 @@ HEADERS += \
     networkmanager.h \
     setapikey.h \
     suppeventbus.h \
+    supportClasses/adtractionsuppcase.h \
+    supportClasses/supportcaseBase.h \
     supportPages/p_supportpageAdtraction.h
 
 FORMS += \

@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include "suppeventbus.h"
+#include "DataManager/standardfiles.h"
 
 //-------------Constructor----------------
 MainWindow::MainWindow(QWidget *parent)
@@ -18,12 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     dataManager = new DataManager(this);
 
-    //TBD: FileManager dataBank or soemthing like that
-    dataManager->registerFile("currenciesAdtraction","dataAdtraction/currenciesAdtraction.txt");
-    dataManager->registerFile("adtractionKey","dataAdtraction/adtractionKey.txt");
-    dataManager->registerFile("AdtractionRegions","dataAdtraction/adtractionRegions.json");
-    dataManager->registerFile("NetworkChannels","Admin/Networkchannels.json");
-    dataManager->registerFile("NetworkSuppAnswers","Admin/NetworkSuppAnswers.json");
+    StandardFiles standardFiles(dataManager);
 
     apiManager = new APIManager(dataManager,encryptionHelper);
 

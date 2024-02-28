@@ -293,7 +293,7 @@ void P_SupportPageAdtraction::fillShopComboBox(QString &fi_channel, QString &fi_
 void P_SupportPageAdtraction::fillCurrencyComboBox()
 {
     //load the CurrencyFile for adtraction
-    cur = dataManager->json->load("currenciesAdtraction");
+    cur = dataManager->json->load("AdtractionCurrencies");
 
 
     //take the json an load it into 2 lists (Preferred / Rest)
@@ -446,7 +446,7 @@ void P_SupportPageAdtraction::setupComboBoxConnections()
 //on Startup fills the Table with the last session / if not deleted
 void P_SupportPageAdtraction::fillTableWithJson() {
 
-    QJsonDocument suppAnswers = dataManager->json->load("NetworkSuppAnswers");
+    QJsonDocument suppAnswers = dataManager->json->load("AdtractionSessionFile");
 
     //qDebug()<<suppAnswers;
 
@@ -472,7 +472,7 @@ void P_SupportPageAdtraction::fillTableWithJson() {
             QString expProv         = orderObj["expProv"].toString();
             QString currency        = orderObj["currency"].toString();
             QString orderId         = orderObj["orderID"].toString();
-            QString juserId         = userID;
+            QString userId         = userID;
             QString date            = orderObj["date"].toString();
             QString commissionText  = orderObj["commissionText"].toString();
             QString suppType        = orderObj["suppType"].toString();
@@ -498,7 +498,7 @@ void P_SupportPageAdtraction::fillTableWithJson() {
 
                 }
             }
-            SuppDetail tableSuppDetails(channel,shop,value,expProv,currency,orderId,juserId,date,commissionText,suppType,nStat,network,programId,commissionId);
+            SuppDetail tableSuppDetails(channel,shop,value,expProv,currency,orderId,userId,date,commissionText,suppType,nStat,network,programId,commissionId);
 
             addItemToTable(tableSuppDetails,false, nStatText);
         }
@@ -659,7 +659,7 @@ void P_SupportPageAdtraction::addNStatButton(const int currentRow,const QString 
 bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails, bool withCheck)
 {
 
-    QJsonDocument suppDataDoc = dataManager->json->load("NetworkSuppAnswers");
+    QJsonDocument suppDataDoc = dataManager->json->load("AdtractionSessionFile");
     QJsonObject suppDataObj;
 
     if (!suppDataDoc.isNull()) {
@@ -709,7 +709,7 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
                         suppDataObj[userID] = userObj;
                         QJsonDocument suppDoc(suppDataObj);
 
-                        dataManager->json->save("NetworkSuppAnswers",suppDoc);
+                        dataManager->json->save("AdtractionSessionFile",suppDoc);
                     } else {
 
                         return false; // Exit if the user decides not to delete
@@ -731,7 +731,7 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
                     suppDataObj[userID] = userObj;
                     QJsonDocument suppDoc(suppDataObj);
 
-                    dataManager->json->save("NetworkSuppAnswers",suppDoc);
+                    dataManager->json->save("AdtractionSessionFile",suppDoc);
 
                 }
 
@@ -740,7 +740,7 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
         }
     }
 
-    suppDataDoc = dataManager->json->load("NetworkSuppAnswers");
+    suppDataDoc = dataManager->json->load("AdtractionSessionFile");
     if (!suppDataDoc.isNull()) {
         // If the JSON document is not null, use its object
         suppDataObj = suppDataDoc.object();
@@ -773,7 +773,7 @@ bool P_SupportPageAdtraction::addItemToSessionJson(const SuppDetail &suppDetails
 
     QJsonDocument suppDoc(suppDataObj);
 
-    dataManager->json->save("NetworkSuppAnswers",suppDoc);
+    dataManager->json->save("AdtractionSessionFile",suppDoc);
     return true;
 }
 
@@ -849,7 +849,7 @@ void P_SupportPageAdtraction::outputRowsToCSV(const QString &fileName)
 //Event after the request was received from the server
 void P_SupportPageAdtraction::networkRequestMessageReceived(const QString responseCode, const QString userId, const QString orderId)
 {
-    QJsonDocument suppAnswers = dataManager->json->load("NetworkSuppAnswers");
+    QJsonDocument suppAnswers = dataManager->json->load("AdtractionSessionFile");
     QJsonObject jObj;
 
     QString nreply;
@@ -1156,7 +1156,7 @@ void P_SupportPageAdtraction::on_PB_AddToList_clicked()
 //deleting one Element from the Table directly
 void P_SupportPageAdtraction::on_deleteBTNTable_clicked()
 {
-    QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
+    QJsonDocument suppData = dataManager->json->load("AdtractionSessionFile");
     QJsonObject jObj;
 
     int currRow = ui->T_NachbuchungsanfragenListe->currentRow();
@@ -1192,7 +1192,7 @@ void P_SupportPageAdtraction::on_deleteBTNTable_clicked()
 
         QJsonDocument suppdoc(jObj);
 
-        dataManager->json->save("NetworkSuppAnswers",suppdoc);
+        dataManager->json->save("AdtractionSessionFile",suppdoc);
     }
 
     ui->T_NachbuchungsanfragenListe->removeRow(currRow);
@@ -1385,7 +1385,7 @@ void P_SupportPageAdtraction::on_PB_ExportList_clicked()
 //Deleting selection / all
 void P_SupportPageAdtraction::on_pb_deleteAll_clicked()
 {
-    QJsonDocument suppData = dataManager->json->load("NetworkSuppAnswers");
+    QJsonDocument suppData = dataManager->json->load("AdtractionSessionFile");
     QJsonObject jObj;
 
     if (!suppData.isNull()) {
@@ -1453,7 +1453,7 @@ void P_SupportPageAdtraction::on_pb_deleteAll_clicked()
 
     // Save the modified JSON object back to the file
     QJsonDocument suppdoc(jObj);
-    dataManager->json->save("NetworkSuppAnswers", suppdoc);
+    dataManager->json->save("AdtractionSessionFile", suppdoc);
 }
 
 /*

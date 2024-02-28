@@ -9,6 +9,7 @@
 #include "apimanager.h"
 #include "advertiserdata.h"
 #include "DataManager/datamanager.h"
+#include "supportClasses/adtractionsuppcase.h"
 
 namespace Ui {
 class P_SupportPageAdtraction;
