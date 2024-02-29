@@ -5,6 +5,7 @@
 
 struct BaseParams{
 
+    QString network;
     QString orderId;
     QString userId;
 
@@ -22,6 +23,8 @@ public:
 
     //Getters
     BaseParams getAllAttributes()           const;
+
+    const QString getNetwork()              const noexcept {return network;};
     const QString& getOrderId()             const noexcept { return orderId; }
     const QString& getUserId()              const noexcept { return userId; }
     double getOrderVal()                    const noexcept { return orderVal; }
@@ -32,6 +35,7 @@ public:
 
 
     // Setters
+    void setNetwork(const QString& newNetwork)      noexcept { network = newNetwork; }
     void setOrderId(const QString& newOrderId)      noexcept { orderId = newOrderId; }
     void setUserId(const QString& newUserId)        noexcept { userId = newUserId; }
     void setOrderVal(double newOrderVal)            noexcept { orderVal = newOrderVal; }
@@ -40,6 +44,7 @@ public:
 protected:
     QString uuId;
 
+    QString network;
     QString orderId;
     QString currency;
     QString userId;

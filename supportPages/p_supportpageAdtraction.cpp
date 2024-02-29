@@ -1,5 +1,5 @@
-
 #include "supportPages/p_supportpageAdtraction.h"
+#include "DataManager/adtractionsuppdatamanager.h"
 #include "ui_p_supportpageAdtraction.h"
 
 #include "qjsonobject.h"
@@ -24,6 +24,8 @@ P_SupportPageAdtraction::P_SupportPageAdtraction(DataManager* dataManager, APIMa
     apiManager(apiManager)
 {
     ui->setupUi(this);
+
+    suppdataManager = new AdtractionSuppDataManager(dataManager);
 
     //init the whole Page (has to be on a delay, otherwise problem with fileloading)
     QTimer::singleShot(300, this, &P_SupportPageAdtraction::initPage);
@@ -187,7 +189,7 @@ void P_SupportPageAdtraction::fillNetworkComboBox()
 {
     ui->CB_Network->clear();
 
-    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonDocument networksDoc = suppdataManager->getNetworkChannelsDoc();
     QJsonObject networksObj = networksDoc.object();
 
     // Each network's key is the network name, and its value is another JSON object containing channels
@@ -226,7 +228,7 @@ void P_SupportPageAdtraction::fillShopComboBox(QString &fi_channel, QString &fi_
 
     ui->CB_shop->clear();
 
-    QJsonDocument networksDoc = dataManager->json->load("NetworkChannels");
+    QJsonDocument networksDoc = suppdataManager->getNetworkChannelsDoc();
     QJsonObject networksObj = networksDoc.object();
     QJsonObject channelsObj = networksObj["Adtraction"].toObject();
 
@@ -1544,7 +1546,7 @@ void P_SupportPageAdtraction::on_T_NachbuchungsanfragenListe_itemChanged(QTableW
     case eCol_Channel: {
 
         bool isEqualToOneItem = false;
-        QJsonDocument networksDoc= dataManager->json->load("NetworkChannels");
+        QJsonDocument networksDoc= suppdataManager->getNetworkChannelsDoc();
         QJsonObject networksObj = networksDoc.object();
         QJsonObject channelsObj = networksObj["Adtraction"].toObject();
 

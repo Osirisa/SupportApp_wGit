@@ -6,6 +6,7 @@
 #include <QString>
 #include <QDate>
 
+#include "DataManager/adtractionsuppdatamanager.h"
 #include "apimanager.h"
 #include "advertiserdata.h"
 #include "DataManager/datamanager.h"
@@ -57,7 +58,7 @@ private:
     //Objects which are needed
     DataManager* dataManager;
     APIManager* apiManager;
-
+    AdtractionSuppDataManager* suppdataManager;
     //JsonDocuments which will be used "globally" in this class
     QJsonDocument doc;
     QJsonDocument cur;

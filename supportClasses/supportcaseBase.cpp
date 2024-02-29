@@ -23,6 +23,7 @@ BaseParams SupportCaseBase::getAllAttributes() const {
 
     BaseParams params;
 
+    params.network = network;
     params.orderId = orderId;
     params.userId = userId;
     params.orderVal = orderVal;

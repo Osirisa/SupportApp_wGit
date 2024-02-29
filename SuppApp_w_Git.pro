@@ -21,6 +21,7 @@ release:LIBS += -L"C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD" -llibcrypto -ll
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    DataManager/adtractionsuppdatamanager.cpp \
     DataManager/basesuppdatamanager.cpp \
     DataManager/standardfiles.cpp \
     networkchannels.cpp \
@@ -40,6 +41,7 @@ SOURCES += \
 
 HEADERS += \
     APIData.h \
+    DataManager/adtractionsuppdatamanager.h \
     DataManager/basesuppdatamanager.h \
     DataManager/standardfiles.h \
     networkchannels.h \

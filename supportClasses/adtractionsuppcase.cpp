@@ -2,9 +2,10 @@
 
 AdtractionSuppCase::AdtractionSuppCase(const AdtractionParams adtractionParams)
     :SupportCaseBase(adtractionParams),
-    network(adtractionParams.network), channel(adtractionParams.channel), date(adtractionParams.date),
-    shop(adtractionParams.shop), programId(adtractionParams.programId),commissionId(adtractionParams.commissionId),
-    commissionText(adtractionParams.commissionText),expProv(adtractionParams.expProv){}
+    networkStatus(adtractionParams.networkStatus),networkStatusText(adtractionParams.networkStatusText),
+    channel(adtractionParams.channel), date(adtractionParams.date),lastEditDate(adtractionParams.lastEditDate), shop(adtractionParams.shop),
+    programId(adtractionParams.programId),commissionId(adtractionParams.commissionId), commissionText(adtractionParams.commissionText),
+    expProv(adtractionParams.expProv){}
 
 AdtractionParams AdtractionSuppCase::getAllAttributes() const
 {
@@ -13,23 +14,28 @@ AdtractionParams AdtractionSuppCase::getAllAttributes() const
     BaseParams baseParams = SupportCaseBase::getAllAttributes();
 
     //first all BaseParameters:
+    params.network = baseParams.network;
     params.orderId = baseParams.orderId;
     params.userId = baseParams.userId;
     params.orderVal = baseParams.orderVal;
     params.currency = baseParams.currency;
 
     // Now, add derived attributes
+    params.networkStatus = networkStatus;
+    params.networkStatusText = networkStatusText;
     params.channel = channel;
-    params.shop = shop;
-    params.expProv = expProv;
+
     params.date = date;
-    params.commissionText = commissionText;
-    params.network = network;
+    params.lastEditDate = lastEditDate;
+
+    params.shop = shop;
     params.programId = programId;
     params.commissionId = commissionId;
+    params.commissionText = commissionText;
+
+    params.expProv = expProv;
 
     return params;
-
 }
 
 
