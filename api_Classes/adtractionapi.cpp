@@ -32,7 +32,7 @@ void AdtractionAPI::onCurrenciesRequestFinished(QNetworkReply* reply)
 {
     if(reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
-        dataManager->txt->save("currenciesAdtraction", responseData);
+        dataManager->txt->save("AdtractionCurrencies", responseData);
     } else {
         qWarning() << "Network request failed:" << reply->errorString();
     }
@@ -93,18 +93,14 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int chann
         //fills up a AdvertiserData Structure with the needed Data
         for(const QJsonValue& value : originalAdvertisersArray) {
             QJsonObject advertiserObj = value.toObject();
-            AdvertiserData adData;
-            adData.programId = advertiserObj["programId"].toInt();
-            adData.market = advertiserObj["market"].toString();
-            adData.currency = advertiserObj["currency"].toString();
-            adData.programName = advertiserObj["programName"].toString();
 
             // Create a new JSON object for this advertiser
             QJsonObject newAdvertiserObj;
-            newAdvertiserObj["programId"] = adData.programId;
-            newAdvertiserObj["market"] = adData.market;
-            newAdvertiserObj["currency"] = adData.currency;
-            newAdvertiserObj["programName"] = adData.programName;
+            newAdvertiserObj["programId"] = advertiserObj["programId"].toInt();
+            newAdvertiserObj["market"] = advertiserObj["market"].toString();
+            newAdvertiserObj["currency"] =advertiserObj["currency"].toString();
+            newAdvertiserObj["programName"] = advertiserObj["programName"].toString();
+
 
             //fills up a AdvertiserData Structure with the needed Data -> specific the comissionID
             QJsonArray commissionsArray = advertiserObj["commissions"].toArray();
@@ -112,34 +108,25 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int chann
 
             for(const QJsonValue& commissionValue : commissionsArray) {
                 QJsonObject commissionObj = commissionValue.toObject();
-                Commission commission;
-                commission.id = QString::number(commissionObj["id"].toInt());  // Adjusted line
-                commission.type = commissionObj["type"].toString();
-                commission.name = commissionObj["name"].toString();
-                commission.value = commissionObj["value"].toDouble();
-                commission.transactionType = commissionObj["transactionType"].toInt();
-                adData.commissions.append(commission);
 
                 // Add the commission to the new commissions array
                 QJsonObject newCommissionObj;
-                newCommissionObj["id"] = commission.id;
-                newCommissionObj["type"] = commission.type;
-                newCommissionObj["name"] = commission.name;
-                newCommissionObj["value"] = commission.value;
-                newCommissionObj["transactionType"] = commission.transactionType;
+                newCommissionObj["id"] = QString::number(commissionObj["id"].toInt());
+                newCommissionObj["type"] = commissionObj["type"].toString();
+                newCommissionObj["name"] = commissionObj["name"].toString();
+                newCommissionObj["value"] = commissionObj["value"].toDouble();
+                newCommissionObj["transactionType"] = commissionObj["transactionType"].toInt();
                 newCommissionsArray.append(newCommissionObj);
             }
 
             newAdvertiserObj["commissions"] = newCommissionsArray;
             newAdvertisersArray.append(newAdvertiserObj);
-
-            m_advertisers.insert(adData.programName, adData);  // Updating m_advertisers hash
         }
 
         // Create a new JSON document from the modified array and save it
         QJsonDocument newJsonDoc(newAdvertisersArray);
         dataManager->json->save("Adtraction"+QString::number(channelID), newJsonDoc);
-        emit advertisersUpdated(m_advertisers);
+
     } else {
         qWarning() << "Network request failed:" << reply->errorString();
     }
@@ -147,31 +134,6 @@ void AdtractionAPI::onAdvertisersRequestFinished(QNetworkReply* reply, int chann
     SuppEventBus::instance()->publish("shopsUpdated");
 }
 
-
-void AdtractionAPI::deleteAdvertiser()
-{
-    QJsonDocument deleteDocument;
-    dataManager->json->save("advertisersAdtraction", deleteDocument);
-}
-
-void AdtractionAPI::loadAdvertisersData()
-{
-    QJsonDocument jsonDoc = dataManager->json->load("advertisersAdtraction");
-    if (!jsonDoc.isNull()) {
-        QJsonObject jsonObject = jsonDoc.object();
-        m_advertisers.clear();  // Clear any existing data
-        for(const QString& key : jsonObject.keys()) {
-            QJsonObject advertiserObject = jsonObject[key].toObject();
-            AdvertiserData adData;
-            adData.programId = advertiserObject["programId"].toInt();
-            adData.market = advertiserObject["market"].toString();
-            adData.currency = advertiserObject["currency"].toString();
-            adData.programName = key;
-            m_advertisers.insert(key, adData);
-        }
-        emit advertisersUpdated(m_advertisers);
-    }
-}
 
 void AdtractionAPI::sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId)
 {

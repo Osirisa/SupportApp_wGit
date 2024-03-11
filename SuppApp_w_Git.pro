@@ -44,10 +44,10 @@ HEADERS += \
     DataManager/adtractionsuppdatamanager.h \
     DataManager/basesuppdatamanager.h \
     DataManager/standardfiles.h \
+    Enums.h \
     networkchannels.h \
     Networks/adtraction.h \
     api_Classes/adtractionapi.h \
-    advertiserdata.h \
     apimanager.h \
     BaseClasses/basenetwork.h \
     DataManager/datamanager.h \

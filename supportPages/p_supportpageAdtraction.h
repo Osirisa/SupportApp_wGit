@@ -8,9 +8,11 @@
 
 #include "DataManager/adtractionsuppdatamanager.h"
 #include "apimanager.h"
-#include "advertiserdata.h"
+#include "Enums.h"
 #include "DataManager/datamanager.h"
 #include "supportClasses/adtractionsuppcase.h"
+
+
 
 namespace Ui {
 class P_SupportPageAdtraction;
@@ -42,13 +44,13 @@ private:
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
 
-    void addItemToTable(const SuppDetail& suppDetails, const bool addOrderToSessionJson, const QString& nStatText = "");
+    void addItemToTable(const AdtractionSuppCase &suppCase);
     void addNStatButton(const int currentRow,const QString& netReply, const suppNetStatus currentStat);
-    bool addItemToSessionJson(const SuppDetail& suppDetails, bool withCheck = true);
+    bool addItemToSessionJson(const AdtractionSuppCase &suppCase);
 
     void disableEditingForRow(const int currentRow);
 
-    suppNetStatus convStringTosuppNetStat(const QString& suppNetStatString);
+    suppNetStatus convertNetworkStatusCodeToNStat(const QString& suppNetStatString);
 
     void outputRowsToCSV(const QString &fileName);
 
@@ -64,12 +66,8 @@ private:
     QJsonDocument cur;
 
     //QHashes, QMaps, QSets, QLists
-    QHash<QString,int> shopToProgramIdHash;
     QHash<QString,QString> channelToId;
-
-    QMap<QString, QJsonDocument> allDocs;
-
-    QSet<QString> prefferedCurrencies = {"EUR","CHF","USD"};
+    QHash<QString,QString> idtoChannel;
 
     QList<QString> prefferedList;
     QList<QString> otherList;
@@ -82,7 +80,31 @@ private:
 
     toggleTable toggleStatusTable = eTT_Normal;
 
-    AdvertiserData aD_advertData;
+    //Enum for every column in the table for better Code transparency
+    enum ColumnIndexesAdtraction{
+
+        //visible
+        eCol_Channel,
+        eCol_Shop,
+        eCol_Value,
+        eCol_ExpProv,
+        eCol_Currency,
+        eCol_OrderId,
+        eCol_UserId,
+        eCol_Date,
+        eCol_CommissionText,
+        eCol_DaysOld,
+        eCol_Networkstatus,
+        eCol_SendBTN,
+        eCol_DeleteBTN,
+
+        //invisible
+        eCol_H_Nstat,
+        eCol_H_Network,
+        eCol_H_ProgramId,
+        eCOl_H_CommissionId
+    };
+
 public slots:
 private slots:
     void on_RB_expProvCur_clicked();

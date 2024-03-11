@@ -1,11 +1,19 @@
-#include "adtractionsuppcase.h"
+#include "supportClasses/adtractionsuppcase.h"
 
 AdtractionSuppCase::AdtractionSuppCase(const AdtractionParams adtractionParams)
     :SupportCaseBase(adtractionParams),
     networkStatus(adtractionParams.networkStatus),networkStatusText(adtractionParams.networkStatusText),
     channel(adtractionParams.channel), date(adtractionParams.date),lastEditDate(adtractionParams.lastEditDate), shop(adtractionParams.shop),
     programId(adtractionParams.programId),commissionId(adtractionParams.commissionId), commissionText(adtractionParams.commissionText),
-    expProv(adtractionParams.expProv){}
+    expProv(adtractionParams.expProv){
+
+    network = "Adtraction";
+}
+
+AdtractionSuppCase::~AdtractionSuppCase()
+{
+
+}
 
 AdtractionParams AdtractionSuppCase::getAllAttributes() const
 {

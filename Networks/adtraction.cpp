@@ -46,7 +46,7 @@ void Adtraction::UpdateAdvs::currencies()
 
 void Adtraction::UpdateAdvs::deleteAdvertisers()
 {
-    parentAdtraction->adtractionAPI->deleteAdvertiser();
+    //parentAdtraction->adtractionAPI->deleteAdvertiser();
 }
 
 void Adtraction::UpdateAdvs::byChannel(int channelID, const QString &channelRegion) {

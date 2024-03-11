@@ -18,7 +18,7 @@ protected:
 
     QString pathToSessionJson;
 
-    DataManager dataManager;
+    DataManager* dataManager;
 };
 
 #endif // BASESUPPDATAMANAGER_H

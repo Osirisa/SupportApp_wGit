@@ -2,21 +2,48 @@
 #define ADTRACTIONSUPPDATAMANAGER_H
 
 #include <QObject>
-#include "basesuppdatamanager.h"
+#include "DataManager/basesuppdatamanager.h"
 #include "supportClasses/adtractionsuppcase.h"
+
+struct Commission {
+    QString id;
+    QString name;
+    double value;
+    QString type; // e.g., "%" or currency
+};
+
+struct Shop {
+    QString programName;
+    int programId;
+    QString channelID;
+    QList<Commission> commissions;
+};
+
+struct AdtractionNetworkChannelData
+{
+    QString channelID;
+    QString channelName;
+    QString channelRegion;
+};
 
 class AdtractionSuppDataManager : public BaseSuppDataManager
 {
 public:
     AdtractionSuppDataManager(DataManager *dataManager);
+    ~AdtractionSuppDataManager();
 
-    void saveObjectToSessionFile(const AdtractionSuppCase& adtractionObject);
-    void saveObjectToSessionFile(const QList<AdtractionSuppCase>& adtractionObjects);
-
-    AdtractionSuppCase loadObjectFromSessionFile(QString& userId, QString& orderId);
-    QList<AdtractionSuppCase> loadAllObjectsFromSessionFile();
+    bool saveObjectToSessionFile(const AdtractionSuppCase& adtractionObject);
+    bool saveObjectToSessionFile(const QList<AdtractionSuppCase>& adtractionObjects);
 
     void deleteOrder(const QString& userId, const QString& orderId);
+
+    AdtractionSuppCase loadObjectFromSessionFile(const QString& userId, const QString& orderId);
+    QList<AdtractionSuppCase> loadAllObjectsFromSessionFile();
+    QList<AdtractionNetworkChannelData> getAdtractionNetworkChannels();
+
+    QList<Shop> getShopsByChannelID(const QString& channelID);
+    QList<Commission> getCommissionsByShop(const QString& shopName, const QString& channelID = QString());
+    QStringList getSortedCurrencies();
 };
 
 #endif // ADTRACTIONSUPPDATAMANAGER_H
