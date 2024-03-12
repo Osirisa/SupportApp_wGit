@@ -25,10 +25,10 @@ bool AdtractionSuppDataManager::saveObjectToSessionFile(const AdtractionSuppCase
 {
     // Load the existing session document
     QJsonDocument sessionDoc = dataManager->json->load("AdtractionSessionFile");
-    if (sessionDoc.isNull()) {
-        qDebug() << "Error: File could not be loaded.";
-        return false;
-    }
+    // if (sessionDoc.isNull()) {
+    //     qDebug() << "Error: File could not be loaded.";
+    //     return false;
+    // }
 
     // Extract the root object
     QJsonObject sessionObj = sessionDoc.object();

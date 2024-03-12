@@ -57,7 +57,7 @@ bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
     if (!QFileInfo(filePath).isAbsolute()) {
         // If not an absolute path, then prepend the executable's directory
         filePath = standardAppDataPath + "/" + filePath;
-        qDebug()<<filePath;
+        //qDebug()<<filePath;
     }
 
     QFileInfo fileInfo(filePath);
@@ -65,7 +65,7 @@ bool DataManager::saveToFile(const QString &key, const QByteArray &data) {
     // Check if the directory exists, create it if it doesn't
     if (!dir.exists(fileInfo.dir().absolutePath())) {
         dir.mkpath(fileInfo.dir().absolutePath());
-        qDebug()<<"Test";
+        //qDebug()<<"Test";
     }
     else{
         qDebug()<< fileInfo.dir().absolutePath();

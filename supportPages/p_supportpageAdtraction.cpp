@@ -64,21 +64,16 @@ P_SupportPageAdtraction::~P_SupportPageAdtraction()
 //Inits all the Elements on the page
 void P_SupportPageAdtraction::initPage()
 {
-
+    //set the adtraction logo on top of the input fields
     QPixmap networkPixmap(":/Logos/img/adtractionLogo_trans.png");
     networkPixmap = networkPixmap.scaledToHeight(20*1.33, Qt::SmoothTransformation); //scale it down to 20pt
     ui->L_NetworkNamePic->setPixmap(networkPixmap);
 
-    //Fill Comboboxes
-
-    //In Adtraction there is only one type (maybe delete completely?
-    //TBD:
 
     fillCurrencyComboBox();
     fillNetworkComboBox();
 
     initTable();
-
     initInputElements();
 
     setupComboBoxConnections();
@@ -891,17 +886,17 @@ void P_SupportPageAdtraction::on_sendBTNTable_clicked(){
     QString currency = ui->T_NachbuchungsanfragenListe->item(row, eCol_Currency)->text();
     QString userId = ui->T_NachbuchungsanfragenListe->item(row, eCol_UserId)->text();
 
-    qDebug()<<programId;
-    qDebug()<<channelId;
-    qDebug()<<orderId;
-    qDebug()<<commissionId;
-    qDebug()<<expecetedCom;
-    qDebug()<<transactionDate;
-    qDebug()<<orderVal;
-    qDebug()<<currency;
-    qDebug()<<userId;
-    qDebug()<<"------------------------------SEND------------------------------";
-    //apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
+    // qDebug()<<programId;
+    // qDebug()<<channelId;
+    // qDebug()<<orderId;
+    // qDebug()<<commissionId;
+    // qDebug()<<expecetedCom;
+    // qDebug()<<transactionDate;
+    // qDebug()<<orderVal;
+    // qDebug()<<currency;
+    // qDebug()<<userId;
+    // qDebug()<<"------------------------------SEND------------------------------";
+    apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
 }
 
 //Sending selection / all
@@ -967,17 +962,17 @@ void P_SupportPageAdtraction::on_PB_SendOverAPI_clicked()
             QString currency = ui->T_NachbuchungsanfragenListe->item(row, eCol_Currency)->text();
             QString userId = ui->T_NachbuchungsanfragenListe->item(row, eCol_UserId)->text();
 
-             qDebug()<<programId;
-             qDebug()<<channelId;
-             qDebug()<<orderId;
-             qDebug()<<commissionId;
-             qDebug()<<expecetedCom;
-             qDebug()<<transactionDate;
-             qDebug()<<orderVal;
-             qDebug()<<currency;
-             qDebug()<<userId;
-             qDebug()<<"------------------------------SEND------------------------------";
-            //apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
+            // qDebug()<<programId;
+            // qDebug()<<channelId;
+            // qDebug()<<orderId;
+            // qDebug()<<commissionId;
+            // qDebug()<<expecetedCom;
+            // qDebug()<<transactionDate;
+            // qDebug()<<orderVal;
+            // qDebug()<<currency;
+            // qDebug()<<userId;
+            // qDebug()<<"------------------------------SEND------------------------------";
+            apiManager->adtraction->sendSuppData(programId,channelId, orderId, commissionId, expecetedCom, transactionDate, orderVal, currency, userId);
         }
     }
 }
