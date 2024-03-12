@@ -288,11 +288,14 @@ void NetworkChannels::addDeleteButton(int row) {
 void NetworkChannels::initUiElements()
 {
     fillComboBox();
+    QRegularExpression regExp("^[0-9]+$");
+    QRegularExpression regExp2("[A-Za-z0-9 ]*");                             //ban everything except A-Z a-z 0-9 and space
 
-    QRegularExpression regExp("[A-Za-z0-9 ]*");                             //ban everything except A-Z a-z 0-9 and space
-    QValidator* validator = new QRegularExpressionValidator(regExp, this);
+    QValidator* validator  = new QRegularExpressionValidator(regExp, this);
+    QValidator* validator2 = new QRegularExpressionValidator(regExp2, this);
 
-    ui->LE_NWC_ChannelName->setValidator(validator);
+    ui->LE_NWC_ChannelID->setValidator(validator);
+    ui->LE_NWC_ChannelName->setValidator(validator2);
     ui->LE_NWC_ChannelName->setMaxLength(14);
 
 
