@@ -37,7 +37,8 @@ SOURCES += \
     suppeventbus.cpp \
     supportClasses/adtractionsuppcase.cpp \
     supportClasses/supportcaseBase.cpp \
-    supportPages/p_supportpageAdtraction.cpp
+    supportPages/p_supportpageAdtraction.cpp \
+    supportPages/p_supportpageawin.cpp
 
 HEADERS += \
     APIData.h \
@@ -58,13 +59,15 @@ HEADERS += \
     suppeventbus.h \
     supportClasses/adtractionsuppcase.h \
     supportClasses/supportcaseBase.h \
-    supportPages/p_supportpageAdtraction.h
+    supportPages/p_supportpageAdtraction.h \
+    supportPages/p_supportpageawin.h
 
 FORMS += \
     networkchannels.ui \
     mainwindow.ui \
     setapikey.ui \
-    supportPages/p_supportpageAdtraction.ui
+    supportPages/p_supportpageAdtraction.ui \
+    supportPages/p_supportpageawin.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

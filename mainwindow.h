@@ -7,6 +7,7 @@
 #include "networkchannels.h"
 
 #include "supportPages/p_supportpageAdtraction.h"
+#include "supportPages/p_supportpageawin.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -27,7 +28,6 @@ public slots:
 
 private slots:
 
-    void on_actionAPI_Key_triggered();
     void on_actionUpdate_Shops_triggered();
     void on_actionAdd_ChannelIds_triggered();
     void on_actionChannelIDs_triggered();
@@ -35,6 +35,12 @@ private slots:
     void on_actionUpdate_All_triggered();
     void on_actionUpdate_triggered();
     void onVersionCheckFinished(QNetworkReply* reply);
+
+    void on_PB_adtraction_suppPage_clicked();
+    void on_PB_awin_suppPage_clicked();
+
+    void on_actionAPI_Key_adtraction_triggered();
+    void on_actionAPI_Key_awin_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -49,6 +55,8 @@ private:
     SetAPIKey* SetAPIKeyWindow;
     NetworkChannels* networkChannelWindow;
     P_SupportPageAdtraction* adtractionSuppPage;
+    p_SupportPageAwin* awinSuppPage;
+
 
     //GeneralClasses
     DataManager* dataManager;

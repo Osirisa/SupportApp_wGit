@@ -61,9 +61,6 @@ private:
     DataManager* dataManager;
     APIManager* apiManager;
     AdtractionSuppDataManager* suppdataManager;
-    //JsonDocuments which will be used "globally" in this class
-    QJsonDocument doc;
-    QJsonDocument cur;
 
     //QHashes, QMaps, QSets, QLists
     QHash<QString,QString> channelToId;
@@ -71,8 +68,6 @@ private:
 
     QList<QString> prefferedList;
     QList<QString> otherList;
-
-
 
     sortingStatus sortStat_networkStat = eSStat_None;
     sortingStatus sortStat_shop = eSStat_None;

@@ -227,3 +227,35 @@ void AdtractionAPI::onRegionsRequestFinished(QNetworkReply *reply)
     }
     reply->deleteLater();
 }
+
+
+//TBD: implement so that you only have to write the ID into the channelIDs tab -> retreive name and markets
+void AdtractionAPI::listApprovedChannels() {
+    QString endpoint = "https://api.adtraction.com/v2/partner/channels";
+    QNetworkReply* reply = networkManager->sendGetRequest(endpoint, apiToken);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        onListApprovedChannelsRequestFinished(reply);
+    });
+}
+
+void AdtractionAPI::onListApprovedChannelsRequestFinished(QNetworkReply* reply) {
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray responseData = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+        QJsonArray channelsArray = jsonDoc.array();
+
+        // Process each channel object
+        for (const QJsonValue &value : channelsArray) {
+            QJsonObject channelObj = value.toObject();
+            qDebug() << "Channel ID:" << channelObj["channelId"].toInt();
+            qDebug() << "Channel Name:" << channelObj["channelName"].toString();
+            // Add more processing as needed
+        }
+
+        // Signal or further process the list of channels as needed
+        SuppEventBus::instance()->publish("channelsListUpdated");
+    } else {
+        qWarning() << "Network request for listing approved channels failed:" << reply->errorString();
+    }
+    reply->deleteLater();
+}

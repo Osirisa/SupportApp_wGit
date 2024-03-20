@@ -15,12 +15,8 @@ class SetAPIKey : public QDialog
     Q_OBJECT
 
 public:
-    explicit SetAPIKey(DataManager* dataManager, EncryptionHelper* encryptionHelper,QWidget *parent = nullptr);
+    explicit SetAPIKey(QString network, DataManager* dataManager, EncryptionHelper* encryptionHelper,QWidget *parent = nullptr);
     ~SetAPIKey();
-
-    QString loadAPIKey();
-
-    void FillLE();
 
     signals:
     void apiKeyChanged(const QString& newKey);
@@ -30,10 +26,15 @@ private slots:
     void on_PB_Save_clicked();
 
 private:
+    void initUi();
+    void fillKeyText();
+    QString loadAPIKey();
+
     Ui::SetAPIKey *ui;
     DataManager* dataManager;
     EncryptionHelper* encryptionHelper;
 
+    QString network;
     void saveAPIKey(const QByteArray &key);
 };
 

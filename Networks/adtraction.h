@@ -32,6 +32,7 @@ public:
     public:
         explicit GetAdvs(Adtraction* parent);
 
+        void listChannels();
         QStringList fromChannel(int channelID) override;
         QStringList fromNetwork() override;
 

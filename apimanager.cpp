@@ -29,7 +29,7 @@ void APIManager::initApiNetwork()
     // Decrypt the API key
     QString decryptedKey = encryptionHelper->decrypt(decodedData, "hello");
 
-    qDebug() << QString("%1").arg(decryptedKey);
+    //qDebug() << QString("%1").arg(decryptedKey);
     networkManager = new NetworkManager(this);
 
     adtraction = new Adtraction(dataManager,networkManager,decryptedKey,this);

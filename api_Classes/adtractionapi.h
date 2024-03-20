@@ -18,9 +18,11 @@ public:
     void updateAdvertisers(int channelId, const QString &marketRegion);
     void updateRegions();
     void deleteAdvertiser();
+    void listApprovedChannels();
 
     void loadAdvertisersData();
     void sendSuppData(int programId, int channelId,QString orderId,int commissionId,double expecetedCom,QString transactionDate, double orderVal, QString currency, QString userId);
+
 
 
 signals:
@@ -31,6 +33,7 @@ private slots:
     void onAdvertisersRequestFinished(QNetworkReply* reply, int channelId);
     void onSuppDataRequestFinished(QNetworkReply* reply, QString userId, QString orderId);
     void onRegionsRequestFinished(QNetworkReply* reply);
+    void onListApprovedChannelsRequestFinished(QNetworkReply *reply);
 
 private:
    // QJsonObject jsonObject; // Declare jsonObject as a member variable in your class

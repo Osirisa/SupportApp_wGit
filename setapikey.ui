@@ -23,16 +23,6 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="L_AdtractionAPI_Key">
-       <property name="text">
-        <string>AdtractionAPI Key</string>
-       </property>
-       <property name="buddy">
-        <cstring>LE_APIKey</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLineEdit" name="LE_APIKey"/>
      </item>
     </layout>

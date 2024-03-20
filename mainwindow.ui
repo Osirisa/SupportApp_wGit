@@ -327,7 +327,7 @@
      <addaction name="actionUpdate_Shops"/>
      <addaction name="actionUpdate_Currencies"/>
      <addaction name="separator"/>
-     <addaction name="actionAPI_Key"/>
+     <addaction name="actionAPI_Key_adtraction"/>
      <addaction name="actionAdd_ChannelIds"/>
     </widget>
     <widget class="QMenu" name="menuAwin">
@@ -340,6 +340,8 @@
      </property>
      <addaction name="actionUpdateShops"/>
      <addaction name="actionUpdate_Currencies_2"/>
+     <addaction name="separator"/>
+     <addaction name="actionAPI_Key_awin"/>
     </widget>
     <addaction name="actionAdcell"/>
     <addaction name="menuAdTraction"/>
@@ -409,7 +411,7 @@
     <string>Update Currencies</string>
    </property>
   </action>
-  <action name="actionAPI_Key">
+  <action name="actionAPI_Key_adtraction">
    <property name="text">
     <string>API Key</string>
    </property>
@@ -482,6 +484,11 @@
   <action name="actionUpdate_Currencies_2">
    <property name="text">
     <string>Update Currencies</string>
+   </property>
+  </action>
+  <action name="actionAPI_Key_awin">
+   <property name="text">
+    <string>API Key</string>
    </property>
   </action>
  </widget>

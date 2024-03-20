@@ -57,6 +57,11 @@ void Adtraction::UpdateAdvs::byChannel(int channelID, const QString &channelRegi
 Adtraction::GetAdvs::GetAdvs(Adtraction* parent)
     : GetAdvertisersBase(parent), parentAdtraction(parent) {}
 
+void Adtraction::GetAdvs::listChannels()
+{
+    parentAdtraction->adtractionAPI->listApprovedChannels();
+}
+
 QStringList Adtraction::GetAdvs::fromChannel(int channelID) {
 
     //TBD:

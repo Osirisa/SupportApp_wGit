@@ -1,60 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>P_SupportPageAdtraction</class>
- <widget class="QWidget" name="P_SupportPageAdtraction">
+ <class>p_SupportPageAwin</class>
+ <widget class="QWidget" name="p_SupportPageAwin">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1826</width>
-    <height>632</height>
+    <width>1721</width>
+    <height>593</height>
    </rect>
-  </property>
-  <property name="palette">
-   <palette>
-    <active>
-     <colorrole role="Window">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </active>
-    <inactive>
-     <colorrole role="Window">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </inactive>
-    <disabled>
-     <colorrole role="Base">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-     <colorrole role="Window">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </disabled>
-   </palette>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -115,7 +69,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;Adtraction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;AWIN&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -307,9 +261,6 @@
                       <property name="text">
                        <string>[Währung]</string>
                       </property>
-                      <attribute name="buttonGroup">
-                       <string notr="true">buttonGroup</string>
-                      </attribute>
                      </widget>
                     </item>
                    </layout>
@@ -383,9 +334,6 @@
                       <property name="text">
                        <string> [%]</string>
                       </property>
-                      <attribute name="buttonGroup">
-                       <string notr="true">buttonGroup</string>
-                      </attribute>
                      </widget>
                     </item>
                    </layout>
@@ -509,7 +457,7 @@
                <number>9</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="L_orderId">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -618,6 +566,28 @@
                  <bool>true</bool>
                 </property>
                </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="verticalFrame">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="QLabel" name="L_enquiryType">
+                <property name="text">
+                 <string>Enquiry Type</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="CB_enquiryType"/>
               </item>
              </layout>
             </widget>
@@ -746,7 +716,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="verticalFrame">
+    <widget class="QFrame" name="verticalFrame_4">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>1</horstretch>
@@ -1058,27 +1028,6 @@
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>CB_shop</tabstop>
-  <tabstop>LE_value</tabstop>
-  <tabstop>RB_expProvCur</tabstop>
-  <tabstop>LE_expectedProv_Currency</tabstop>
-  <tabstop>RB_expProvPer</tabstop>
-  <tabstop>LE_expectedProv_Percent</tabstop>
-  <tabstop>CB_ComissionID</tabstop>
-  <tabstop>LE_orderId</tabstop>
-  <tabstop>CB_Currency</tabstop>
-  <tabstop>LE_User</tabstop>
-  <tabstop>DE_transactionDate</tabstop>
-  <tabstop>T_NachbuchungsanfragenListe</tabstop>
-  <tabstop>LE_SearchBar</tabstop>
-  <tabstop>PB_SendOverAPI</tabstop>
-  <tabstop>PB_ExportList</tabstop>
-  <tabstop>pb_deleteAll</tabstop>
- </tabstops>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>

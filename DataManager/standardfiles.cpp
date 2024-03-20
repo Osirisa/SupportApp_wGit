@@ -14,7 +14,7 @@ StandardFiles::StandardFiles(DataManager *dataManager) {
     dataManager->registerFile("AdtractionRegions",      "dataAdtraction/AdtractionRegions.json");
 
     //AwinFiles
-
+    dataManager->registerFile("AwinKey",                "dataAwin/AwinApiKey.txt");
 
 
     //CJFiles

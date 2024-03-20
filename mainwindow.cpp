@@ -24,17 +24,20 @@ MainWindow::MainWindow(QWidget *parent)
     apiManager = new APIManager(dataManager,encryptionHelper);
 
     //Windows
-    SetAPIKeyWindow = new SetAPIKey(dataManager,encryptionHelper, this);
-    networkChannelWindow = new NetworkChannels(dataManager,this);
-    adtractionSuppPage = new P_SupportPageAdtraction(dataManager,apiManager,this);
+    networkChannelWindow    = new NetworkChannels(dataManager,this);
+
+    //Pages
+    adtractionSuppPage      = new P_SupportPageAdtraction(dataManager,apiManager,this);
+    awinSuppPage            = new p_SupportPageAwin(dataManager,apiManager,this);
 
     //Signal
-    connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
     connect(networkChannelWindow,SIGNAL(onNetworkDataSaved()),this,SLOT(updateNetworks()));
 
     ui->stackedWidget->addWidget(adtractionSuppPage);
-    ui->stackedWidget->setCurrentWidget(adtractionSuppPage);
+    ui->stackedWidget->addWidget(awinSuppPage);
 
+    //TBD implement HomePage
+    ui->stackedWidget->setCurrentWidget(adtractionSuppPage);
 
     QObject::connect(SuppEventBus::instance(), &SuppEventBus::eventPublished, [this](const QString& eventName) {
         if (eventName == "shopsUpdated") {
@@ -58,6 +61,9 @@ MainWindow::~MainWindow()
     delete apiManager;
     delete encryptionHelper;
     delete ui;
+
+    delete adtractionSuppPage;
+    delete awinSuppPage;
 }
 
 //Public Slots
@@ -90,13 +96,7 @@ void MainWindow::updateNetworks()
 }
 
 //Private Slots
-void MainWindow::on_actionAPI_Key_triggered()
-{
-    //Opens teh Set APIKEY window
-    SetAPIKeyWindow->setModal(true);
-    SetAPIKeyWindow->FillLE();
-    SetAPIKeyWindow->exec();
-}
+
 
 void MainWindow::on_actionUpdate_Shops_triggered()
 {
@@ -194,7 +194,7 @@ void MainWindow::initUI()
 
     //NetworkButtons
     ui->PB_adcell_suppPageBTN->setDisabled(true);
-    ui->PB_awin_suppPage->setDisabled(true);
+    ui->PB_awin_suppPage->setDisabled(false);
     ui->PB_cj_suppPage->setDisabled(true);
     ui->PB_tradeDoubler_suppPage->setDisabled(true);
     ui->PB_webgains_suppPage->setDisabled(true);
@@ -203,6 +203,7 @@ void MainWindow::initUI()
 void MainWindow::updateRegions()
 {
     apiManager->adtraction->updater.regions();
+    apiManager->adtraction->getter.listChannels();
 }
 
 
@@ -255,5 +256,36 @@ void MainWindow::launchMaintenanceTool()
     arguments << "--updater";
 
     QProcess::startDetached(maintenanceToolPath, arguments);
+}
+
+
+void MainWindow::on_PB_adtraction_suppPage_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(adtractionSuppPage);
+}
+
+
+void MainWindow::on_PB_awin_suppPage_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(awinSuppPage);
+}
+
+
+void MainWindow::on_actionAPI_Key_adtraction_triggered()
+{
+    //Opens teh Set APIKEY window
+    SetAPIKeyWindow = new SetAPIKey("Adtraction", dataManager,encryptionHelper, this);
+    connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
+    SetAPIKeyWindow->setModal(true);
+    SetAPIKeyWindow->exec();
+}
+
+
+void MainWindow::on_actionAPI_Key_awin_triggered()
+{
+    SetAPIKeyWindow = new SetAPIKey("Awin", dataManager,encryptionHelper, this);
+    connect(SetAPIKeyWindow,SIGNAL(apiKeyChanged(QString)),this,SLOT(updateApiKey(QString)));
+    SetAPIKeyWindow->setModal(true);
+    SetAPIKeyWindow->exec();
 }
 
