@@ -18,7 +18,7 @@
  */
 
 P_SupportPageAdtraction::P_SupportPageAdtraction(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
-    QWidget(parent),
+    NetworkPageBase(parent),
     ui(new Ui::P_SupportPageAdtraction),
     dataManager(dataManager),
     apiManager(apiManager)
@@ -129,6 +129,11 @@ void P_SupportPageAdtraction::initInputElements()
 
     ui->DE_transactionDate->setDate(QDate::currentDate());
     ui->DE_transactionDate->setMaximumDate(QDate::currentDate());
+
+    StandardButtons stdBTNs;
+
+    stdBTNs.std_addToListBTN = ui->PB_AddToList;
+
 
     //Add To list Button
     QPixmap pm_addToList(":/img/img/plusIcon_trans.png");

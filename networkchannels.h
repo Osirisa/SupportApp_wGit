@@ -24,7 +24,6 @@ signals:
 private slots:
     void on_addButton_clicked();
     void on_saveButton_clicked();
-    void on_deleteBTN_clicked();
     void on_PB_NWC_Cancel_clicked();
     void updateTableWidget();
 

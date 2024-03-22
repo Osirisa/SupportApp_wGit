@@ -154,11 +154,6 @@ void NetworkChannels::setupRegionsComboBox()
         }
     });
 }
-void NetworkChannels::on_deleteBTN_clicked(){
-
-    ui->T_NWC_NetworkChannels->removeRow(ui->T_NWC_NetworkChannels->currentRow());
-
-}
 void NetworkChannels::sortTableWidget() {
     // This function assumes that the table has been already filled with items.
 

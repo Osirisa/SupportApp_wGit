@@ -56,12 +56,6 @@ MainWindow::MainWindow(QWidget *parent)
 //-------------Destructor----------------
 MainWindow::~MainWindow()
 {
-    delete SetAPIKeyWindow;
-    delete dataManager;
-    delete apiManager;
-    delete encryptionHelper;
-    delete ui;
-
     delete adtractionSuppPage;
     delete awinSuppPage;
 }
@@ -104,39 +98,48 @@ void MainWindow::on_actionUpdate_Shops_triggered()
     QJsonObject networksObj = networksDoc.object();
 
     QJsonDocument marketRegionsAdtraction = dataManager->json->load("AdtractionRegions");
-
     QJsonArray marketArray = marketRegionsAdtraction.array();
-
 
     QString marketShort;
 
     for (auto network = networksObj.begin(); network != networksObj.end(); ++network) {
-        // Each network's key is the network name, and its value is another JSON object containing channels
         QJsonObject channelsObj = network.value().toObject();
 
-        // Iterate through each channel in the network
         for (auto channel = channelsObj.begin(); channel != channelsObj.end(); ++channel) {
-            // Each channel's key is the channel ID, and its value is another JSON object containing channel details
             QJsonObject channelDetails = channel.value().toObject();
 
-            // Extract channel details
+            // Ensure channelRegion is present
+            if (!channelDetails.contains("channelRegion") || channelDetails["channelRegion"].toString().isEmpty()) {
+                // TBD: implement log output for missing channelRegion
+                qDebug() << "Missing channelRegion for channel ID: " << channel.key(); // Placeholder for log output
+                continue; // Skip this channel
+            }
+
             QString channelID = channel.key();
             QString channelName = channelDetails["channelName"].toString();
             QString channelRegion = channelDetails["channelRegion"].toString();
 
+            bool marketFound = false;
             for(int i = 0; i< marketArray.size(); ++i){
                 QJsonObject marketObject = marketArray[i].toObject();
-
                 if(channelRegion == marketObject["marketName"].toString()){
                     marketShort = marketObject["market"].toString();
+                    marketFound = true;
                     break;
                 }
             }
 
-            apiManager->adtraction->updater.byChannel(channelID.toInt(),marketShort);
+            // Proceed only if a matching market was found
+            if (marketFound) {
+                apiManager->adtraction->updater.byChannel(channelID.toInt(), marketShort);
+            } else {
+                // TBD: implement log output for missing market match
+                qDebug() << "No market match found for channel ID: " << channel.key(); // Placeholder for log output
+            }
         }
     }
 }
+
 
 
 void MainWindow::on_actionAdd_ChannelIds_triggered()

@@ -6,6 +6,7 @@
 #include <QString>
 #include <QDate>
 
+#include "supportPages/networkpagebase.h"
 #include "DataManager/adtractionsuppdatamanager.h"
 #include "apimanager.h"
 #include "Enums.h"
@@ -18,12 +19,12 @@ namespace Ui {
 class P_SupportPageAdtraction;
 }
 
-class P_SupportPageAdtraction : public QWidget
+class P_SupportPageAdtraction : public NetworkPageBase
 {
     Q_OBJECT
 
 public:
-    explicit P_SupportPageAdtraction(DataManager* dataManager,APIManager* apiManager,QWidget *parent = nullptr);
+    P_SupportPageAdtraction(DataManager* dataManager,APIManager* apiManager,QWidget *parent = nullptr);
     ~P_SupportPageAdtraction();
 
     void refreshNetworkList();

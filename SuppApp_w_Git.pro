@@ -37,6 +37,7 @@ SOURCES += \
     suppeventbus.cpp \
     supportClasses/adtractionsuppcase.cpp \
     supportClasses/supportcaseBase.cpp \
+    supportPages/networkpagebase.cpp \
     supportPages/p_supportpageAdtraction.cpp \
     supportPages/p_supportpageawin.cpp
 
@@ -59,6 +60,7 @@ HEADERS += \
     suppeventbus.h \
     supportClasses/adtractionsuppcase.h \
     supportClasses/supportcaseBase.h \
+    supportPages/networkpagebase.h \
     supportPages/p_supportpageAdtraction.h \
     supportPages/p_supportpageawin.h
 
