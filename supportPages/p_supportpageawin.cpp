@@ -2,7 +2,7 @@
 #include "ui_p_supportpageawin.h"
 
 p_SupportPageAwin::p_SupportPageAwin(DataManager* dataManager, APIManager* apiManager,QWidget *parent) :
-    QWidget(parent),
+    NetworkPageBase(parent),
     ui(new Ui::p_SupportPageAwin),
     dataManager(dataManager),
     apiManager(apiManager)
@@ -55,50 +55,76 @@ void p_SupportPageAwin::initInputElements()
     ui->CB_enquiryType->addItems(enquiryTypes);
 
     //Add To list Button
-    QPixmap pm_addToList(":/img/img/plusIcon_trans.png");
-    QIcon i_addToList(pm_addToList);
-    ui->PB_AddToList->setIcon(i_addToList);
-    ui->PB_AddToList->setToolTip("Adds the input to the table");
+    StandardButtons stdBTNs;
 
-    //Export List to CSV Button
-    QPixmap pm_exportList(":/img/img/document_trans.png");
-    QIcon i_exportList(pm_exportList);
-    ui->PB_ExportList->setIcon(i_exportList);
-    ui->PB_ExportList->setToolTip("Exports either all or only selected Items of the Table to a CSV");
+    stdBTNs.std_addToListBTN    = ui->PB_AddToList;
+    stdBTNs.std_deleteAllBTN    = ui->pb_deleteAll;
+    stdBTNs.std_exportToCSV     = ui->PB_ExportList;
+    stdBTNs.std_select_Days     = ui->pb_select_90Days;
+    stdBTNs.std_select_Green    = ui->pb_select_Green;
+    stdBTNs.std_select_Orange   = ui->pb_select_Orange;
+    stdBTNs.std_select_Red      = ui->pb_select_Red;
+    stdBTNs.std_sendOverAPI     = ui->PB_SendOverAPI;
 
-    //Delte All Button
-    QPixmap pm_deleteAllBTN(":/img/img/3x_trans.png");
-    QIcon i_deleteAllBTN(pm_deleteAllBTN);
-    ui->pb_deleteAll->setIcon(i_deleteAllBTN);
-    ui->pb_deleteAll->setToolTip("Delets either all or only selected Items of the table");
-
-    //send over API Button
-    QPixmap pm_soaButton(":/img/img/arrowCircle_trans.png");
-    QIcon i_soaButton(pm_soaButton);
-    ui->PB_SendOverAPI->setIcon(i_soaButton);
-    ui->PB_SendOverAPI->setToolTip("Sends either all or only selected Contents of the Table");
-
-    //select "Red" Button
-    QPixmap pm_select_Red(":/img/img/ausrufezeichen_trans.png");
-    QIcon i_select_Red(pm_select_Red);
-    ui->pb_select_Red->setIcon(i_select_Red);
-    ui->pb_select_Red->setToolTip("Selects all the not accepted Supports");
-
-    //select "Orange" Button
-    QPixmap pm_select_Orange(":/img/img/ausrufezeichen_orange_trans.png");
-    QIcon i_select_Orange(pm_select_Orange);
-    ui->pb_select_Orange->setIcon(i_select_Orange);
-    ui->pb_select_Orange->setToolTip("Selects all the accepted but not good Supports");
-
-    //select "Green" Button
-    QPixmap pm_select_Green(":/img/img/ausrufezeichen_green_trans.png");
-    QIcon i_select_Green(pm_select_Green);
-    ui->pb_select_Green->setIcon(i_select_Green);
-    ui->pb_select_Green->setToolTip("Selects all the accepted Supports");
-
-    //select "90Days" Button
-    QPixmap pm_select_90Days(":/img/img/Uhr_trans.png");
-    QIcon i_select_90Days(pm_select_90Days);
-    ui->pb_select_90Days->setIcon(i_select_90Days);
-    ui->pb_select_90Days->setToolTip("Selects all the Supports which are older than 90 Days");
+    initStandardButtons(stdBTNs);
 }
+
+void p_SupportPageAwin::initializeColumnSortStates()
+{
+    columnSortStates[1] = ColumnSortState(eCol_Shop);
+    columnSortStates[9] = ColumnSortState(eCol_DaysOld);
+    columnSortStates[13] = ColumnSortState(eCol_H_Nstat); //TBD: is valid?
+}
+
+void p_SupportPageAwin::on_pb_select_90Days_clicked()
+{
+    int overdueDays = 90; //TBD: how many Days?
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_DaysOld, [overdueDays](const QString &value) {
+        int days = value.toInt();
+        //qDebug() << "Days old:" << days << ", Overdue threshold:" << overdueDays;
+        return days >= overdueDays;
+    });
+}
+
+
+void p_SupportPageAwin::on_pb_select_Red_clicked()
+{
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_H_Nstat, [](const QString &value) {
+        //qDebug() << "Checking value:" << value << ", Converted to Int:" << value.toInt();
+        int valueInt = value.toInt();
+        bool isSelected = (valueInt != 0 && valueInt != 200 && valueInt != 201 && valueInt != 204 && valueInt != 409);//TBD: Define Value
+        //qDebug() << "Is Selected:" << isSelected;
+        return isSelected;
+    });
+}
+
+
+void p_SupportPageAwin::on_pb_select_Orange_clicked()
+{
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_H_Nstat, [](const QString &value) {
+        //qDebug() << "Checking value:" << value << ", Converted to Int:" << value.toInt();
+        int valueInt = value.toInt();
+        bool isSelected = ((valueInt == 201) || (valueInt == 204) || (valueInt == 409));//TBD: Define Value
+        //qDebug() << "Is Selected:" << isSelected;
+        return isSelected;
+    });
+}
+
+
+void p_SupportPageAwin::on_pb_select_Green_clicked()
+{
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_H_Nstat, [](const QString &value) {
+        //qDebug() << "Checking value:" << value << ", Converted to Int:" << value.toInt();
+        int valueInt = value.toInt();
+        bool isSelected = (valueInt == 200); //TBD: Define Value
+        //qDebug() << "Is Selected:" << isSelected;
+        return isSelected;
+    });
+}
+
+
+void p_SupportPageAwin::on_PB_select_search_clicked()
+{
+    selectSearch(ui->T_NachbuchungsanfragenListe,ui->LE_SearchBar);
+}
+

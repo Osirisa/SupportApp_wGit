@@ -39,19 +39,21 @@ private:
     void initTable();
     void initPage();
     void initInputElements();
+
     void fillTableWithJson();
     void fillShopComboBox(QString &channel,QString &channelID);
-    void setupComboBoxConnections();
     void fillCurrencyComboBox();
     void fillNetworkComboBox();
 
+    void setupComboBoxConnections();
+
     void addItemToTable(const AdtractionSuppCase &suppCase);
-    void addNStatButton(const int currentRow,const QString& netReply, const suppNetStatus currentStat);
     bool addItemToSessionJson(const AdtractionSuppCase &suppCase);
 
     void disableEditingForRow(const int currentRow);
+    void initializeColumnSortStates() override;
 
-    suppNetStatus convertNetworkStatusCodeToNStat(const QString& suppNetStatString);
+    suppNetStatus convertNetworkStatusCodeToNstat(const QString& suppNetStatString);
 
     void outputRowsToCSV(const QString &fileName);
 
@@ -67,12 +69,10 @@ private:
     QHash<QString,QString> channelToId;
     QHash<QString,QString> idtoChannel;
 
+    //Currency Sorting
     QList<QString> prefferedList;
     QList<QString> otherList;
 
-    sortingStatus sortStat_networkStat = eSStat_None;
-    sortingStatus sortStat_shop = eSStat_None;
-    sortingStatus sortStat_date = eSStat_None;
 
     toggleTable toggleStatusTable = eTT_Normal;
 
@@ -103,26 +103,38 @@ private:
 
 public slots:
 private slots:
+
+    //RadioButtons
     void on_RB_expProvCur_clicked();
     void on_RB_expProvPer_clicked();
-    void on_LE_expectedProv_Percent_editingFinished();
+
+    //Line Edits
     void on_LE_value_editingFinished();
+    void on_LE_expectedProv_Percent_editingFinished();
+    void on_LE_SearchBar_textChanged(const QString &arg1);
+
+    //PushButtons
     void on_PB_AddToList_clicked();
-    void on_deleteBTNTable_clicked();
-    void on_sendBTNTable_clicked();
     void on_PB_SendOverAPI_clicked();
     void on_pb_toggleTable_clicked();
     void on_PB_ExportList_clicked();
     void on_pb_deleteAll_clicked();
+
     void on_PB_SortNetworkStatus_clicked();
     void on_PB_SortShop_clicked();
     void on_PB_SortDate_clicked();
-    void on_pb_select_Red_clicked();
+
     void on_pb_select_90Days_clicked();
-    void on_pb_select_Orange_clicked();
     void on_pb_select_Green_clicked();
-    void on_LE_SearchBar_textChanged(const QString &arg1);
+    void on_pb_select_Orange_clicked();
+    void on_pb_select_Red_clicked();
     void on_PB_select_search_clicked();
+
+    //In Table PushButtons
+    void on_deleteBTNTable_clicked();
+    void on_sendBTNTable_clicked();
+
+    //In Table row manipulation
     void on_T_NachbuchungsanfragenListe_itemChanged(QTableWidgetItem *item);
 };
 

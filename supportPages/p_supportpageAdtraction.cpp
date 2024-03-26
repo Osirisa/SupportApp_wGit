@@ -47,6 +47,7 @@ P_SupportPageAdtraction::P_SupportPageAdtraction(DataManager* dataManager, APIMa
         }
     });
 
+
 }
 
 //Destructor
@@ -87,6 +88,8 @@ void P_SupportPageAdtraction::initPage()
 //Inits the Table (Column Size)
 void P_SupportPageAdtraction::initTable()
 {
+    initializeColumnSortStates();
+
     //standard size is 150 for the columns
     for(int i=0;i<ui->T_NachbuchungsanfragenListe->columnCount();++i){
         ui->T_NachbuchungsanfragenListe->setColumnWidth(i,150);
@@ -130,58 +133,24 @@ void P_SupportPageAdtraction::initInputElements()
     ui->DE_transactionDate->setDate(QDate::currentDate());
     ui->DE_transactionDate->setMaximumDate(QDate::currentDate());
 
+    addKeyWordMapping("UserID"      ,eCol_UserId);
+    addKeyWordMapping("Currency"    ,eCol_Currency);
+    addKeyWordMapping("Value"       ,eCol_Value);
+    addKeyWordMapping("OrderID"     ,eCol_OrderId);
+    addKeyWordMapping("Date"        ,eCol_Date);
+
     StandardButtons stdBTNs;
 
-    stdBTNs.std_addToListBTN = ui->PB_AddToList;
+    stdBTNs.std_addToListBTN    = ui->PB_AddToList;
+    stdBTNs.std_deleteAllBTN    = ui->pb_deleteAll;
+    stdBTNs.std_exportToCSV     = ui->PB_ExportList;
+    stdBTNs.std_select_Days     = ui->pb_select_90Days;
+    stdBTNs.std_select_Green    = ui->pb_select_Green;
+    stdBTNs.std_select_Orange   = ui->pb_select_Orange;
+    stdBTNs.std_select_Red      = ui->pb_select_Red;
+    stdBTNs.std_sendOverAPI     = ui->PB_SendOverAPI;
 
-
-    //Add To list Button
-    QPixmap pm_addToList(":/img/img/plusIcon_trans.png");
-    QIcon i_addToList(pm_addToList);
-    ui->PB_AddToList->setIcon(i_addToList);
-    ui->PB_AddToList->setToolTip("Adds the input to the table");
-
-    //Export List to CSV Button
-    QPixmap pm_exportList(":/img/img/document_trans.png");
-    QIcon i_exportList(pm_exportList);
-    ui->PB_ExportList->setIcon(i_exportList);
-    ui->PB_ExportList->setToolTip("Exports either all or only selected Items of the Table to a CSV");
-
-    //Delte All Button
-    QPixmap pm_deleteAllBTN(":/img/img/3x_trans.png");
-    QIcon i_deleteAllBTN(pm_deleteAllBTN);
-    ui->pb_deleteAll->setIcon(i_deleteAllBTN);
-    ui->pb_deleteAll->setToolTip("Delets either all or only selected Items of the table");
-
-    //send over API Button
-    QPixmap pm_soaButton(":/img/img/arrowCircle_trans.png");
-    QIcon i_soaButton(pm_soaButton);
-    ui->PB_SendOverAPI->setIcon(i_soaButton);
-    ui->PB_SendOverAPI->setToolTip("Sends either all or only selected Contents of the Table");
-
-    //select "Red" Button
-    QPixmap pm_select_Red(":/img/img/ausrufezeichen_trans.png");
-    QIcon i_select_Red(pm_select_Red);
-    ui->pb_select_Red->setIcon(i_select_Red);
-    ui->pb_select_Red->setToolTip("Selects all the not accepted Supports");
-
-    //select "Orange" Button
-    QPixmap pm_select_Orange(":/img/img/ausrufezeichen_orange_trans.png");
-    QIcon i_select_Orange(pm_select_Orange);
-    ui->pb_select_Orange->setIcon(i_select_Orange);
-    ui->pb_select_Orange->setToolTip("Selects all the accepted but not good Supports");
-
-    //select "Green" Button
-    QPixmap pm_select_Green(":/img/img/ausrufezeichen_green_trans.png");
-    QIcon i_select_Green(pm_select_Green);
-    ui->pb_select_Green->setIcon(i_select_Green);
-    ui->pb_select_Green->setToolTip("Selects all the accepted Supports");
-
-    //select "90Days" Button
-    QPixmap pm_select_90Days(":/img/img/Uhr_trans.png");
-    QIcon i_select_90Days(pm_select_90Days);
-    ui->pb_select_90Days->setIcon(i_select_90Days);
-    ui->pb_select_90Days->setToolTip("Selects all the Supports which are older than 90 Days");
+    initStandardButtons(stdBTNs);
 }
 //Fills the Network Combobox with all the ChannelIDs Inputted in the Adtraction->ChannelIds Window
 void P_SupportPageAdtraction::fillNetworkComboBox()
@@ -336,7 +305,7 @@ void P_SupportPageAdtraction::refreshShops()
  *
  */
 
-suppNetStatus P_SupportPageAdtraction::convertNetworkStatusCodeToNStat(const QString& suppNetStatString)
+suppNetStatus P_SupportPageAdtraction::convertNetworkStatusCodeToNstat(const QString& suppNetStatString)
 {
     if (suppNetStatString == "0") {
         return eNstat_NotSend;
@@ -377,7 +346,7 @@ void P_SupportPageAdtraction::addItemToTable(const AdtractionSuppCase &suppCase)
     ui->T_NachbuchungsanfragenListe->setItem(newRow, eCol_DaysOld, new QTableWidgetItem(daysOld));
 
     // Adjust addNStatButton and action button adding methods as needed
-    addNStatButton(newRow, suppCase.getNetworkStatusText(), convertNetworkStatusCodeToNStat(suppCase.getNetworkStatus()));
+    addNStatButton(ui->T_NachbuchungsanfragenListe, newRow, eCol_Networkstatus, convertNetworkStatusCodeToNstat(suppCase.getNetworkStatus()), suppCase.getNetworkStatusText());
 
     QPushButton *sendBTN = new QPushButton;
     QPixmap sendPixmap(":/img/img/Send_trans.png");
@@ -399,60 +368,6 @@ void P_SupportPageAdtraction::addItemToTable(const AdtractionSuppCase &suppCase)
     ui->T_NachbuchungsanfragenListe->blockSignals(false);
 }
 
-
-
-void P_SupportPageAdtraction::addNStatButton(const int currentRow,const QString &netReply ,const suppNetStatus currentStat)
-{
-    QPushButton *networkStatusBTN = new QPushButton;
-
-    switch(currentStat){
-    case eNstat_Good:
-
-
-        networkStatusBTN->setIcon(QIcon(":/img/img/ausrufezeichen_green_trans.png"));
-        networkStatusBTN->setToolTip(netReply);
-
-        ui->T_NachbuchungsanfragenListe->setCellWidget(currentRow,eCol_Networkstatus,networkStatusBTN);
-
-        break;
-
-    case eNstat_Okay:
-
-
-        networkStatusBTN->setIcon(QIcon(":/img/img/ausrufezeichen_orange_trans.png"));
-        networkStatusBTN->setToolTip(netReply);
-
-        ui->T_NachbuchungsanfragenListe->setCellWidget(currentRow,eCol_Networkstatus,networkStatusBTN);
-
-        break;
-
-    case eNstat_Error:
-
-        networkStatusBTN->setIcon(QIcon(":/img/img/ausrufezeichen_trans.png"));
-        networkStatusBTN->setToolTip(netReply);
-
-        ui->T_NachbuchungsanfragenListe->setCellWidget(currentRow,eCol_Networkstatus,networkStatusBTN);
-
-        break;
-
-    case eNstat_NotSend:
-
-        networkStatusBTN->setIcon(QIcon(":/img/img/3Dots_trans.png"));
-        networkStatusBTN->setToolTip("This Item has not been send");
-
-        ui->T_NachbuchungsanfragenListe->setCellWidget(currentRow, eCol_Networkstatus, networkStatusBTN);
-
-        break;
-
-    default:
-
-        qDebug()<<"Error in AddNstatButton-Statemachine";
-        delete networkStatusBTN;
-
-        break;
-    }
-}
-
 bool P_SupportPageAdtraction::addItemToSessionJson(const AdtractionSuppCase &suppCase)
 {
     return suppdataManager->saveObjectToSessionFile(suppCase);
@@ -472,7 +387,13 @@ void P_SupportPageAdtraction::disableEditingForRow(const int currentRow)
 
 }
 
-//TBD:: OBJECTIFY
+void P_SupportPageAdtraction::initializeColumnSortStates()
+{
+    columnSortStates[1] = ColumnSortState(eCol_Shop);
+    columnSortStates[9] = ColumnSortState(eCol_DaysOld);
+    columnSortStates[13] = ColumnSortState(eCol_H_Nstat);
+}
+
 void P_SupportPageAdtraction::outputRowsToCSV(const QString &fileName)
 {
     QList<QTableWidgetSelectionRange> rowSelections = ui->T_NachbuchungsanfragenListe->selectedRanges();
@@ -573,7 +494,7 @@ void P_SupportPageAdtraction::networkRequestMessageReceived(const QString respon
                 netStatForObject = eNstat_Error;
             }
 
-            addNStatButton(currentRow,nreply,netStatForObject);
+            addNStatButton(ui->T_NachbuchungsanfragenListe, currentRow, eCol_Networkstatus, netStatForObject,nreply);
             ui->T_NachbuchungsanfragenListe->item(currentRow,eCol_H_Nstat)->setText(QString::number(netStatForObject));
             break;
         }
@@ -635,157 +556,70 @@ void P_SupportPageAdtraction::on_pb_toggleTable_clicked()
 
 void P_SupportPageAdtraction::on_pb_select_90Days_clicked()
 {
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
-    ui->T_NachbuchungsanfragenListe->clearSelection();
-
-    for (int currRow = 0; currRow < ui->T_NachbuchungsanfragenListe->rowCount(); ++currRow){
-
-        if(ui->T_NachbuchungsanfragenListe->item(currRow,eCol_DaysOld)->text().toInt() >= 90){
-            ui->T_NachbuchungsanfragenListe->selectRow(currRow);
-        }
-    }
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    int overdueDays = 90;
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_DaysOld, [overdueDays](const QString &value) {
+        int days = value.toInt();
+        //qDebug() << "Days old:" << days << ", Overdue threshold:" << overdueDays;
+        return days >= overdueDays;
+    });
 }
 
 void P_SupportPageAdtraction::on_pb_select_Red_clicked()
 {
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
-    ui->T_NachbuchungsanfragenListe->clearSelection();
-
-    for (int currRow = 0; currRow < ui->T_NachbuchungsanfragenListe->rowCount(); ++currRow){
-
-        if(ui->T_NachbuchungsanfragenListe->item(currRow,eCol_H_Nstat)->text().toInt() == eNstat_Error){
-            ui->T_NachbuchungsanfragenListe->selectRow(currRow);
-        }
-    }
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_H_Nstat, [](const QString &value) {
+        //qDebug() << "Checking value:" << value << ", Converted to Int:" << value.toInt();
+        int valueInt = value.toInt();
+        bool isSelected = (valueInt != 0 && valueInt != 200 && valueInt != 201 && valueInt != 204 && valueInt != 409);
+        //qDebug() << "Is Selected:" << isSelected;
+        return isSelected;
+    });
 }
 
 void P_SupportPageAdtraction::on_pb_select_Orange_clicked()
 {
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
-    ui->T_NachbuchungsanfragenListe->clearSelection();
-
-    for (int currRow = 0; currRow < ui->T_NachbuchungsanfragenListe->rowCount(); ++currRow){
-
-        if(ui->T_NachbuchungsanfragenListe->item(currRow,eCol_H_Nstat)->text().toInt() == eNstat_Okay){
-            qDebug()<<"notok";
-            ui->T_NachbuchungsanfragenListe->selectRow(currRow);
-        }
-    }
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_H_Nstat, [](const QString &value) {
+        //qDebug() << "Checking value:" << value << ", Converted to Int:" << value.toInt();
+        int valueInt = value.toInt();
+        bool isSelected = ((valueInt == 201) || (valueInt == 204) || (valueInt == 409));
+        //qDebug() << "Is Selected:" << isSelected;
+        return isSelected;
+    });
 }
 
 void P_SupportPageAdtraction::on_pb_select_Green_clicked()
 {
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
+    selectRowsBasedOnCondition(ui->T_NachbuchungsanfragenListe, eCol_H_Nstat, [](const QString &value) {
+        //qDebug() << "Checking value:" << value << ", Converted to Int:" << value.toInt();
+        int valueInt = value.toInt();
+        bool isSelected = (valueInt == 200);
+        //qDebug() << "Is Selected:" << isSelected;
+        return isSelected;
+    });
 
-    ui->T_NachbuchungsanfragenListe->clearSelection();
+}
 
-    for (int currRow = 0; currRow < ui->T_NachbuchungsanfragenListe->rowCount(); ++currRow){
-
-        if(ui->T_NachbuchungsanfragenListe->item(currRow,eCol_H_Nstat)->text().toInt() == eNstat_Good){
-            ui->T_NachbuchungsanfragenListe->selectRow(currRow);
-        }
-    }
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
+void P_SupportPageAdtraction::on_PB_select_search_clicked()
+{
+    selectSearch(ui->T_NachbuchungsanfragenListe,ui->LE_SearchBar);
 }
 
 //Sort by NetworkStatus
 void P_SupportPageAdtraction::on_PB_SortNetworkStatus_clicked()
 {
-    switch(sortStat_networkStat){
-    case eSStat_None:
-        ui->T_NachbuchungsanfragenListe->sortItems(eCol_H_Nstat,Qt::AscendingOrder);
-
-        sortStat_networkStat = eSStat_Ascending;
-        sortStat_shop = eSStat_None;
-        sortStat_date = eSStat_None;
-        break;
-
-    case eSStat_Ascending:
-        ui->T_NachbuchungsanfragenListe->sortItems(eCol_H_Nstat,Qt::DescendingOrder);
-
-        sortStat_networkStat = eSStat_Descending;
-        break;
-
-    case eSStat_Descending:
-
-        fillTableWithJson();
-        sortStat_networkStat = eSStat_None;
-        break;
-
-    default:
-        qDebug()<<"Error in NetworkStatus-Sorting-Statemachine";
-        break;
-    }
-
+    sortColumn(ui->T_NachbuchungsanfragenListe,eCol_H_Nstat);
 }
 
 //Sort by Shop
 void P_SupportPageAdtraction::on_PB_SortShop_clicked()
 {
-    switch(sortStat_shop){
-    case eSStat_None:
-        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Shop,Qt::AscendingOrder);
 
-        sortStat_shop = eSStat_Ascending;
-        sortStat_networkStat = eSStat_None;
-        sortStat_date = eSStat_None;
-
-        break;
-
-    case eSStat_Ascending:
-        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Shop,Qt::DescendingOrder);
-
-        sortStat_shop = eSStat_Descending;
-        break;
-
-    case eSStat_Descending:
-
-        fillTableWithJson();
-        sortStat_shop = eSStat_None;
-        break;
-
-    default:
-        qDebug()<<"Error in Shop-Sorting-Statemachine";
-        break;
-    }
+    sortColumn(ui->T_NachbuchungsanfragenListe,eCol_Shop);
 }
 
 //Sort by Date
 void P_SupportPageAdtraction::on_PB_SortDate_clicked()
 {
-    switch(sortStat_date){
-    case eSStat_None:
-        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Date,Qt::AscendingOrder);
-
-        sortStat_date = eSStat_Ascending;
-        sortStat_networkStat = eSStat_None;
-        sortStat_shop = eSStat_None;
-        break;
-
-    case eSStat_Ascending:
-        ui->T_NachbuchungsanfragenListe->sortItems(eCol_Date,Qt::DescendingOrder);
-
-        sortStat_date = eSStat_Descending;
-        break;
-
-    case eSStat_Descending:
-
-        fillTableWithJson();
-        sortStat_date = eSStat_None;
-        break;
-
-    default:
-        qDebug()<<"Error in Date-Sorting-Statemachine";
-
-        sortStat_networkStat = eSStat_None;
-        sortStat_shop = eSStat_None;
-        sortStat_date = eSStat_None;
-        break;
-    }
+    sortColumn(ui->T_NachbuchungsanfragenListe,eCol_DaysOld);
 }
 //------------------
 
@@ -798,7 +632,7 @@ void P_SupportPageAdtraction::on_PB_AddToList_clicked()
     }
     else{
 
-        bool answer;
+        //bool answer;
         AdtractionParams suppCaseParams;
 
         suppCaseParams.orderVal         = ui->LE_value->text().toDouble();
@@ -826,8 +660,10 @@ void P_SupportPageAdtraction::on_PB_AddToList_clicked()
 
         AdtractionSuppCase suppCase(suppCaseParams);
 
-        answer = addItemToSessionJson(suppCase);
-        qDebug()<<answer;
+        //answer = addItemToSessionJson(suppCase);
+        addItemToSessionJson(suppCase);
+        //qDebug()<<answer;
+
         fillTableWithJson();
 
         //Delete contents
@@ -838,8 +674,6 @@ void P_SupportPageAdtraction::on_PB_AddToList_clicked()
     }
 }
 
-//deleting one Element from the Table directly
-//TBD:: OBJECTIFY
 void P_SupportPageAdtraction::on_deleteBTNTable_clicked()
 {
     int currRow = ui->T_NachbuchungsanfragenListe->currentRow();
@@ -1120,37 +954,10 @@ void P_SupportPageAdtraction::on_RB_expProvPer_clicked()
 
 void P_SupportPageAdtraction::on_LE_SearchBar_textChanged(const QString &arg1)
 {
-    for (int i = 0; i < ui->T_NachbuchungsanfragenListe->rowCount(); ++i) {
-        bool match = false;
-        for (int j = 0; j < ui->T_NachbuchungsanfragenListe->columnCount(); ++j) {
-            QTableWidgetItem *item = ui->T_NachbuchungsanfragenListe->item(i, j);
-            if (item && item->text().contains(arg1, Qt::CaseInsensitive)) {
-                match = true;
-                break; // No need to check other columns if we have a match
-            }
-        }
-        ui->T_NachbuchungsanfragenListe->setRowHidden(i, !match); // Hide the row if there is no match
-    }
+    searchBarActivity(ui->T_NachbuchungsanfragenListe, arg1);
 }
 
 
-void P_SupportPageAdtraction::on_PB_select_search_clicked()
-{
-    if(ui->LE_SearchBar->text().isEmpty()){
-        QMessageBox::critical(this,"Search is Empty","Please put in a search before pressing this button.");
-        return;
-    }
-
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::MultiSelection);
-    for (int i = 0; i < ui->T_NachbuchungsanfragenListe->rowCount(); ++i) {
-
-        if(!ui->T_NachbuchungsanfragenListe->isRowHidden(i)){
-
-            ui->T_NachbuchungsanfragenListe->selectRow(i);
-        }
-    }
-    ui->T_NachbuchungsanfragenListe->setSelectionMode(QAbstractItemView::ExtendedSelection);
-}
 
 void P_SupportPageAdtraction::on_T_NachbuchungsanfragenListe_itemChanged(QTableWidgetItem *item)
 {
